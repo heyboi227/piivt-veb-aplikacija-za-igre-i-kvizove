@@ -8,19 +8,31 @@ class GameController {
   }
 
   async getAll(_req: Request, res: Response) {
-    res.send(await this.gameService.getAll());
+    this.gameService
+      .getAll()
+      .then((result) => {
+        res.send(result);
+      })
+      .catch((error) => {
+        res.status(500).send(error?.message);
+      });
   }
 
   async getById(req: Request, res: Response) {
     const id: number = +req.params?.id;
 
-    const category = await this.gameService.getById(id);
+    this.gameService
+      .getById(id)
+      .then((result) => {
+        if (result === null) {
+          return res.sendStatus(404);
+        }
 
-    if (category === null) {
-      return res.sendStatus(404);
-    }
-
-    res.send(category);
+        res.send(result);
+      })
+      .catch((error) => {
+        res.status(500).send(error?.message);
+      });
   }
 }
 

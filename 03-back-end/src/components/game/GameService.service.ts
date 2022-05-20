@@ -1,39 +1,69 @@
 import GameModel from "./GameModel.model";
+import * as mysql2 from "mysql2/promise";
 
 class GameService {
+  private db: mysql2.Connection;
+
+  constructor(databaseConnection: mysql2.Connection) {
+    this.db = databaseConnection;
+  }
+
+  private async adaptToModel(data: any): Promise<GameModel> {
+    const game: GameModel = new GameModel();
+
+    game.gameId = +data?.game_id;
+    game.name = data?.name;
+
+    return game;
+  }
+
   public async getAll(): Promise<GameModel[]> {
-    const games: GameModel[] = [];
+    return new Promise<GameModel[]>((resolve, reject) => {
+      const games: GameModel[] = [];
 
-    games.push(
-      {
-        gameId: 1,
-        name: "Pronađi najdužu reč",
-      },
-      {
-        gameId: 2,
-        name: "Pogodi državu",
-      },
-      {
-        gameId: 3,
-        name: "Pogodi zastavu",
-      },
-      {
-        gameId: 4,
-        name: "Izračunaj izraz",
-      }
-    );
+      const sql: string = "SELECT * FROM `game`;";
+      this.db
+        .execute(sql)
+        .then(async ([rows]) => {
+          if (rows === undefined) {
+            return resolve([]);
+          }
 
-    return games;
+          const games: GameModel[] = [];
+
+          for (const row of rows as mysql2.RowDataPacket[]) {
+            games.push(await this.adaptToModel(row));
+          }
+
+          resolve(games);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
   }
 
   public async getById(gameId: number): Promise<GameModel> | null {
-    if (gameId === 5) {
-      return null;
-    }
-    return {
-      gameId: 2,
-      name: "Game " + gameId + " name",
-    };
+    return new Promise<GameModel>((resolve, reject) => {
+      const sql: string = "SELECT * FROM game WHERE game_id = ?;";
+
+      this.db
+        .execute(sql, [gameId])
+        .then(async ([rows]) => {
+          if (rows === undefined) {
+            return resolve(null);
+          }
+
+          if (Array.isArray(rows) && rows.length === 0) {
+            return resolve(null);
+          }
+
+          resolve(await this.adaptToModel(rows[0]));
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
   }
 }
 
