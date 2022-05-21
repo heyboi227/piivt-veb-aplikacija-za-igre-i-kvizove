@@ -1,14 +1,16 @@
-import GameService from "./GameService.service";
+import WordService from "./WordService.service";
 import { Request, Response } from "express";
-class GameController {
-  private gameService: GameService;
+import { AddWordValidator } from "./dto/IAddWord.dto";
+import IAddWord from "./dto/IAddWord.dto";
+class WordController {
+  private wordService: WordService;
 
-  constructor(gameService: GameService) {
-    this.gameService = gameService;
+  constructor(wordService: WordService) {
+    this.wordService = wordService;
   }
 
   async getAll(_req: Request, res: Response) {
-    this.gameService
+    this.wordService
       .getAll()
       .then((result) => {
         res.send(result);
@@ -21,7 +23,7 @@ class GameController {
   async getById(req: Request, res: Response) {
     const id: number = +req.params?.id;
 
-    this.gameService
+    this.wordService
       .getById(id)
       .then((result) => {
         if (result === null) {
@@ -38,7 +40,7 @@ class GameController {
   async getAllByName(req: Request, res: Response) {
     const name: string = req.params?.name;
 
-    this.gameService
+    this.wordService
       .getAllByName(name)
       .then((result) => {
         if (result === null) {
@@ -51,6 +53,23 @@ class GameController {
         res.status(500).send(error?.message);
       });
   }
+
+  async add(req: Request, res: Response) {
+    const data = req.body as IAddWord;
+
+    if (!AddWordValidator(data)) {
+      return res.status(400).send(AddWordValidator.errors);
+    }
+
+    this.wordService
+      .add(data)
+      .then((result) => {
+        res.send(result);
+      })
+      .catch((error) => {
+        res.status(400).send(error?.message);
+      });
+  }
 }
 
-export default GameController;
+export default WordController;

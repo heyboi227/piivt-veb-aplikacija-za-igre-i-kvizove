@@ -10,7 +10,7 @@ import * as mysql2 from "mysql2/promise";
 async function main() {
   const config: IConfig = DevConfig;
 
-  fs.mkdirSync("./logs", {
+  fs.mkdirSync("./log-files", {
     mode: 0o755,
     recursive: true,
   });
@@ -88,5 +88,9 @@ async function main() {
 
   application.listen(config.server.port);
 }
+
+process.on("uncaughtException", (error) => {
+  console.error("ERROR: ", error);
+});
 
 main();

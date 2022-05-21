@@ -1,5 +1,6 @@
 import IConfig from "./common/IConfig.interface";
 import GameRouter from "./components/game/GameRouter.router";
+import WordRouter from "./components/word/WordRouter.router";
 
 const DevConfig: IConfig = {
   server: {
@@ -15,7 +16,7 @@ const DevConfig: IConfig = {
     },
   },
   logging: {
-    path: "./logs",
+    path: "./log-files",
     filename: "access.log",
     format:
       ":date[iso]\t:remote-addr\t:method\t:url\t:status\t:res[content-length] bytes\t:response-time ms",
@@ -30,7 +31,7 @@ const DevConfig: IConfig = {
     timezone: "+01:00",
     supportBigNumbers: true,
   },
-  routers: [new GameRouter()],
+  routers: [new GameRouter(), new WordRouter()],
 };
 
 export { DevConfig };

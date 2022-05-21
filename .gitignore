@@ -1,1 +1,3 @@
-node_modules
+03-back-end/node_modules
+03-back-end/dist
+03-back-end/log-files
