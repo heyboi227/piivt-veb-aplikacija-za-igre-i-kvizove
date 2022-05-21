@@ -61,27 +61,6 @@ async function main() {
     res.send("<h1>Flagalica</h1><p>Dobrošli u naš kviz!</p>");
   });
 
-  application.get("/game", (_req, res) => {
-    res.send([
-      {
-        game_id: 1,
-        name: "Pronađi najdužu reč",
-      },
-      {
-        game_id: 2,
-        name: "Pogodi državu",
-      },
-      {
-        game_id: 3,
-        name: "Pogodi zastavu",
-      },
-      {
-        game_id: 4,
-        name: "Izračunaj izraz",
-      },
-    ]);
-  });
-
   application.use((_req, res) => {
     res.sendStatus(404);
   });
