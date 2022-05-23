@@ -12,7 +12,9 @@ class WordRouter implements IRouter {
     const wordService: WordService = new WordService(
       resources.databaseConnection
     );
-    const wordController: WordController = new WordController(wordService);
+    const wordController: WordController = new WordController(
+      resources.services
+    );
 
     application.get("/api/word", wordController.getAll.bind(wordController));
     application.get(

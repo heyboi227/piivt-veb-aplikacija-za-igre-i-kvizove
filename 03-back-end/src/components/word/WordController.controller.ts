@@ -1,16 +1,10 @@
-import WordService from "./WordService.service";
 import { Request, Response } from "express";
 import { AddWordValidator, IAddWordDto } from "./dto/IAddWord.dto";
 import { EditWordValidator, IEditWordDto } from "./dto/IEditWord.dto";
-class WordController {
-  private wordService: WordService;
-
-  constructor(wordService: WordService) {
-    this.wordService = wordService;
-  }
-
+import BaseController from "../../common/BaseController";
+class WordController extends BaseController {
   async getAll(_req: Request, res: Response) {
-    this.wordService
+    this.services.word
       .getAll()
       .then((result) => {
         res.send(result);
@@ -23,7 +17,7 @@ class WordController {
   async getById(req: Request, res: Response) {
     const id: number = +req.params?.id;
 
-    this.wordService
+    this.services.word
       .getById(id)
       .then((result) => {
         if (result === null) {
@@ -40,7 +34,7 @@ class WordController {
   async getAllByName(req: Request, res: Response) {
     const name: string = req.params?.name;
 
-    this.wordService
+    this.services.word
       .getAllByName(name)
       .then((result) => {
         if (result === null) {
@@ -61,7 +55,7 @@ class WordController {
       return res.status(400).send(AddWordValidator.errors);
     }
 
-    this.wordService
+    this.services.word
       .add(data)
       .then((result) => {
         res.send(result);
@@ -79,14 +73,14 @@ class WordController {
       return res.status(400).send(EditWordValidator.errors);
     }
 
-    this.wordService
+    this.services.word
       .getById(id)
       .then((result) => {
         if (result === null) {
           return res.sendStatus(404);
         }
 
-        this.wordService
+        this.services.word
           .editById(id, {
             name: data.name,
           })
@@ -105,14 +99,14 @@ class WordController {
   async delete(req: Request, res: Response) {
     const id: number = +req.params?.id;
 
-    this.wordService
+    this.services.word
       .getById(id)
       .then((result) => {
         if (result === null) {
           return res.sendStatus(404);
         }
 
-        this.wordService
+        this.services.word
           .deleteById(id)
           .then((result) => {
             res.send("This word has been deleted!");

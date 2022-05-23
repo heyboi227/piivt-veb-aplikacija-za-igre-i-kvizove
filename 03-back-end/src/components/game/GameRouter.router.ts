@@ -12,7 +12,9 @@ class GameRouter implements IRouter {
     const gameService: GameService = new GameService(
       resources.databaseConnection
     );
-    const gameController: GameController = new GameController(gameService);
+    const gameController: GameController = new GameController(
+      resources.services
+    );
 
     application.get("/api/game", gameController.getAll.bind(gameController));
     application.get(

@@ -1,14 +1,8 @@
-import GameService from "./GameService.service";
 import { Request, Response } from "express";
-class GameController {
-  private gameService: GameService;
-
-  constructor(gameService: GameService) {
-    this.gameService = gameService;
-  }
-
+import BaseController from "../../common/BaseController";
+class GameController extends BaseController {
   async getAll(_req: Request, res: Response) {
-    this.gameService
+    this.services.game
       .getAll()
       .then((result) => {
         res.send(result);
@@ -21,7 +15,7 @@ class GameController {
   async getById(req: Request, res: Response) {
     const id: number = +req.params?.id;
 
-    this.gameService
+    this.services.game
       .getById(id)
       .then((result) => {
         if (result === null) {
@@ -38,7 +32,7 @@ class GameController {
   async getAllByName(req: Request, res: Response) {
     const name: string = req.params?.name;
 
-    this.gameService
+    this.services.game
       .getAllByName(name)
       .then((result) => {
         if (result === null) {
