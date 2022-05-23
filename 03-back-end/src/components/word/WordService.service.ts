@@ -1,5 +1,5 @@
 import WordModel from "./WordModel.model";
-import IAddWord from "./dto/IAddWord.dto";
+import { IAddWordDto } from "./dto/IAddWord.dto";
 import BaseService from "../../common/BaseService";
 import { IEditWordDto } from "./dto/IEditWord.dto";
 
@@ -21,7 +21,7 @@ class WordService extends BaseService<WordModel> {
     return this.getAllByFieldNameAndValue("name", name);
   }
 
-  public async add(data: IAddWord): Promise<WordModel> {
+  public async add(data: IAddWordDto): Promise<WordModel> {
     return this.baseAdd(data);
   }
 
@@ -30,6 +30,10 @@ class WordService extends BaseService<WordModel> {
     data: IEditWordDto
   ): Promise<WordModel> {
     return this.baseEditById(wordId, data);
+  }
+
+  public async deleteById(id: number): Promise<boolean> {
+    return this.baseDeleteById(id);
   }
 }
 

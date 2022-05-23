@@ -1,8 +1,7 @@
 import WordService from "./WordService.service";
 import { Request, Response } from "express";
-import { AddWordValidator } from "./dto/IAddWord.dto";
-import IAddWord from "./dto/IAddWord.dto";
-import { IEditWordDto } from "./dto/IEditWord.dto";
+import { AddWordValidator, IAddWordDto } from "./dto/IAddWord.dto";
+import { EditWordValidator, IEditWordDto } from "./dto/IEditWord.dto";
 class WordController {
   private wordService: WordService;
 
@@ -56,7 +55,7 @@ class WordController {
   }
 
   async add(req: Request, res: Response) {
-    const data = req.body as IAddWord;
+    const data = req.body as IAddWordDto;
 
     if (!AddWordValidator(data)) {
       return res.status(400).send(AddWordValidator.errors);
@@ -76,8 +75,8 @@ class WordController {
     const id: number = +req.params?.id;
     const data = req.body as IEditWordDto;
 
-    if (!AddWordValidator(data)) {
-      return res.status(400).send(AddWordValidator.errors);
+    if (!EditWordValidator(data)) {
+      return res.status(400).send(EditWordValidator.errors);
     }
 
     this.wordService
@@ -96,6 +95,30 @@ class WordController {
           })
           .catch((error) => {
             res.status(400).send(error?.message);
+          });
+      })
+      .catch((error) => {
+        res.status(500).send(error?.message);
+      });
+  }
+
+  async delete(req: Request, res: Response) {
+    const id: number = +req.params?.id;
+
+    this.wordService
+      .getById(id)
+      .then((result) => {
+        if (result === null) {
+          return res.sendStatus(404);
+        }
+
+        this.wordService
+          .deleteById(id)
+          .then((result) => {
+            res.send("This word has been deleted!");
+          })
+          .catch((error) => {
+            res.status(500).send(error?.message);
           });
       })
       .catch((error) => {
