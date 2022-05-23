@@ -186,7 +186,7 @@ export default abstract class BaseService<ReturnModel extends IModel> {
     });
   }
 
-  protected async baseDeleteById(id: number): Promise<boolean> {
+  protected async baseDeleteById(id: number): Promise<true> {
     const tableName = this.tableName();
 
     return new Promise((resolve, reject) => {

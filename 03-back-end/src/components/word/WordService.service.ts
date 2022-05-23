@@ -32,7 +32,7 @@ class WordService extends BaseService<WordModel> {
     return this.baseEditById(wordId, data);
   }
 
-  public async deleteById(id: number): Promise<boolean> {
+  public async deleteById(id: number): Promise<true> {
     return this.baseDeleteById(id);
   }
 }
