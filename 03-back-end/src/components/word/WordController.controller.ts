@@ -2,6 +2,7 @@ import WordService from "./WordService.service";
 import { Request, Response } from "express";
 import { AddWordValidator } from "./dto/IAddWord.dto";
 import IAddWord from "./dto/IAddWord.dto";
+import { IEditWordDto } from "./dto/IEditWord.dto";
 class WordController {
   private wordService: WordService;
 
@@ -68,6 +69,37 @@ class WordController {
       })
       .catch((error) => {
         res.status(400).send(error?.message);
+      });
+  }
+
+  async edit(req: Request, res: Response) {
+    const id: number = +req.params?.id;
+    const data = req.body as IEditWordDto;
+
+    if (!AddWordValidator(data)) {
+      return res.status(400).send(AddWordValidator.errors);
+    }
+
+    this.wordService
+      .getById(id)
+      .then((result) => {
+        if (result === null) {
+          return res.sendStatus(404);
+        }
+
+        this.wordService
+          .editById(id, {
+            name: data.name,
+          })
+          .then((result) => {
+            res.send(result);
+          })
+          .catch((error) => {
+            res.status(400).send(error?.message);
+          });
+      })
+      .catch((error) => {
+        res.status(500).send(error?.message);
       });
   }
 }

@@ -3,15 +3,15 @@ import IServiceData from "../../../common/IServiceData.interface";
 
 const ajv = new Ajv();
 
-export default interface IAddWord extends IServiceData {
+export default interface IEditWord extends IServiceData {
   name: string;
 }
 
-interface IAddWordDto {
+interface IEditWordDto {
   name: string;
 }
 
-const AddWordSchema = {
+const EditWordSchema = {
   type: "object",
   properties: {
     name: {
@@ -24,6 +24,6 @@ const AddWordSchema = {
   additionalProperties: false,
 };
 
-const AddWordValidator = ajv.compile(AddWordSchema);
+const EditWordValidator = ajv.compile(EditWordSchema);
 
-export { AddWordValidator, IAddWordDto };
+export { EditWordValidator, IEditWordDto };

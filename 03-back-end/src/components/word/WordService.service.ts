@@ -1,6 +1,7 @@
 import WordModel from "./WordModel.model";
 import IAddWord from "./dto/IAddWord.dto";
 import BaseService from "../../common/BaseService";
+import { IEditWordDto } from "./dto/IEditWord.dto";
 
 class WordService extends BaseService<WordModel> {
   tableName(): string {
@@ -21,30 +22,14 @@ class WordService extends BaseService<WordModel> {
   }
 
   public async add(data: IAddWord): Promise<WordModel> {
-    return new Promise<WordModel>((resolve, reject) => {
-      const sql: string = "INSERT `word` SET `name` = ?;";
+    return this.baseAdd(data);
+  }
 
-      this.db
-        .execute(sql, [data.name])
-        .then(async (result) => {
-          const info: any = result;
-
-          const newWordId = +info[0].insertId;
-
-          const newWord: WordModel | null = await this.getById(newWordId);
-
-          if (newWord === null) {
-            return reject({
-              message: "Duplicate word name!",
-            });
-          }
-
-          resolve(newWord);
-        })
-        .catch((error) => {
-          reject(error);
-        });
-    });
+  public async editById(
+    wordId: number,
+    data: IEditWordDto
+  ): Promise<WordModel> {
+    return this.baseEditById(wordId, data);
   }
 }
 
