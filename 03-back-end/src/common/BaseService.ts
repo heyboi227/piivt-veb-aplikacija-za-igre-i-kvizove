@@ -142,6 +142,7 @@ export default abstract class BaseService<ReturnModel extends IModel> {
 
     return new Promise((resolve, reject) => {
       const properties = Object.getOwnPropertyNames(data);
+
       const sqlPairs = properties
         .map((property) => "`" + property + "` = ?")
         .join(", ");

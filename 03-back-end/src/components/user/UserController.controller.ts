@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
-import { AddWordValidator, IAddWordDto } from "./dto/IAddWord.dto";
-import { EditWordValidator, IEditWordDto } from "./dto/IEditWord.dto";
 import BaseController from "../../common/BaseController";
-class WordController extends BaseController {
-  async getAll(_req: Request, res: Response) {
-    this.services.word
+import { AddUserValidator, IAddUserDto } from "./dto/IAddUser.dto";
+import { EditUserValidator, IEditUserDto } from "./dto/IEditUser.dto";
+
+export default class UserController extends BaseController {
+  async getAll(req: Request, res: Response) {
+    this.services.user
       .getAll()
       .then((result) => {
         res.send(result);
@@ -15,30 +16,13 @@ class WordController extends BaseController {
   }
 
   async getById(req: Request, res: Response) {
-    const id: number = +req.params?.wid;
+    const id: number = +req.params?.uid;
 
-    this.services.word
+    this.services.user
       .getById(id)
       .then((result) => {
         if (result === null) {
-          return res.sendStatus(404);
-        }
-
-        res.send(result);
-      })
-      .catch((error) => {
-        res.status(500).send(error?.message);
-      });
-  }
-
-  async getAllByName(req: Request, res: Response) {
-    const name: string = req.params?.name;
-
-    this.services.word
-      .getAllByName(name)
-      .then((result) => {
-        if (result === null) {
-          return res.sendStatus(404);
+          res.status(404).send("User not found!");
         }
 
         res.send(result);
@@ -49,14 +33,18 @@ class WordController extends BaseController {
   }
 
   async add(req: Request, res: Response) {
-    const data = req.body as IAddWordDto;
+    const data = req.body as IAddUserDto;
 
-    if (!AddWordValidator(data)) {
-      return res.status(400).send(AddWordValidator.errors);
+    if (!AddUserValidator(data)) {
+      return res.status(400).send(AddUserValidator.errors);
     }
 
-    this.services.word
-      .add(data)
+    this.services.user
+      .add({
+        username: data.username,
+        email: data.email,
+        password_hash: data.password,
+      })
       .then((result) => {
         res.send(result);
       })
@@ -66,23 +54,24 @@ class WordController extends BaseController {
   }
 
   async edit(req: Request, res: Response) {
-    const id: number = +req.params?.wid;
-    const data = req.body as IEditWordDto;
+    const id: number = +req.params?.uid;
+    const data = req.body as IEditUserDto;
 
-    if (!EditWordValidator(data)) {
-      return res.status(400).send(EditWordValidator.errors);
+    if (!EditUserValidator(data)) {
+      return res.status(400).send(EditUserValidator.errors);
     }
 
-    this.services.word
+    this.services.user
       .getById(id)
       .then((result) => {
         if (result === null) {
           return res.sendStatus(404);
         }
 
-        this.services.word
+        this.services.user
           .editById(id, {
-            name: data.name,
+            username: data.username,
+            password_hash: data.password,
           })
           .then((result) => {
             res.send(result);
@@ -97,19 +86,19 @@ class WordController extends BaseController {
   }
 
   async delete(req: Request, res: Response) {
-    const id: number = +req.params?.wid;
+    const id: number = +req.params?.uid;
 
-    this.services.word
+    this.services.user
       .getById(id)
       .then((result) => {
         if (result === null) {
           return res.sendStatus(404);
         }
 
-        this.services.word
+        this.services.user
           .deleteById(id)
           .then((_result) => {
-            res.send("This word has been deleted!");
+            res.send("This user has been deleted!");
           })
           .catch((error) => {
             res.status(500).send(error?.message);
@@ -120,5 +109,3 @@ class WordController extends BaseController {
       });
   }
 }
-
-export default WordController;

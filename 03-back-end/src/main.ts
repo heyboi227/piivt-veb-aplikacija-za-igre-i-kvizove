@@ -8,6 +8,7 @@ import IApplicationResources from "./common/IApplicationResources.interface";
 import * as mysql2 from "mysql2/promise";
 import GameService from "./components/game/GameService.service";
 import WordService from "./components/word/WordService.service";
+import UserService from "./components/user/UserService.service";
 
 async function main() {
   const config: IConfig = DevConfig;
@@ -33,6 +34,7 @@ async function main() {
     services: {
       game: new GameService(db),
       word: new WordService(db),
+      user: new UserService(db),
     },
   };
 

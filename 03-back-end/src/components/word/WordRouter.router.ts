@@ -1,5 +1,4 @@
 import WordController from "./WordController.controller";
-import WordService from "./WordService.service";
 import * as express from "express";
 import IApplicationResources from "../../common/IApplicationResources.interface";
 import IRouter from "../../common/IRouter.interface";
@@ -9,16 +8,13 @@ class WordRouter implements IRouter {
     application: express.Application,
     resources: IApplicationResources
   ) {
-    const wordService: WordService = new WordService(
-      resources.databaseConnection
-    );
     const wordController: WordController = new WordController(
       resources.services
     );
 
     application.get("/api/word", wordController.getAll.bind(wordController));
     application.get(
-      "/api/word/:id",
+      "/api/word/:wid",
       wordController.getById.bind(wordController)
     );
     application.get(
@@ -26,9 +22,9 @@ class WordRouter implements IRouter {
       wordController.getAllByName.bind(wordController)
     );
     application.post("/api/word", wordController.add.bind(wordController));
-    application.put("/api/word/:id", wordController.edit.bind(wordController));
+    application.put("/api/word/:wid", wordController.edit.bind(wordController));
     application.delete(
-      "/api/word/:id",
+      "/api/word/:wid",
       wordController.delete.bind(wordController)
     );
   }
