@@ -32,7 +32,7 @@ class WordController extends BaseController {
   }
 
   async getAllByName(req: Request, res: Response) {
-    const name: string = req.params?.name;
+    const name: string = req.params?.wname;
 
     this.services.word
       .getAllByName(name)

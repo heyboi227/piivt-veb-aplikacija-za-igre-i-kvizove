@@ -18,7 +18,7 @@ class WordRouter implements IRouter {
       wordController.getById.bind(wordController)
     );
     application.get(
-      "/api/word/name/:name",
+      "/api/word/:wname",
       wordController.getAllByName.bind(wordController)
     );
     application.post("/api/word", wordController.add.bind(wordController));

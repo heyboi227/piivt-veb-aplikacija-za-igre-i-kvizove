@@ -2,9 +2,10 @@ import { Request, Response } from "express";
 import BaseController from "../../common/BaseController";
 import { AddUserValidator, IAddUserDto } from "./dto/IAddUser.dto";
 import { EditUserValidator, IEditUserDto } from "./dto/IEditUser.dto";
+import * as bcrypt from "bcrypt";
 
 export default class UserController extends BaseController {
-  async getAll(req: Request, res: Response) {
+  getAll(req: Request, res: Response) {
     this.services.user
       .getAll()
       .then((result) => {
@@ -15,7 +16,7 @@ export default class UserController extends BaseController {
       });
   }
 
-  async getById(req: Request, res: Response) {
+  getById(req: Request, res: Response) {
     const id: number = +req.params?.uid;
 
     this.services.user
@@ -32,7 +33,7 @@ export default class UserController extends BaseController {
       });
   }
 
-  async add(req: Request, res: Response) {
+  add(req: Request, res: Response) {
     const data = req.body as IAddUserDto;
 
     if (!AddUserValidator(data)) {
@@ -42,8 +43,6 @@ export default class UserController extends BaseController {
     this.services.user
       .add({
         username: data.username,
-        email: data.email,
-        password_hash: data.password,
       })
       .then((result) => {
         res.send(result);
@@ -53,13 +52,16 @@ export default class UserController extends BaseController {
       });
   }
 
-  async edit(req: Request, res: Response) {
+  edit(req: Request, res: Response) {
     const id: number = +req.params?.uid;
     const data = req.body as IEditUserDto;
 
     if (!EditUserValidator(data)) {
       return res.status(400).send(EditUserValidator.errors);
     }
+
+    const salt = bcrypt.genSaltSync(10);
+    const passwordHash = bcrypt.hashSync(data.password, 10);
 
     this.services.user
       .getById(id)
@@ -71,7 +73,8 @@ export default class UserController extends BaseController {
         this.services.user
           .editById(id, {
             username: data.username,
-            password_hash: data.password,
+            email: data.email,
+            password_hash: passwordHash,
           })
           .then((result) => {
             res.send(result);
@@ -85,7 +88,7 @@ export default class UserController extends BaseController {
       });
   }
 
-  async delete(req: Request, res: Response) {
+  delete(req: Request, res: Response) {
     const id: number = +req.params?.uid;
 
     this.services.user
