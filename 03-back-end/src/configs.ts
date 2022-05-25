@@ -1,4 +1,5 @@
 import IConfig from "./common/IConfig.interface";
+import CountryRouter from "./components/country/CountryRouter.router";
 import GameRouter from "./components/game/GameRouter.router";
 import UserRouter from "./components/user/UserRouter.router";
 import WordRouter from "./components/word/WordRouter.router";
@@ -32,7 +33,12 @@ const DevConfig: IConfig = {
     timezone: "+01:00",
     supportBigNumbers: true,
   },
-  routers: [new GameRouter(), new WordRouter(), new UserRouter()],
+  routers: [
+    new GameRouter(),
+    new WordRouter(),
+    new UserRouter(),
+    new CountryRouter(),
+  ],
 };
 
 export { DevConfig };

@@ -9,6 +9,7 @@ import * as mysql2 from "mysql2/promise";
 import GameService from "./components/game/GameService.service";
 import WordService from "./components/word/WordService.service";
 import UserService from "./components/user/UserService.service";
+import CountryService from "./components/country/CountryService.service";
 
 async function main() {
   const config: IConfig = DevConfig;
@@ -35,6 +36,7 @@ async function main() {
       game: new GameService(db),
       word: new WordService(db),
       user: new UserService(db),
+      country: new CountryService(db),
     },
   };
 

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import BaseController from "../../common/BaseController";
-class GameController extends BaseController {
-  async getAll(_req: Request, res: Response) {
+class CountryController extends BaseController {
+  getAll(_req: Request, res: Response) {
     this.services.country
       .getAll()
       .then((result) => {
@@ -12,8 +12,8 @@ class GameController extends BaseController {
       });
   }
 
-  async getById(req: Request, res: Response) {
-    const id: number = +req.params?.gid;
+  getById(req: Request, res: Response) {
+    const id: number = +req.params?.cid;
 
     this.services.country
       .getById(id)
@@ -29,8 +29,8 @@ class GameController extends BaseController {
       });
   }
 
-  async getAllByName(req: Request, res: Response) {
-    const name: string = req.params?.gname;
+  getAllByName(req: Request, res: Response) {
+    const name: string = req.params?.cname;
 
     this.services.country
       .getAllByName(name)
@@ -45,6 +45,23 @@ class GameController extends BaseController {
         res.status(500).send(error?.message);
       });
   }
+
+  getAllByCountryCode(req: Request, res: Response) {
+    const countryCode: string = req.params?.ccode;
+
+    this.services.country
+      .getAllByCountryCode(countryCode)
+      .then((result) => {
+        if (result === null) {
+          return res.sendStatus(404);
+        }
+
+        res.send(result);
+      })
+      .catch((error) => {
+        res.status(500).send(error?.message);
+      });
+  }
 }
 
-export default GameController;
+export default CountryController;
