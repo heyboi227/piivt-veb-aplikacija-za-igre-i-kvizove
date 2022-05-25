@@ -13,7 +13,7 @@ class GameController extends BaseController {
   }
 
   async getById(req: Request, res: Response) {
-    const id: number = +req.params?.id;
+    const id: number = +req.params?.gid;
 
     this.services.game
       .getById(id)
@@ -30,7 +30,7 @@ class GameController extends BaseController {
   }
 
   async getAllByName(req: Request, res: Response) {
-    const name: string = req.params?.name;
+    const name: string = req.params?.gname;
 
     this.services.game
       .getAllByName(name)

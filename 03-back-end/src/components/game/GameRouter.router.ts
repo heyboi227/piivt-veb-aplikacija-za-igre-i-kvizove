@@ -18,11 +18,11 @@ class GameRouter implements IRouter {
 
     application.get("/api/game", gameController.getAll.bind(gameController));
     application.get(
-      "/api/game/:id",
+      "/api/game/:gid",
       gameController.getById.bind(gameController)
     );
     application.get(
-      "/api/game/name/:name",
+      "/api/game/:gname",
       gameController.getAllByName.bind(gameController)
     );
   }
