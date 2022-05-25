@@ -3,6 +3,7 @@ import CountryRouter from "./components/country/CountryRouter.router";
 import GameRouter from "./components/game/GameRouter.router";
 import UserRouter from "./components/user/UserRouter.router";
 import WordRouter from "./components/word/WordRouter.router";
+import ExpressionRouter from "./components/expression/ExpressionRouter.router";
 
 const DevConfig: IConfig = {
   server: {
@@ -38,6 +39,7 @@ const DevConfig: IConfig = {
     new WordRouter(),
     new UserRouter(),
     new CountryRouter(),
+    new ExpressionRouter(),
   ],
 };
 

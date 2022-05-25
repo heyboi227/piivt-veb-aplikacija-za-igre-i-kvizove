@@ -10,6 +10,7 @@ import GameService from "./components/game/GameService.service";
 import WordService from "./components/word/WordService.service";
 import UserService from "./components/user/UserService.service";
 import CountryService from "./components/country/CountryService.service";
+import ExpressionService from "./components/expression/ExpressionService.service";
 
 async function main() {
   const config: IConfig = DevConfig;
@@ -37,6 +38,7 @@ async function main() {
       word: new WordService(db),
       user: new UserService(db),
       country: new CountryService(db),
+      expression: new ExpressionService(db),
     },
   };
 

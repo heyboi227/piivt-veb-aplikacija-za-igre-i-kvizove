@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import BaseController from "../../common/BaseController";
 class GameController extends BaseController {
-  async getAll(_req: Request, res: Response) {
+  getAll(_req: Request, res: Response) {
     this.services.country
       .getAll()
       .then((result) => {
@@ -12,7 +12,7 @@ class GameController extends BaseController {
       });
   }
 
-  async getById(req: Request, res: Response) {
+  getById(req: Request, res: Response) {
     const id: number = +req.params?.gid;
 
     this.services.country
@@ -29,7 +29,7 @@ class GameController extends BaseController {
       });
   }
 
-  async getAllByName(req: Request, res: Response) {
+  getAllByName(req: Request, res: Response) {
     const name: string = req.params?.gname;
 
     this.services.country

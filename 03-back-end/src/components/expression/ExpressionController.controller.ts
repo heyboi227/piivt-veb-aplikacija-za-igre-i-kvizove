@@ -1,10 +1,14 @@
 import { Request, Response } from "express";
-import { AddWordValidator, IAddWordDto } from "./dto/IAddWord.dto";
-import { EditWordValidator, IEditWordDto } from "./dto/IEditWord.dto";
 import BaseController from "../../common/BaseController";
-class WordController extends BaseController {
+import IAddExpressionDto, {
+  AddExpressionValidator,
+} from "./dto/IAddExpression.dto";
+import IEditExpressionDto, {
+  EditExpressionValidator,
+} from "./dto/IEditExpression.dto";
+class ExpressionController extends BaseController {
   getAll(_req: Request, res: Response) {
-    this.services.word
+    this.services.expression
       .getAll()
       .then((result) => {
         res.send(result);
@@ -15,9 +19,9 @@ class WordController extends BaseController {
   }
 
   getById(req: Request, res: Response) {
-    const id: number = +req.params?.wid;
+    const id: number = +req.params?.eid;
 
-    this.services.word
+    this.services.expression
       .getById(id)
       .then((result) => {
         if (result === null) {
@@ -31,11 +35,11 @@ class WordController extends BaseController {
       });
   }
 
-  getAllByName(req: Request, res: Response) {
-    const name: string = req.params?.wname;
+  getAllByExpressionValue(req: Request, res: Response) {
+    const expressionValue: string = req.params?.evalue;
 
-    this.services.word
-      .getAllByName(name)
+    this.services.expression
+      .getAllByExpressionValue(expressionValue)
       .then((result) => {
         if (result === null) {
           return res.sendStatus(404);
@@ -49,13 +53,13 @@ class WordController extends BaseController {
   }
 
   add(req: Request, res: Response) {
-    const data = req.body as IAddWordDto;
+    const data = req.body as IAddExpressionDto;
 
-    if (!AddWordValidator(data)) {
-      return res.status(400).send(AddWordValidator.errors);
+    if (!AddExpressionValidator(data)) {
+      return res.status(400).send(AddExpressionValidator.errors);
     }
 
-    this.services.word
+    this.services.expression
       .add(data)
       .then((result) => {
         res.send(result);
@@ -66,23 +70,23 @@ class WordController extends BaseController {
   }
 
   edit(req: Request, res: Response) {
-    const id: number = +req.params?.wid;
-    const data = req.body as IEditWordDto;
+    const id: number = +req.params?.eid;
+    const data = req.body as IEditExpressionDto;
 
-    if (!EditWordValidator(data)) {
-      return res.status(400).send(EditWordValidator.errors);
+    if (!EditExpressionValidator(data)) {
+      return res.status(400).send(EditExpressionValidator.errors);
     }
 
-    this.services.word
+    this.services.expression
       .getById(id)
       .then((result) => {
         if (result === null) {
           return res.sendStatus(404);
         }
 
-        this.services.word
+        this.services.expression
           .editById(id, {
-            name: data.name,
+            value: data.value,
           })
           .then((result) => {
             res.send(result);
@@ -95,30 +99,6 @@ class WordController extends BaseController {
         res.status(500).send(error?.message);
       });
   }
-
-  delete(req: Request, res: Response) {
-    const id: number = +req.params?.wid;
-
-    this.services.word
-      .getById(id)
-      .then((result) => {
-        if (result === null) {
-          return res.sendStatus(404);
-        }
-
-        this.services.word
-          .deleteById(id)
-          .then((_result) => {
-            res.send("This word has been deleted!");
-          })
-          .catch((error) => {
-            res.status(500).send(error?.message);
-          });
-      })
-      .catch((error) => {
-        res.status(500).send(error?.message);
-      });
-  }
 }
 
-export default WordController;
+export default ExpressionController;
