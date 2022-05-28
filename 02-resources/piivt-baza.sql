@@ -24,24 +24,25 @@ USE `piivt_app`;
 DROP TABLE IF EXISTS `country`;
 CREATE TABLE IF NOT EXISTS `country` (
   `country_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `country_code` varchar(2) COLLATE utf8mb4_unicode_ci NOT NULL,
   `name` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `country_flag_file_path` text COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`country_id`),
   UNIQUE KEY `uq_country_name` (`name`),
-  UNIQUE KEY `uq_country_country_flag_file_path` (`country_flag_file_path`) USING HASH
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  UNIQUE KEY `uq_country_country_code` (`country_code`)
+) ENGINE=InnoDB AUTO_INCREMENT=197 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table piivt_app.country: ~0 rows (approximately)
+-- Data exporting was unselected.
 
 -- Dumping structure for table piivt_app.expression
 DROP TABLE IF EXISTS `expression`;
 CREATE TABLE IF NOT EXISTS `expression` (
   `expression_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `expression_photo_file_path` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  PRIMARY KEY (`expression_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `value` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`expression_id`),
+  UNIQUE KEY `uq_expression_value` (`value`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table piivt_app.expression: ~0 rows (approximately)
+-- Data exporting was unselected.
 
 -- Dumping structure for table piivt_app.game
 DROP TABLE IF EXISTS `game`;
@@ -50,9 +51,9 @@ CREATE TABLE IF NOT EXISTS `game` (
   `name` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`game_id`),
   UNIQUE KEY `uq_game_name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table piivt_app.game: ~0 rows (approximately)
+-- Data exporting was unselected.
 
 -- Dumping structure for table piivt_app.question
 DROP TABLE IF EXISTS `question`;
@@ -75,7 +76,7 @@ CREATE TABLE IF NOT EXISTS `question` (
   CONSTRAINT `fk_question_game_id` FOREIGN KEY (`game_id`) REFERENCES `game` (`game_id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table piivt_app.question: ~0 rows (approximately)
+-- Data exporting was unselected.
 
 -- Dumping structure for table piivt_app.user
 DROP TABLE IF EXISTS `user`;
@@ -84,15 +85,15 @@ CREATE TABLE IF NOT EXISTS `user` (
   `username` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
   `email` varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `password_hash` varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `is_active` tinyint(1) unsigned NOT NULL,
+  `is_active` tinyint(1) unsigned NOT NULL DEFAULT 1,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `uq_user_username` (`username`),
   UNIQUE KEY `uq_user_email` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table piivt_app.user: ~0 rows (approximately)
+-- Data exporting was unselected.
 
 -- Dumping structure for table piivt_app.word
 DROP TABLE IF EXISTS `word`;
@@ -100,10 +101,10 @@ CREATE TABLE IF NOT EXISTS `word` (
   `word_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`word_id`),
-  UNIQUE KEY `uq_word_name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  UNIQUE KEY `uq_word_name` (`name`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=504 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table piivt_app.word: ~0 rows (approximately)
+-- Data exporting was unselected.
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
