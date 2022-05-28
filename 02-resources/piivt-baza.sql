@@ -59,7 +59,6 @@ CREATE TABLE IF NOT EXISTS `game` (
 DROP TABLE IF EXISTS `question`;
 CREATE TABLE IF NOT EXISTS `question` (
   `question_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL,
   `game_id` int(10) unsigned NOT NULL,
   `country_id` int(10) unsigned DEFAULT NULL,
   `expression_id` int(10) unsigned DEFAULT NULL,
@@ -102,7 +101,7 @@ CREATE TABLE IF NOT EXISTS `word` (
   `name` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`word_id`),
   UNIQUE KEY `uq_word_name` (`name`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=504 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Data exporting was unselected.
 
