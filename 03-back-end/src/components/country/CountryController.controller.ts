@@ -3,7 +3,9 @@ import BaseController from "../../common/BaseController";
 class CountryController extends BaseController {
   getAll(_req: Request, res: Response) {
     this.services.country
-      .getAll()
+      .getAll({
+        removeCountryCode: false,
+      })
       .then((result) => {
         res.send(result);
       })
@@ -16,7 +18,9 @@ class CountryController extends BaseController {
     const id: number = +req.params?.cid;
 
     this.services.country
-      .getById(id)
+      .getById(id, {
+        removeCountryCode: false,
+      })
       .then((result) => {
         if (result === null) {
           return res.sendStatus(404);

@@ -5,7 +5,7 @@ import BaseController from "../../common/BaseController";
 class WordController extends BaseController {
   getAll(_req: Request, res: Response) {
     this.services.word
-      .getAll()
+      .getAll({})
       .then((result) => {
         res.send(result);
       })
@@ -18,7 +18,7 @@ class WordController extends BaseController {
     const id: number = +req.params?.wid;
 
     this.services.word
-      .getById(id)
+      .getById(id, {})
       .then((result) => {
         if (result === null) {
           return res.sendStatus(404);
@@ -74,7 +74,7 @@ class WordController extends BaseController {
     }
 
     this.services.word
-      .getById(id)
+      .getById(id, {})
       .then((result) => {
         if (result === null) {
           return res.sendStatus(404);
@@ -100,7 +100,7 @@ class WordController extends BaseController {
     const id: number = +req.params?.wid;
 
     this.services.word
-      .getById(id)
+      .getById(id, {})
       .then((result) => {
         if (result === null) {
           return res.sendStatus(404);

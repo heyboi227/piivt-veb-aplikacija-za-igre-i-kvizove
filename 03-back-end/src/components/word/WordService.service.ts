@@ -2,8 +2,11 @@ import WordModel from "./WordModel.model";
 import { IAddWordDto } from "./dto/IAddWord.dto";
 import BaseService from "../../common/BaseService";
 import { IEditWordDto } from "./dto/IEditWord.dto";
+import IAdapterOptions from "../../common/IAdapterOptions.interface";
 
-class WordService extends BaseService<WordModel> {
+export class WordAdapterOptions implements IAdapterOptions {}
+
+class WordService extends BaseService<WordModel, WordAdapterOptions> {
   tableName(): string {
     return "word";
   }
@@ -18,18 +21,18 @@ class WordService extends BaseService<WordModel> {
   }
 
   public async getByName(name: string): Promise<WordModel> {
-    return this.getByFieldNameAndValue("name", name);
+    return this.getByFieldNameAndValue("name", {}, name);
   }
 
   public async add(data: IAddWordDto): Promise<WordModel> {
-    return this.baseAdd(data);
+    return this.baseAdd(data, {});
   }
 
   public async editById(
     wordId: number,
     data: IEditWordDto
   ): Promise<WordModel> {
-    return this.baseEditById(wordId, data);
+    return this.baseEditById(wordId, data, {});
   }
 
   public async deleteById(id: number): Promise<true> {

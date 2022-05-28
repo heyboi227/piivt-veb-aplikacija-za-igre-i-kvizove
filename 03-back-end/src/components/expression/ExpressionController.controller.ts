@@ -9,7 +9,7 @@ import IEditExpressionDto, {
 class ExpressionController extends BaseController {
   getAll(_req: Request, res: Response) {
     this.services.expression
-      .getAll()
+      .getAll({})
       .then((result) => {
         res.send(result);
       })
@@ -22,7 +22,7 @@ class ExpressionController extends BaseController {
     const id: number = +req.params?.eid;
 
     this.services.expression
-      .getById(id)
+      .getById(id, {})
       .then((result) => {
         if (result === null) {
           return res.sendStatus(404);
@@ -78,7 +78,7 @@ class ExpressionController extends BaseController {
     }
 
     this.services.expression
-      .getById(id)
+      .getById(id, {})
       .then((result) => {
         if (result === null) {
           return res.sendStatus(404);

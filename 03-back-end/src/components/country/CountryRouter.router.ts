@@ -9,14 +9,14 @@ class CountryRouter implements IRouter {
     application: express.Application,
     resources: IApplicationResources
   ) {
-    const countryService: CountryService = new CountryService(
-      resources.databaseConnection
-    );
     const countryController: CountryController = new CountryController(
       resources.services
     );
 
-    application.get("/api/country", countryController.getAll.bind(countryController));
+    application.get(
+      "/api/country",
+      countryController.getAll.bind(countryController)
+    );
     application.get(
       "/api/country/:cid",
       countryController.getById.bind(countryController)

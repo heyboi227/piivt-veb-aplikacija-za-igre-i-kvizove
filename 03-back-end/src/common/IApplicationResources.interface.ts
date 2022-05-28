@@ -10,7 +10,7 @@ export interface IServices {
   word: WordService;
   user: UserService;
   country: CountryService;
-  expression: ExpressionService
+  expression: ExpressionService;
 }
 
 export default interface IApplicationResources {

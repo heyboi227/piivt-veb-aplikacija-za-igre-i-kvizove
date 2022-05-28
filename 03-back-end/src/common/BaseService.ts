@@ -1,23 +1,54 @@
 import * as mysql2 from "mysql2/promise";
+import IAdapterOptions from "./IAdapterOptions.interface";
+import IApplicationResources, {
+  IServices,
+} from "./IApplicationResources.interface";
 import IModel from "./IModel.interface";
 import IServiceData from "./IServiceData.interface";
 
-export default abstract class BaseService<ReturnModel extends IModel> {
+export default abstract class BaseService<
+  ReturnModel extends IModel,
+  AdapterOptions extends IAdapterOptions
+> {
   private database: mysql2.Connection;
+  private serviceInstances: IServices;
 
-  constructor(databaseConnection: mysql2.Connection) {
-    this.database = databaseConnection;
+  constructor(resources: IApplicationResources) {
+    this.database = resources.databaseConnection;
+    this.serviceInstances = resources.services;
   }
 
   protected get db(): mysql2.Connection {
     return this.database;
   }
 
+  protected get services(): IServices {
+    return this.serviceInstances;
+  }
+
+  public startTransaction() {
+    return this.database.beginTransaction();
+  }
+
+  public commitChanges() {
+    return this.database.commit();
+  }
+
+  public rollbackChanges() {
+    return this.database.rollback();
+  }
+
   public abstract tableName(): string;
 
-  protected abstract adaptToModel(data: any): Promise<ReturnModel>;
+  protected abstract adaptToModel(
+    data: any,
+    options: AdapterOptions
+  ): Promise<ReturnModel>;
 
-  public async getById(id: number): Promise<ReturnModel | null> {
+  public async getById(
+    id: number,
+    options: AdapterOptions
+  ): Promise<ReturnModel | null> {
     const tableName = this.tableName();
 
     return new Promise<ReturnModel>((resolve, reject) => {
@@ -33,7 +64,7 @@ export default abstract class BaseService<ReturnModel extends IModel> {
             return resolve(null);
           }
 
-          resolve(await this.adaptToModel(rows[0]));
+          resolve(await this.adaptToModel(rows[0], options));
         })
         .catch((error) => {
           reject(error);
@@ -41,37 +72,44 @@ export default abstract class BaseService<ReturnModel extends IModel> {
     });
   }
 
-  public async getAll(): Promise<ReturnModel[]> {
+  public async getAll(options: AdapterOptions): Promise<ReturnModel[]> {
     const tableName = this.tableName();
 
-    return this.returnAllItems(`SELECT * FROM \`${tableName}\`;`);
+    return this.returnAllItems(`SELECT * FROM \`${tableName}\`;`, options);
   }
 
   protected async getAllByFieldNameAndValue(
     fieldName: string,
+    options: AdapterOptions,
     value: any
   ): Promise<ReturnModel[]> {
     const tableName = this.tableName();
 
     return this.returnAllItems(
       `SELECT * FROM \`${tableName}\` WHERE \`${fieldName}\` = ?;`,
+      options,
       [value]
     );
   }
 
   protected async getByFieldNameAndValue(
     fieldName: string,
+    options: AdapterOptions,
     value: any
   ): Promise<ReturnModel> {
     const tableName = this.tableName();
 
     return this.returnItem(
       `SELECT * FROM \`${tableName}\` WHERE \`${fieldName}\` = ?;`,
+      options,
       [value]
     );
   }
 
-  protected async baseAdd(data: IServiceData): Promise<ReturnModel> {
+  protected async baseAdd(
+    data: IServiceData,
+    options: AdapterOptions
+  ): Promise<ReturnModel> {
     const tableName = this.tableName();
 
     return new Promise((resolve, reject) => {
@@ -90,7 +128,10 @@ export default abstract class BaseService<ReturnModel extends IModel> {
 
           const newItemId = +info[0].insertId;
 
-          const newItem: ReturnModel | null = await this.getById(newItemId);
+          const newItem: ReturnModel | null = await this.getById(
+            newItemId,
+            options
+          );
 
           if (newItem === null) {
             return reject({
@@ -109,7 +150,8 @@ export default abstract class BaseService<ReturnModel extends IModel> {
 
   protected async baseEditById(
     id: number,
-    data: IServiceData
+    data: IServiceData,
+    options: AdapterOptions
   ): Promise<ReturnModel> {
     const tableName = this.tableName();
 
@@ -143,7 +185,7 @@ export default abstract class BaseService<ReturnModel extends IModel> {
             });
           }
 
-          const item: ReturnModel | null = await this.getById(id);
+          const item: ReturnModel | null = await this.getById(id, options);
 
           if (item === null) {
             return reject({
@@ -187,6 +229,7 @@ export default abstract class BaseService<ReturnModel extends IModel> {
 
   private async returnAllItems(
     query: string,
+    options: AdapterOptions,
     params?: any[]
   ): Promise<ReturnModel[]> {
     return new Promise<ReturnModel[]>((resolve, reject) => {
@@ -201,7 +244,7 @@ export default abstract class BaseService<ReturnModel extends IModel> {
             const items: ReturnModel[] = [];
 
             for (const row of rows as mysql2.RowDataPacket[]) {
-              items.push(await this.adaptToModel(row));
+              items.push(await this.adaptToModel(row, options));
             }
 
             resolve(items);
@@ -220,7 +263,7 @@ export default abstract class BaseService<ReturnModel extends IModel> {
             const items: ReturnModel[] = [];
 
             for (const row of rows as mysql2.RowDataPacket[]) {
-              items.push(await this.adaptToModel(row));
+              items.push(await this.adaptToModel(row, options));
             }
 
             resolve(items);
@@ -234,6 +277,7 @@ export default abstract class BaseService<ReturnModel extends IModel> {
 
   private async returnItem(
     query: string,
+    options: AdapterOptions,
     params?: any[]
   ): Promise<ReturnModel> {
     return new Promise<ReturnModel>((resolve, reject) => {
@@ -248,7 +292,7 @@ export default abstract class BaseService<ReturnModel extends IModel> {
               return resolve(null);
             }
 
-            resolve(await this.adaptToModel(rows[0]));
+            resolve(await this.adaptToModel(rows[0], options));
           })
           .catch((error) => {
             reject(error);
@@ -264,7 +308,7 @@ export default abstract class BaseService<ReturnModel extends IModel> {
               return resolve(null);
             }
 
-            resolve(await this.adaptToModel(rows[0]));
+            resolve(await this.adaptToModel(rows[0], options));
           })
           .catch((error) => {
             reject(error);

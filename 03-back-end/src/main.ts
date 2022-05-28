@@ -6,11 +6,11 @@ import * as fs from "fs";
 import * as morgan from "morgan";
 import IApplicationResources from "./common/IApplicationResources.interface";
 import * as mysql2 from "mysql2/promise";
+import CountryService from "./components/country/CountryService.service";
+import ExpressionService from "./components/expression/ExpressionService.service";
 import GameService from "./components/game/GameService.service";
 import WordService from "./components/word/WordService.service";
 import UserService from "./components/user/UserService.service";
-import CountryService from "./components/country/CountryService.service";
-import ExpressionService from "./components/expression/ExpressionService.service";
 
 async function main() {
   const config: IConfig = DevConfig;
@@ -34,13 +34,23 @@ async function main() {
   const applicationResources: IApplicationResources = {
     databaseConnection: db,
     services: {
-      game: new GameService(db),
-      word: new WordService(db),
-      user: new UserService(db),
-      country: new CountryService(db),
-      expression: new ExpressionService(db),
+      game: null,
+      word: null,
+      user: null,
+      country: null,
+      expression: null,
     },
   };
+
+  applicationResources.services.game = new GameService(applicationResources);
+  applicationResources.services.word = new WordService(applicationResources);
+  applicationResources.services.user = new UserService(applicationResources);
+  applicationResources.services.country = new CountryService(
+    applicationResources
+  );
+  applicationResources.services.expression = new ExpressionService(
+    applicationResources
+  );
 
   const application: express.Application = express();
 

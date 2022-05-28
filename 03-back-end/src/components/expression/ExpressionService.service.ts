@@ -1,9 +1,15 @@
 import BaseService from "../../common/BaseService";
+import IAdapterOptions from "../../common/IAdapterOptions.interface";
 import { IAddExpressionDto } from "./dto/IAddExpression.dto";
 import { IEditExpressionDto } from "./dto/IEditExpression.dto";
 import ExpressionModel from "./ExpressionModel.model";
 
-class ExpressionService extends BaseService<ExpressionModel> {
+export class ExpressionAdapterOptions implements IAdapterOptions {}
+
+class ExpressionService extends BaseService<
+  ExpressionModel,
+  ExpressionAdapterOptions
+> {
   tableName(): string {
     return "expression";
   }
@@ -20,18 +26,18 @@ class ExpressionService extends BaseService<ExpressionModel> {
   public async getAllByExpressionValue(
     expressionValue: string
   ): Promise<ExpressionModel[]> {
-    return this.getAllByFieldNameAndValue("value", expressionValue);
+    return this.getAllByFieldNameAndValue("value", expressionValue, {});
   }
 
   public async add(data: IAddExpressionDto): Promise<ExpressionModel> {
-    return this.baseAdd(data);
+    return this.baseAdd(data, {});
   }
 
   public async editById(
     expressionId: number,
     data: IEditExpressionDto
   ): Promise<ExpressionModel> {
-    return this.baseEditById(expressionId, data);
+    return this.baseEditById(expressionId, data, {});
   }
 }
 

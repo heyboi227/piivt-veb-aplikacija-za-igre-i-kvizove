@@ -3,7 +3,7 @@ import BaseController from "../../common/BaseController";
 class GameController extends BaseController {
   getAll(_req: Request, res: Response) {
     this.services.game
-      .getAll()
+      .getAll({})
       .then((result) => {
         res.send(result);
       })
@@ -16,7 +16,7 @@ class GameController extends BaseController {
     const id: number = +req.params?.gid;
 
     this.services.game
-      .getById(id)
+      .getById(id, {})
       .then((result) => {
         if (result === null) {
           return res.sendStatus(404);

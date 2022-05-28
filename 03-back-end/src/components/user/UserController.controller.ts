@@ -7,7 +7,10 @@ import * as bcrypt from "bcrypt";
 export default class UserController extends BaseController {
   getAll(req: Request, res: Response) {
     this.services.user
-      .getAll()
+      .getAll({
+        removePassword: true,
+        removeEmail: false,
+      })
       .then((result) => {
         res.send(result);
       })
@@ -20,7 +23,10 @@ export default class UserController extends BaseController {
     const id: number = +req.params?.uid;
 
     this.services.user
-      .getById(id)
+      .getById(id, {
+        removePassword: true,
+        removeEmail: false,
+      })
       .then((result) => {
         if (result === null) {
           res.status(404).send("User not found!");
@@ -43,6 +49,8 @@ export default class UserController extends BaseController {
     this.services.user
       .add({
         username: data.username,
+        password_hash: null,
+        email: null,
       })
       .then((result) => {
         res.send(result);
@@ -64,7 +72,10 @@ export default class UserController extends BaseController {
     const passwordHash = bcrypt.hashSync(data.password, 10);
 
     this.services.user
-      .getById(id)
+      .getById(id, {
+        removePassword: false,
+        removeEmail: false,
+      })
       .then((result) => {
         if (result === null) {
           return res.sendStatus(404);
@@ -92,7 +103,10 @@ export default class UserController extends BaseController {
     const id: number = +req.params?.uid;
 
     this.services.user
-      .getById(id)
+      .getById(id, {
+        removePassword: false,
+        removeEmail: false,
+      })
       .then((result) => {
         if (result === null) {
           return res.sendStatus(404);

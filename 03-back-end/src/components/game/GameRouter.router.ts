@@ -9,9 +9,6 @@ class GameRouter implements IRouter {
     application: express.Application,
     resources: IApplicationResources
   ) {
-    const gameService: GameService = new GameService(
-      resources.databaseConnection
-    );
     const gameController: GameController = new GameController(
       resources.services
     );

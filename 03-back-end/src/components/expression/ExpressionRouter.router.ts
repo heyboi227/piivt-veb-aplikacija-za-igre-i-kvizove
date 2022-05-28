@@ -9,9 +9,6 @@ class ExpressionRouter implements IRouter {
     application: express.Application,
     resources: IApplicationResources
   ) {
-    const expressionService: ExpressionService = new ExpressionService(
-      resources.databaseConnection
-    );
     const expressionController: ExpressionController = new ExpressionController(
       resources.services
     );
