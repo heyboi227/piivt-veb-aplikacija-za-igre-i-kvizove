@@ -31,11 +31,11 @@ class WordController extends BaseController {
       });
   }
 
-  getAllByName(req: Request, res: Response) {
+  getByName(req: Request, res: Response) {
     const name: string = req.params?.wname;
 
     this.services.word
-      .getAllByName(name)
+      .getByName(name)
       .then((result) => {
         if (result === null) {
           return res.sendStatus(404);

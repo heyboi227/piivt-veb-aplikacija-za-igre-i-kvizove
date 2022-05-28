@@ -17,8 +17,8 @@ class WordService extends BaseService<WordModel> {
     return word;
   }
 
-  public async getAllByName(name: string): Promise<WordModel[]> {
-    return this.getAllByFieldNameAndValue("name", name);
+  public async getByName(name: string): Promise<WordModel> {
+    return this.getByFieldNameAndValue("name", name);
   }
 
   public async add(data: IAddWordDto): Promise<WordModel> {

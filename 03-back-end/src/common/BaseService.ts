@@ -26,11 +26,10 @@ export default abstract class BaseService<ReturnModel extends IModel> {
       this.db
         .execute(sql, [id])
         .then(async ([rows]) => {
-          if (rows === undefined) {
-            return resolve(null);
-          }
-
-          if (Array.isArray(rows) && rows.length === 0) {
+          if (
+            rows === undefined ||
+            (Array.isArray(rows) && rows.length === 0)
+          ) {
             return resolve(null);
           }
 
@@ -45,27 +44,7 @@ export default abstract class BaseService<ReturnModel extends IModel> {
   public async getAll(): Promise<ReturnModel[]> {
     const tableName = this.tableName();
 
-    return new Promise<ReturnModel[]>((resolve, reject) => {
-      const sql: string = `SELECT * FROM \`${tableName}\`;`;
-      this.db
-        .execute(sql)
-        .then(async ([rows]) => {
-          if (rows === undefined) {
-            return resolve([]);
-          }
-
-          const items: ReturnModel[] = [];
-
-          for (const row of rows as mysql2.RowDataPacket[]) {
-            items.push(await this.adaptToModel(row));
-          }
-
-          resolve(items);
-        })
-        .catch((error) => {
-          reject(error);
-        });
-    });
+    return this.returnAllItems(`SELECT * FROM \`${tableName}\`;`);
   }
 
   protected async getAllByFieldNameAndValue(
@@ -74,28 +53,22 @@ export default abstract class BaseService<ReturnModel extends IModel> {
   ): Promise<ReturnModel[]> {
     const tableName = this.tableName();
 
-    return new Promise<ReturnModel[]>((resolve, reject) => {
-      const sql: string = `SELECT * FROM \`${tableName}\` WHERE \`${fieldName}\` = ?;`;
+    return this.returnAllItems(
+      `SELECT * FROM \`${tableName}\` WHERE \`${fieldName}\` = ?;`,
+      [value]
+    );
+  }
 
-      this.db
-        .execute(sql, [value])
-        .then(async ([rows]) => {
-          if (rows === undefined) {
-            return resolve([]);
-          }
+  protected async getByFieldNameAndValue(
+    fieldName: string,
+    value: any
+  ): Promise<ReturnModel> {
+    const tableName = this.tableName();
 
-          const items: ReturnModel[] = [];
-
-          for (const row of rows as mysql2.RowDataPacket[]) {
-            items.push(await this.adaptToModel(row));
-          }
-
-          resolve(items);
-        })
-        .catch((error) => {
-          reject(error);
-        });
-    });
+    return this.returnItem(
+      `SELECT * FROM \`${tableName}\` WHERE \`${fieldName}\` = ?;`,
+      [value]
+    );
   }
 
   protected async baseAdd(data: IServiceData): Promise<ReturnModel> {
@@ -209,6 +182,94 @@ export default abstract class BaseService<ReturnModel extends IModel> {
         .catch((error) => {
           reject(error);
         });
+    });
+  }
+
+  private async returnAllItems(
+    query: string,
+    params?: any[]
+  ): Promise<ReturnModel[]> {
+    return new Promise<ReturnModel[]>((resolve, reject) => {
+      if (params !== undefined) {
+        this.db
+          .execute(query, params)
+          .then(async ([rows]) => {
+            if (rows === undefined) {
+              return resolve([]);
+            }
+
+            const items: ReturnModel[] = [];
+
+            for (const row of rows as mysql2.RowDataPacket[]) {
+              items.push(await this.adaptToModel(row));
+            }
+
+            resolve(items);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      } else {
+        this.db
+          .execute(query)
+          .then(async ([rows]) => {
+            if (rows === undefined) {
+              return resolve([]);
+            }
+
+            const items: ReturnModel[] = [];
+
+            for (const row of rows as mysql2.RowDataPacket[]) {
+              items.push(await this.adaptToModel(row));
+            }
+
+            resolve(items);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      }
+    });
+  }
+
+  private async returnItem(
+    query: string,
+    params?: any[]
+  ): Promise<ReturnModel> {
+    return new Promise<ReturnModel>((resolve, reject) => {
+      if (params !== undefined) {
+        this.db
+          .execute(query, params)
+          .then(async ([rows]) => {
+            if (
+              rows === undefined ||
+              (Array.isArray(rows) && rows.length === 0)
+            ) {
+              return resolve(null);
+            }
+
+            resolve(await this.adaptToModel(rows[0]));
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      } else {
+        this.db
+          .execute(query)
+          .then(async ([rows]) => {
+            if (
+              rows === undefined ||
+              (Array.isArray(rows) && rows.length === 0)
+            ) {
+              return resolve(null);
+            }
+
+            resolve(await this.adaptToModel(rows[0]));
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      }
     });
   }
 }

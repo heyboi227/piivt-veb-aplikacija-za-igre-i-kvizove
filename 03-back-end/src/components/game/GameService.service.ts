@@ -15,8 +15,8 @@ class GameService extends BaseService<GameModel> {
     return game;
   }
 
-  public async getAllByName(name: string): Promise<GameModel[]> {
-    return this.getAllByFieldNameAndValue("name", name);
+  public async getByName(name: string): Promise<GameModel> {
+    return this.getByFieldNameAndValue("name", name);
   }
 }
 

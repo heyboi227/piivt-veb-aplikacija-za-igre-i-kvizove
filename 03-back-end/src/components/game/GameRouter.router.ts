@@ -23,7 +23,7 @@ class GameRouter implements IRouter {
     );
     application.get(
       "/api/game/name/:gname",
-      gameController.getAllByName.bind(gameController)
+      gameController.getByName.bind(gameController)
     );
   }
 }
