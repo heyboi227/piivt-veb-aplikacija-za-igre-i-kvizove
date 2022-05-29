@@ -47,6 +47,28 @@ export default class UserService extends BaseService<
     return user;
   }
 
+  public async getByUsername(username: string): Promise<UserModel> {
+    return this.getByFieldNameAndValue(
+      "username",
+      {
+        removePassword: true,
+        removeEmail: false,
+      },
+      username
+    );
+  }
+
+  public async getByEmail(email: string): Promise<UserModel> {
+    return this.getByFieldNameAndValue(
+      "email",
+      {
+        removePassword: true,
+        removeEmail: false,
+      },
+      email
+    );
+  }
+
   public async add(data: IAddUserDto): Promise<UserModel> {
     return this.baseAdd(data, {
       removeEmail: true,

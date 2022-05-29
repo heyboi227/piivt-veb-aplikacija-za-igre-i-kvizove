@@ -17,6 +17,14 @@ class UserRouter implements IRouter {
       "/api/user/:uid",
       userController.getById.bind(userController)
     );
+    application.get(
+      "/api/user/username/:uusername",
+      userController.getByUsername.bind(userController)
+    );
+    application.get(
+      "/api/user/email/:uemail",
+      userController.getByEmail.bind(userController)
+    );
     application.post("/api/user", userController.add.bind(userController));
     application.put("/api/user/:uid", userController.edit.bind(userController));
     application.delete(

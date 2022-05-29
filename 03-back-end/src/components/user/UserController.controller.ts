@@ -39,6 +39,40 @@ export default class UserController extends BaseController {
       });
   }
 
+  getByUsername(req: Request, res: Response) {
+    const username: string = req.params?.uusername;
+
+    this.services.user
+      .getByUsername(username)
+      .then((result) => {
+        if (result === null) {
+          res.status(404).send("User not found!");
+        }
+
+        res.send(result);
+      })
+      .catch((error) => {
+        res.status(500).send(error?.message);
+      });
+  }
+
+  getByEmail(req: Request, res: Response) {
+    const email: string = req.params?.uemail;
+
+    this.services.user
+      .getByEmail(email)
+      .then((result) => {
+        if (result === null) {
+          res.status(404).send("User not found!");
+        }
+
+        res.send(result);
+      })
+      .catch((error) => {
+        res.status(500).send(error?.message);
+      });
+  }
+
   add(req: Request, res: Response) {
     const data = req.body as IAddUserDto;
 

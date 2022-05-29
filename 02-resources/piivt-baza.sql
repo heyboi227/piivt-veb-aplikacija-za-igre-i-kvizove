@@ -60,19 +60,25 @@ DROP TABLE IF EXISTS `question`;
 CREATE TABLE IF NOT EXISTS `question` (
   `question_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `game_id` int(10) unsigned NOT NULL,
-  `country_id` int(10) unsigned DEFAULT NULL,
-  `expression_id` int(10) unsigned DEFAULT NULL,
   `answers` longtext COLLATE utf8mb4_unicode_ci NOT NULL CHECK (json_valid(`answers`)),
-  `correct_answer` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
   PRIMARY KEY (`question_id`),
   KEY `fk_question_game_id` (`game_id`),
-  KEY `fk_question_country_id` (`country_id`),
-  KEY `fk_question_expression_id` (`expression_id`),
-  CONSTRAINT `fk_question_country_id` FOREIGN KEY (`country_id`) REFERENCES `country` (`country_id`) ON UPDATE CASCADE,
-  CONSTRAINT `fk_question_expression_id` FOREIGN KEY (`expression_id`) REFERENCES `expression` (`expression_id`) ON UPDATE CASCADE,
   CONSTRAINT `fk_question_game_id` FOREIGN KEY (`game_id`) REFERENCES `game` (`game_id`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Data exporting was unselected.
+
+-- Dumping structure for table piivt_app.score
+DROP TABLE IF EXISTS `score`;
+CREATE TABLE IF NOT EXISTS `score` (
+  `score_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(10) unsigned NOT NULL,
+  `score` int(10) unsigned NOT NULL DEFAULT 0,
+  PRIMARY KEY (`score_id`),
+  KEY `fk_score_user_id` (`user_id`),
+  CONSTRAINT `fk_score_user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Data exporting was unselected.
@@ -104,6 +110,30 @@ CREATE TABLE IF NOT EXISTS `word` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Data exporting was unselected.
+
+-- Dumping structure for trigger piivt_app.bi_question
+DROP TRIGGER IF EXISTS `bi_question`;
+SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION';
+DELIMITER //
+CREATE TRIGGER `bi_question` BEFORE INSERT ON `question` FOR EACH ROW BEGIN
+IF (NEW.game_id <> 3) OR (NEW.game_id <> 4) THEN
+	SIGNAL SQLSTATE '50001' SET MESSAGE_TEXT = 'Allowed ids for column game_id are 3 and 4.';
+END IF;
+END//
+DELIMITER ;
+SET SQL_MODE=@OLDTMP_SQL_MODE;
+
+-- Dumping structure for trigger piivt_app.bu_question
+DROP TRIGGER IF EXISTS `bu_question`;
+SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION';
+DELIMITER //
+CREATE TRIGGER `bu_question` BEFORE UPDATE ON `question` FOR EACH ROW BEGIN
+IF (NEW.game_id <> 3) OR (NEW.game_id <> 4) THEN
+	SIGNAL SQLSTATE '50001' SET MESSAGE_TEXT = 'Allowed ids for column game_id are 3 and 4.';
+END IF;
+END//
+DELIMITER ;
+SET SQL_MODE=@OLDTMP_SQL_MODE;
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
