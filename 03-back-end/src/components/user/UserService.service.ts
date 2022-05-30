@@ -83,10 +83,10 @@ export default class UserService extends BaseService<
   }
 
   public async editById(
-    wordId: number,
+    userId: number,
     data: IRegisterUserDto
   ): Promise<UserModel> {
-    return this.baseEditById(wordId, data, {
+    return this.baseEditById(userId, data, {
       removeActivationCode: true,
       removeEmail: false,
       removePassword: true,

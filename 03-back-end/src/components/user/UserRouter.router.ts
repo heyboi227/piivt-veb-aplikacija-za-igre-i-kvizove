@@ -32,7 +32,7 @@ class UserRouter implements IRouter {
       userController.delete.bind(userController)
     );
     application.get(
-      "/api/user/activate/:code",
+      "/api/user/activate/:ucode",
       userController.activate.bind(userController)
     );
   }

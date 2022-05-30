@@ -7,7 +7,10 @@ import {
 } from "./dto/IRegisterUser.dto";
 import * as bcrypt from "bcrypt";
 import * as uuid from "uuid";
+import * as nodemailer from "nodemailer";
+import * as mail from "nodemailer/lib/mailer";
 import UserModel from "./UserModel.model";
+import { DevConfig } from "../../configs";
 
 export default class UserController extends BaseController {
   getAll(req: Request, res: Response) {
@@ -99,14 +102,70 @@ export default class UserController extends BaseController {
       });
   }
 
+  private async sendRegistrationEmail(user: UserModel): Promise<UserModel> {
+    return new Promise((resolve, reject) => {
+      const transport = nodemailer.createTransport(
+        {
+          host: DevConfig.mail.host,
+          port: DevConfig.mail.port,
+          secure: false,
+          tls: {
+            ciphers: "SSLv3",
+          },
+          debug: DevConfig.mail.debug,
+          auth: {
+            user: DevConfig.mail.email,
+            pass: DevConfig.mail.password,
+          },
+        },
+        {
+          from: DevConfig.mail.email,
+        }
+      );
+
+      const mailOptions: mail.Options = {
+        to: user.email,
+        subject: "Account registration",
+        html: `<!DOCTYPE html>
+                <html>
+                  <head><meta charset="utf-8"></head>
+                  <body>
+                    <p>Dear ${user.username},<br>
+                      Your account was succesfully created.
+                    </p>
+                    <p>
+                      You must activate your account by clicking on the following link:
+                    </p>
+                    <p style="text-align: center; padding: 10px;">
+                      <a href="http://localhost:10000/api/user/activate/${user.activationCode}">Activate</a>
+                  </body>
+                </html>`,
+      };
+
+      transport
+        .sendMail(mailOptions)
+        .then(() => {
+          transport.close();
+          user.activationCode = null;
+          resolve(user);
+        })
+        .catch((error) => {
+          transport.close();
+          reject({
+            message: error?.message,
+          });
+        });
+    });
+  }
+
   activate(req: Request, res: Response) {
     const code: string = req.params?.ucode;
 
     this.services.user
       .getUserByActivationCode(code, {
-        removeActivationCode: true,
-        removeEmail: true,
-        removePassword: true,
+        removeActivationCode: false,
+        removeEmail: false,
+        removePassword: false,
       })
       .then((result) => {
         if (result === null) {
@@ -120,7 +179,7 @@ export default class UserController extends BaseController {
       })
       .then((result) => {
         const user = result as UserModel;
-        this.services.user.editById(user.userId, {
+        return this.services.user.editById(user.userId, {
           is_active: 1,
           activation_code: null,
         });
@@ -162,8 +221,11 @@ export default class UserController extends BaseController {
             password_hash: passwordHash,
             activation_code: uuid.v4(),
           })
-          .then((result) => {
-            res.send(result);
+          .then((user) => {
+            return this.sendRegistrationEmail(user);
+          })
+          .then((user) => {
+            res.send(user);
           })
           .catch((error) => {
             res.status(400).send(error?.message);
