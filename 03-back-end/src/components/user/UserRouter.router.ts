@@ -31,6 +31,10 @@ class UserRouter implements IRouter {
       "/api/user/:uid",
       userController.delete.bind(userController)
     );
+    application.get(
+      "/api/user/activate/:code",
+      userController.activate.bind(userController)
+    );
   }
 }
 

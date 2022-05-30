@@ -8,6 +8,7 @@ class UserModel implements IModel {
   createdAt: string;
   updatedAt: string;
   isActive: boolean;
+  activationCode: string;
 }
 
 export default UserModel;

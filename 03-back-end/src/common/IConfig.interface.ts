@@ -1,4 +1,11 @@
 import IRouter from "./IRouter.interface";
+export interface IMailConfiguration {
+  host: string;
+  port: number;
+  email: string;
+  password: string;
+  debug: boolean;
+}
 interface IConfig {
   server: {
     port: number;
@@ -11,12 +18,12 @@ interface IConfig {
       route: string;
       path: string;
     };
-  },
+  };
   logging: {
     path: string;
     filename: string;
     format: string;
-  },
+  };
   database: {
     host: string;
     port: number;
@@ -26,8 +33,9 @@ interface IConfig {
     charset: "utf8" | "utf8mb4" | "ascii";
     timezone: string;
     supportBigNumbers: boolean;
-  },
-  routers: IRouter[],
+  };
+  routers: IRouter[];
+  mail: IMailConfiguration;
 }
 
 export default IConfig;

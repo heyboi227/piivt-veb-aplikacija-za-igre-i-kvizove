@@ -4,6 +4,7 @@ import GameRouter from "./components/game/GameRouter.router";
 import UserRouter from "./components/user/UserRouter.router";
 import WordRouter from "./components/word/WordRouter.router";
 import ExpressionRouter from "./components/expression/ExpressionRouter.router";
+import { MailConfigurationParameters } from "./config.mail";
 
 const DevConfig: IConfig = {
   server: {
@@ -41,6 +42,15 @@ const DevConfig: IConfig = {
     new CountryRouter(),
     new ExpressionRouter(),
   ],
+  mail: {
+    host: "smtp.office365.com",
+    port: 587,
+    email: "",
+    password: "",
+    debug: true,
+  },
 };
+
+DevConfig.mail = MailConfigurationParameters;
 
 export { DevConfig };

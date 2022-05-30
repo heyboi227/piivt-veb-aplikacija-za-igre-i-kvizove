@@ -1,8 +1,13 @@
 import { Request, Response } from "express";
 import BaseController from "../../common/BaseController";
 import { AddUserValidator, IAddUserDto } from "./dto/IAddUser.dto";
-import { EditUserValidator, IEditUserDto } from "./dto/IEditUser.dto";
+import {
+  RegisterUserValidator,
+  IRegisterUserDto,
+} from "./dto/IRegisterUser.dto";
 import * as bcrypt from "bcrypt";
+import * as uuid from "uuid";
+import UserModel from "./UserModel.model";
 
 export default class UserController extends BaseController {
   getAll(req: Request, res: Response) {
@@ -10,6 +15,7 @@ export default class UserController extends BaseController {
       .getAll({
         removePassword: true,
         removeEmail: false,
+        removeActivationCode: true,
       })
       .then((result) => {
         res.send(result);
@@ -26,6 +32,7 @@ export default class UserController extends BaseController {
       .getById(id, {
         removePassword: true,
         removeEmail: false,
+        removeActivationCode: true,
       })
       .then((result) => {
         if (result === null) {
@@ -83,8 +90,6 @@ export default class UserController extends BaseController {
     this.services.user
       .add({
         username: data.username,
-        password_hash: null,
-        email: null,
       })
       .then((result) => {
         res.send(result);
@@ -94,12 +99,46 @@ export default class UserController extends BaseController {
       });
   }
 
+  activate(req: Request, res: Response) {
+    const code: string = req.params?.ucode;
+
+    this.services.user
+      .getUserByActivationCode(code, {
+        removeActivationCode: true,
+        removeEmail: true,
+        removePassword: true,
+      })
+      .then((result) => {
+        if (result === null) {
+          throw {
+            status: 404,
+            message: "User not found!",
+          };
+        }
+
+        return result;
+      })
+      .then((result) => {
+        const user = result as UserModel;
+        this.services.user.editById(user.userId, {
+          is_active: 1,
+          activation_code: null,
+        });
+      })
+      .then((user) => {
+        res.send(user);
+      })
+      .catch((error) => {
+        res.status(error?.status ?? 500).send(error?.message);
+      });
+  }
+
   edit(req: Request, res: Response) {
     const id: number = +req.params?.uid;
-    const data = req.body as IEditUserDto;
+    const data = req.body as IRegisterUserDto;
 
-    if (!EditUserValidator(data)) {
-      return res.status(400).send(EditUserValidator.errors);
+    if (!RegisterUserValidator(data)) {
+      return res.status(400).send(RegisterUserValidator.errors);
     }
 
     const salt = bcrypt.genSaltSync(10);
@@ -107,8 +146,9 @@ export default class UserController extends BaseController {
 
     this.services.user
       .getById(id, {
-        removePassword: false,
+        removePassword: true,
         removeEmail: false,
+        removeActivationCode: true,
       })
       .then((result) => {
         if (result === null) {
@@ -120,6 +160,7 @@ export default class UserController extends BaseController {
             username: data.username,
             email: data.email,
             password_hash: passwordHash,
+            activation_code: uuid.v4(),
           })
           .then((result) => {
             res.send(result);
@@ -140,6 +181,7 @@ export default class UserController extends BaseController {
       .getById(id, {
         removePassword: false,
         removeEmail: false,
+        removeActivationCode: false,
       })
       .then((result) => {
         if (result === null) {
