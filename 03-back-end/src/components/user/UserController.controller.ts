@@ -272,7 +272,10 @@ export default class UserController extends BaseController {
         })
         .then((result) => {
           if (result === null) {
-            return res.sendStatus(404);
+            throw {
+              status: 404,
+              message: "The user is not found!",
+            };
           }
         })
         .then(async () => {
@@ -285,7 +288,7 @@ export default class UserController extends BaseController {
             });
             const sendEmail = await this.sendRegistrationEmail(user);
             await this.services.user.commitChanges();
-            const editedUser = await sendEmail;
+            const editedUser = sendEmail;
             res.send(editedUser);
           } catch (error) {
             res.status(400).send(error?.message);
@@ -293,7 +296,7 @@ export default class UserController extends BaseController {
         })
         .catch(async (error) => {
           await this.services.user.rollbackChanges();
-          res.status(500).send(error?.message);
+          res.status(error?.status ?? 500).send(error?.message);
         });
     });
   }
