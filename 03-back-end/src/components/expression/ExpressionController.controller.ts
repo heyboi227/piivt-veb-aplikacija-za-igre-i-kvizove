@@ -14,7 +14,9 @@ class ExpressionController extends BaseController {
         res.send(result);
       })
       .catch((error) => {
-        res.status(500).send(error?.message);
+        setTimeout(() => {
+          res.status(500).send(error?.message);
+        }, 500);
       });
   }
 
@@ -25,13 +27,18 @@ class ExpressionController extends BaseController {
       .getById(id, {})
       .then((result) => {
         if (result === null) {
-          return res.sendStatus(404);
+          throw {
+            status: 404,
+            message: "The expression is not found!",
+          };
         }
 
         res.send(result);
       })
       .catch((error) => {
-        res.status(500).send(error?.message);
+        setTimeout(() => {
+          res.status(error?.status ?? 500).send(error?.message);
+        }, 500);
       });
   }
 
@@ -42,13 +49,18 @@ class ExpressionController extends BaseController {
       .getAllByExpressionValue(expressionValue)
       .then((result) => {
         if (result === null) {
-          return res.sendStatus(404);
+          throw {
+            status: 404,
+            message: "The expression is not found!",
+          };
         }
 
         res.send(result);
       })
       .catch((error) => {
-        res.status(500).send(error?.message);
+        setTimeout(() => {
+          res.status(error?.status ?? 500).send(error?.message);
+        }, 500);
       });
   }
 
@@ -59,14 +71,18 @@ class ExpressionController extends BaseController {
       return res.status(400).send(AddExpressionValidator.errors);
     }
 
-    this.services.expression
-      .add(data)
-      .then((result) => {
-        res.send(result);
-      })
-      .catch((error) => {
-        res.status(400).send(error?.message);
-      });
+    this.services.expression.startTransaction().then(() => {
+      this.services.expression
+        .add(data)
+        .then(async (result) => {
+          await this.services.expression.commitChanges();
+          res.send(result);
+        })
+        .catch(async (error) => {
+          await this.services.expression.rollbackChanges();
+          res.status(400).send(error?.message);
+        });
+    });
   }
 
   edit(req: Request, res: Response) {
@@ -77,27 +93,36 @@ class ExpressionController extends BaseController {
       return res.status(400).send(EditExpressionValidator.errors);
     }
 
-    this.services.expression
-      .getById(id, {})
-      .then((result) => {
-        if (result === null) {
-          return res.sendStatus(404);
-        }
+    this.services.expression.startTransaction().then(() => {
+      this.services.expression
+        .getById(id, {})
+        .then((result) => {
+          if (result === null) {
+            throw {
+              status: 404,
+              message: "The expression is not found!",
+            };
+          }
 
-        this.services.expression
-          .editById(id, {
-            value: data.value,
-          })
-          .then((result) => {
-            res.send(result);
-          })
-          .catch((error) => {
-            res.status(400).send(error?.message);
-          });
-      })
-      .catch((error) => {
-        res.status(500).send(error?.message);
-      });
+          this.services.expression
+            .editById(id, {
+              value: data.value,
+            })
+            .then(async (result) => {
+              await this.services.expression.commitChanges();
+              res.send(result);
+            })
+            .catch(async (error) => {
+              await this.services.expression.rollbackChanges();
+              res.status(400).send(error?.message);
+            });
+        })
+        .catch((error) => {
+          setTimeout(() => {
+            res.status(error?.status ?? 500).send(error?.message);
+          }, 500);
+        });
+    });
   }
 }
 

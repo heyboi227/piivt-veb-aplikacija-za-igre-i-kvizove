@@ -9,7 +9,6 @@ import * as bcrypt from "bcrypt";
 import * as uuid from "uuid";
 import * as nodemailer from "nodemailer";
 import * as Mailer from "nodemailer/lib/mailer";
-import * as mail from "nodemailer/lib/mailer";
 import UserModel from "./UserModel.model";
 import { DevConfig } from "../../configs";
 
@@ -25,7 +24,9 @@ export default class UserController extends BaseController {
         res.send(result);
       })
       .catch((error) => {
-        res.status(500).send(error?.message);
+        setTimeout(() => {
+          res.status(500).send(error?.message);
+        }, 500);
       });
   }
 
@@ -46,7 +47,9 @@ export default class UserController extends BaseController {
         res.send(result);
       })
       .catch((error) => {
-        res.status(500).send(error?.message);
+        setTimeout(() => {
+          res.status(500).send(error?.message);
+        }, 500);
       });
   }
 
@@ -63,7 +66,9 @@ export default class UserController extends BaseController {
         res.send(result);
       })
       .catch((error) => {
-        res.status(500).send(error?.message);
+        setTimeout(() => {
+          res.status(500).send(error?.message);
+        }, 500);
       });
   }
 
@@ -80,7 +85,9 @@ export default class UserController extends BaseController {
         res.send(result);
       })
       .catch((error) => {
-        res.status(500).send(error?.message);
+        setTimeout(() => {
+          res.status(500).send(error?.message);
+        }, 500);
       });
   }
 
