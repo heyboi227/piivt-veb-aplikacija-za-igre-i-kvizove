@@ -23,10 +23,10 @@ class ExpressionService extends BaseService<
     return expression;
   }
 
-  public async getAllByExpressionValue(
+  public async getByExpressionValue(
     expressionValue: string
-  ): Promise<ExpressionModel[]> {
-    return this.getAllByFieldNameAndValue("value", expressionValue, {});
+  ): Promise<ExpressionModel> {
+    return this.getByFieldNameAndValue("value", expressionValue, {});
   }
 
   public async add(data: IAddExpressionDto): Promise<ExpressionModel> {

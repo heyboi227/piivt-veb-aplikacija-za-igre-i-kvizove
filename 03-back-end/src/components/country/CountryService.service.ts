@@ -32,8 +32,8 @@ class CountryService extends BaseService<CountryModel, CountryAdapterOptions> {
     return country;
   }
 
-  public async getAllByName(name: string): Promise<CountryModel[]> {
-    return this.getAllByFieldNameAndValue(
+  public async getByName(name: string): Promise<CountryModel> {
+    return this.getByFieldNameAndValue(
       "name",
       {
         removeCountryCode: true,
@@ -42,10 +42,10 @@ class CountryService extends BaseService<CountryModel, CountryAdapterOptions> {
     );
   }
 
-  public async getAllByCountryCode(
+  public async getByCountryCode(
     countryCode: string
-  ): Promise<CountryModel[]> {
-    return this.getAllByFieldNameAndValue(
+  ): Promise<CountryModel> {
+    return this.getByFieldNameAndValue(
       "country_code",
       DefaultCountryAdapterOptions,
       countryCode

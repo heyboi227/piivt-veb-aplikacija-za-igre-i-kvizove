@@ -42,11 +42,11 @@ class ExpressionController extends BaseController {
       });
   }
 
-  getAllByExpressionValue(req: Request, res: Response) {
+  getByExpressionValue(req: Request, res: Response) {
     const expressionValue: string = req.params?.evalue;
 
     this.services.expression
-      .getAllByExpressionValue(expressionValue)
+      .getByExpressionValue(expressionValue)
       .then((result) => {
         if (result === null) {
           throw {

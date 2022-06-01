@@ -10,7 +10,9 @@ class CountryController extends BaseController {
         res.send(result);
       })
       .catch((error) => {
-        res.status(500).send(error?.message);
+        setTimeout(() => {
+          res.status(500).send(error?.message);
+        }, 500);
       });
   }
 
@@ -29,41 +31,53 @@ class CountryController extends BaseController {
         res.send(result);
       })
       .catch((error) => {
-        res.status(500).send(error?.message);
+        setTimeout(() => {
+          res.status(500).send(error?.message);
+        }, 500);
       });
   }
 
-  getAllByName(req: Request, res: Response) {
+  getByName(req: Request, res: Response) {
     const name: string = req.params?.cname;
 
     this.services.country
-      .getAllByName(name)
+      .getByName(name)
       .then((result) => {
         if (result === null) {
-          return res.sendStatus(404);
+          throw {
+            status: 404,
+            message: "The country is not found!",
+          };
         }
 
         res.send(result);
       })
       .catch((error) => {
-        res.status(500).send(error?.message);
+        setTimeout(() => {
+          res.status(error?.status ?? 500).send(error?.message);
+        }, 500);
       });
   }
 
-  getAllByCountryCode(req: Request, res: Response) {
+  getByCountryCode(req: Request, res: Response) {
     const countryCode: string = req.params?.ccode;
 
     this.services.country
-      .getAllByCountryCode(countryCode)
+      .getByCountryCode(countryCode)
       .then((result) => {
         if (result === null) {
-          return res.sendStatus(404);
+          throw {
+            status: 404,
+            message: "The country is not found!",
+          };
         }
 
         res.send(result);
       })
       .catch((error) => {
-        res.status(500).send(error?.message);
+        setTimeout(() => {
+          res.status(error?.status ?? 500).send(error?.message);
+        }, 500);
       });
   }
 }

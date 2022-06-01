@@ -23,11 +23,11 @@ class CountryRouter implements IRouter {
     );
     application.get(
       "/api/country/code/:ccode",
-      countryController.getAllByCountryCode.bind(countryController)
+      countryController.getByCountryCode.bind(countryController)
     );
     application.get(
       "/api/country/name/:cname",
-      countryController.getAllByName.bind(countryController)
+      countryController.getByName.bind(countryController)
     );
   }
 }

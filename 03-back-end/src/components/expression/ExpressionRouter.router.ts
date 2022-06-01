@@ -23,7 +23,7 @@ class ExpressionRouter implements IRouter {
     );
     application.get(
       "/api/expression/value/:evalue",
-      expressionController.getAllByExpressionValue.bind(expressionController)
+      expressionController.getByExpressionValue.bind(expressionController)
     );
     application.post(
       "/api/expression",
