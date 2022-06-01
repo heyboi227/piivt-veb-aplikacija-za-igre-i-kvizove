@@ -91,16 +91,20 @@ export default class UserController extends BaseController {
       return res.status(400).send(AddUserValidator.errors);
     }
 
-    this.services.user
-      .add({
-        username: data.username,
-      })
-      .then((result) => {
-        res.send(result);
-      })
-      .catch((error) => {
-        res.status(400).send(error?.message);
-      });
+    this.services.user.startTransaction().then(() => {
+      this.services.user
+        .add({
+          username: data.username,
+        })
+        .then(async (result) => {
+          await this.services.user.commitChanges();
+          res.send(result);
+        })
+        .catch(async (error) => {
+          await this.services.user.rollbackChanges();
+          res.status(400).send(error?.message);
+        });
+    });
   }
 
   private async sendRegistrationEmail(user: UserModel): Promise<UserModel> {
@@ -217,40 +221,44 @@ export default class UserController extends BaseController {
   activate(req: Request, res: Response) {
     const code: string = req.params?.ucode;
 
-    this.services.user
-      .getUserByActivationCode(code, {
-        removeActivationCode: false,
-        removeEmail: false,
-        removePassword: false,
-      })
-      .then((result) => {
-        if (result === null) {
-          throw {
-            status: 404,
-            message: "User not found!",
-          };
-        }
+    this.services.user.startTransaction().then(() => {
+      this.services.user
+        .getUserByActivationCode(code, {
+          removeActivationCode: false,
+          removeEmail: false,
+          removePassword: false,
+        })
+        .then((result) => {
+          if (result === null) {
+            throw {
+              status: 404,
+              message: "User not found!",
+            };
+          }
 
-        return result;
-      })
-      .then((result) => {
-        const user = result as UserModel;
-        return this.services.user.editById(user.userId, {
-          is_active: 1,
-          activation_code: null,
+          return result;
+        })
+        .then((result) => {
+          const user = result as UserModel;
+          return this.services.user.editById(user.userId, {
+            is_active: 1,
+            activation_code: null,
+          });
+        })
+        .then(async (user) => {
+          await this.services.user.commitChanges();
+          return this.sendActivationEmail(user);
+        })
+        .then((user) => {
+          res.send(user);
+        })
+        .catch(async (error) => {
+          await this.services.user.rollbackChanges();
+          setTimeout(() => {
+            res.status(error?.status ?? 500).send(error?.message);
+          }, 500);
         });
-      })
-      .then((user) => {
-        return this.sendActivationEmail(user);
-      })
-      .then((user) => {
-        res.send(user);
-      })
-      .catch((error) => {
-        setTimeout(() => {
-          res.status(error?.status ?? 500).send(error?.message);
-        }, 500);
-      });
+    });
   }
 
   edit(req: Request, res: Response) {
@@ -291,12 +299,17 @@ export default class UserController extends BaseController {
             const editedUser = sendEmail;
             res.send(editedUser);
           } catch (error) {
-            res.status(400).send(error?.message);
+            throw {
+              status: 400,
+              message: error?.message,
+            };
           }
         })
         .catch(async (error) => {
           await this.services.user.rollbackChanges();
-          res.status(error?.status ?? 500).send(error?.message);
+          setTimeout(() => {
+            res.status(error?.status ?? 500).send(error?.message);
+          }, 500);
         });
     });
   }
@@ -304,28 +317,40 @@ export default class UserController extends BaseController {
   delete(req: Request, res: Response) {
     const id: number = +req.params?.uid;
 
-    this.services.user
-      .getById(id, {
-        removePassword: false,
-        removeEmail: false,
-        removeActivationCode: false,
-      })
-      .then((result) => {
-        if (result === null) {
-          return res.sendStatus(404);
-        }
+    this.services.user.startTransaction().then(() => {
+      this.services.user
+        .getById(id, {
+          removePassword: false,
+          removeEmail: false,
+          removeActivationCode: false,
+        })
+        .then((result) => {
+          if (result === null) {
+            throw {
+              status: 404,
+              message: "The user is not found!",
+            };
+          }
 
-        this.services.user
-          .deleteById(id)
-          .then((_result) => {
-            res.send("This user has been deleted!");
-          })
-          .catch((error) => {
-            res.status(500).send(error?.message);
-          });
-      })
-      .catch((error) => {
-        res.status(500).send(error?.message);
-      });
+          this.services.user
+            .deleteById(id)
+            .then(async (_result) => {
+              await this.services.user.commitChanges();
+              res.send("This user has been deleted!");
+            })
+            .catch((error) => {
+              throw {
+                status: 500,
+                message: error?.message,
+              };
+            });
+        })
+        .catch(async (error) => {
+          await this.services.user.rollbackChanges();
+          setTimeout(() => {
+            res.status(error?.status ?? 500).send(error?.message);
+          }, 500);
+        });
+    });
   }
 }
