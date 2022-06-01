@@ -5,6 +5,7 @@ import UserRouter from "./components/user/UserRouter.router";
 import WordRouter from "./components/word/WordRouter.router";
 import ExpressionRouter from "./components/expression/ExpressionRouter.router";
 import { MailConfigurationParameters } from "./config.mail";
+import { readFileSync } from "fs";
 
 const DevConfig: IConfig = {
   server: {
@@ -48,6 +49,48 @@ const DevConfig: IConfig = {
     email: "",
     password: "",
     debug: true,
+  },
+  auth: {
+    user: {
+      algorithm: "RS256",
+      issuer: "PIiVT",
+      tokens: {
+        auth: {
+          duration: 60 * 60 * 24,
+          keys: {
+            public: readFileSync("./.keystore/app.public", "ascii"),
+            private: readFileSync("./.keystore/app.private", "ascii"),
+          },
+        },
+        refresh: {
+          duration: 60 * 60 * 24 * 60,
+          keys: {
+            public: readFileSync("./.keystore/app.public", "ascii"),
+            private: readFileSync("./.keystore/app.private", "ascii"),
+          },
+        },
+      },
+    },
+    activeUser: {
+      algorithm: "RS256",
+      issuer: "PIiVT",
+      tokens: {
+        auth: {
+          duration: 60 * 60 * 24,
+          keys: {
+            public: readFileSync("./.keystore/app.public", "ascii"),
+            private: readFileSync("./.keystore/app.private", "ascii"),
+          },
+        },
+        refresh: {
+          duration: 60 * 60 * 24 * 60,
+          keys: {
+            public: readFileSync("./.keystore/app.public", "ascii"),
+            private: readFileSync("./.keystore/app.private", "ascii"),
+          },
+        },
+      },
+    },
   },
 };
 
