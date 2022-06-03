@@ -1,25 +1,23 @@
 import React from 'react';
-import './Application.css';
+import './Application.sass';
+import { Container } from 'react-bootstrap';
+import LoginPage from '../User/LoginPage/LoginPage';
+import ContactPage from '../Pages/ContactPage/ContactPage';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Menu from '../Menu/Menu';
 
 function Application() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <label htmlFor='username'>Username</label>
-        <input type='text' id='username'></input>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Container className="mt-4">
+      <Menu />
+      <BrowserRouter>
+        <Routes>
+          <Route path='/' element={<div></div>} />
+          <Route path='/contact' element={<ContactPage />} />
+          <Route path='/auth/user/login' element={<LoginPage />} />
+        </Routes>
+      </BrowserRouter>
+    </Container>
   );
 }
 

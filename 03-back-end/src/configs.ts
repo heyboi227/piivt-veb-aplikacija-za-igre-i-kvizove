@@ -91,6 +91,7 @@ const DevConfig: IConfig = {
         },
       },
     },
+    allowAllRoutesWithoutAuthTokens: true,
   },
 };
 
