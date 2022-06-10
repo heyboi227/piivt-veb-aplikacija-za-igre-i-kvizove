@@ -4,6 +4,7 @@ import UserService from "../components/user/UserService.service";
 import WordService from "../components/word/WordService.service";
 import CountryService from "../components/country/CountryService.service";
 import ExpressionService from "../components/expression/ExpressionService.service";
+import QuestionService from "../components/question/QuestionService.service";
 
 export interface IServices {
   game: GameService;
@@ -11,6 +12,7 @@ export interface IServices {
   user: UserService;
   country: CountryService;
   expression: ExpressionService;
+  question: QuestionService;
 }
 
 export default interface IApplicationResources {

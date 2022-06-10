@@ -92,6 +92,35 @@ export default abstract class BaseService<
     );
   }
 
+  protected async getAllFromTableByFieldNameAndValue<OwnReturnType>(
+    tableName: string,
+    fieldName: string,
+    value: any
+  ): Promise<OwnReturnType[]> {
+    return new Promise((resolve, reject) => {
+      const sql = `SELECT * FROM \`${tableName}\` WHERE \`${fieldName}\` = ?;`;
+
+      this.db
+        .execute(sql, [value])
+        .then(async ([rows]) => {
+          if (rows === undefined) {
+            return resolve([]);
+          }
+
+          const items: OwnReturnType[] = [];
+
+          for (const row of rows as mysql2.RowDataPacket[]) {
+            items.push(row as OwnReturnType);
+          }
+
+          resolve(items);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  }
+
   protected async getByFieldNameAndValue(
     fieldName: string,
     options: AdapterOptions,

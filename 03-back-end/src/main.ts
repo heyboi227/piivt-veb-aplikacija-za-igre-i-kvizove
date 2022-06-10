@@ -11,6 +11,7 @@ import ExpressionService from "./components/expression/ExpressionService.service
 import GameService from "./components/game/GameService.service";
 import WordService from "./components/word/WordService.service";
 import UserService from "./components/user/UserService.service";
+import QuestionService from "./components/question/QuestionService.service";
 
 async function main() {
   const config: IConfig = DevConfig;
@@ -39,6 +40,7 @@ async function main() {
       user: null,
       country: null,
       expression: null,
+      question: null,
     },
   };
 
@@ -49,6 +51,9 @@ async function main() {
     applicationResources
   );
   applicationResources.services.expression = new ExpressionService(
+    applicationResources
+  );
+  applicationResources.services.question = new QuestionService(
     applicationResources
   );
 

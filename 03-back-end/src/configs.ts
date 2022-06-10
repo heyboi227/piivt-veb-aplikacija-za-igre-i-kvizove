@@ -6,6 +6,7 @@ import WordRouter from "./components/word/WordRouter.router";
 import ExpressionRouter from "./components/expression/ExpressionRouter.router";
 import { MailConfigurationParameters } from "./config.mail";
 import { readFileSync } from "fs";
+import QuestionRouter from "./components/question/QuestionRouter.router";
 
 const DevConfig: IConfig = {
   server: {
@@ -42,6 +43,7 @@ const DevConfig: IConfig = {
     new UserRouter(),
     new CountryRouter(),
     new ExpressionRouter(),
+    new QuestionRouter(),
   ],
   mail: {
     host: "smtp.office365.com",
