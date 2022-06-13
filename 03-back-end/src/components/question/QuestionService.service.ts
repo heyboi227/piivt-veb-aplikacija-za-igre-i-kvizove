@@ -68,6 +68,28 @@ export default class QuestionService extends BaseService<
   }
 
   public async deleteById(id: number): Promise<true> {
-    return this.baseDeleteById(id);
+    return new Promise((resolve) => {
+      this.deleteAllAnswersByQuestionId(id)
+        .then(() => this.baseDeleteById(id))
+        .then(() => resolve(true));
+    });
+  }
+
+  private async deleteAllAnswersByQuestionId(
+    questionId: number
+  ): Promise<true> {
+    return new Promise((resolve) => {
+      const sql = `DELETE FROM \`answer\` WHERE \`answer\`.question_id = ?;`;
+      this.db
+        .execute(sql, [questionId])
+        .then(() => {
+          resolve(true);
+        })
+        .catch((error) => {
+          throw {
+            message: error?.message ?? "Could not delete answers!",
+          };
+        });
+    });
   }
 }

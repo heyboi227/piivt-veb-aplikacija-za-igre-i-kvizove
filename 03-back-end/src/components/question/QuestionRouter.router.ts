@@ -46,6 +46,8 @@ class QuestionRouter implements IRouter {
       answerController.add.bind(answerController);
     application.put("/api/question/:qid/answer/:aid"),
       answerController.edit.bind(answerController);
+    application.put("/api/question/:qid/answer/:aid"),
+      answerController.delete.bind(answerController);
   }
 }
 

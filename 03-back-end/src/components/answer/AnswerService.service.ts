@@ -56,7 +56,11 @@ export default class AnswerService extends BaseService<
     return this.baseAdd(data, DefaultAnswerAdapterOptions);
   }
 
-  public async edit(answerId: number, data: IEditAnswer): Promise<AnswerModel> {
+  public async editById(answerId: number, data: IEditAnswer): Promise<AnswerModel> {
     return this.baseEditById(answerId, data, DefaultAnswerAdapterOptions);
+  }
+
+  public async deleteById(answerId: number) {
+    return this.baseDeleteById(answerId);
   }
 }

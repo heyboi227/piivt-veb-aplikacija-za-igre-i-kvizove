@@ -84,7 +84,7 @@ export default class AnswerController extends BaseController {
         })
         .then(async () => {
           try {
-            const answer = await this.services.answer.edit(id, {
+            const answer = await this.services.answer.editById(id, {
               question_id: data.questionId,
               answer_value: data.answerValue,
               is_correct: data.isCorrect,
@@ -97,6 +97,42 @@ export default class AnswerController extends BaseController {
               message: error?.message,
             };
           }
+        })
+        .catch(async (error) => {
+          await this.services.answer.rollbackChanges();
+          setTimeout(() => {
+            res.status(error?.status ?? 500).send(error?.message);
+          }, 500);
+        });
+    });
+  }
+
+  delete(req: Request, res: Response) {
+    const id: number = +req.params?.aid;
+
+    this.services.answer.startTransaction().then(() => {
+      this.services.answer
+        .getById(id, DefaultAnswerAdapterOptions)
+        .then((result) => {
+          if (result === null) {
+            throw {
+              status: 404,
+              message: "The answer is not found!",
+            };
+          }
+
+          this.services.answer
+            .deleteById(id)
+            .then(async (_result) => {
+              await this.services.answer.commitChanges();
+              res.send("This answer has been deleted!");
+            })
+            .catch((error) => {
+              throw {
+                status: 500,
+                message: error?.message,
+              };
+            });
         })
         .catch(async (error) => {
           await this.services.answer.rollbackChanges();
