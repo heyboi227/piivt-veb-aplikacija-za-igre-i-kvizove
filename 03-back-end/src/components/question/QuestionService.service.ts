@@ -1,7 +1,7 @@
 import IAdapterOptions from "../../common/IAdapterOptions.interface";
 import QuestionModel from "./QuestionModel.model";
-import { IEditQuestionDto } from "./dto/IEditQuestion.dto";
-import { IAddQuestionDto } from "./dto/IAddQuestion.dto";
+import IEditQuestion from "./dto/IEditQuestion.dto";
+import IAddQuestion from "./dto/IAddQuestion.dto";
 import BaseService from "../../common/BaseService";
 
 export class QuestionAdapterOptions implements IAdapterOptions {
@@ -37,8 +37,9 @@ export default class QuestionService extends BaseService<
       question.game = await this.services.game.getById(question.gameId, {});
     }
 
-    if (options.showAnswers) { // TODO: create an answer component
-      question.answers = await this.services.answer.getByQuestionId(
+    if (options.showAnswers) {
+      // TODO: create an answer component
+      question.answers = await this.services.answer.getAllByQuestionId(
         question.questionId
       );
     }
@@ -54,13 +55,13 @@ export default class QuestionService extends BaseService<
     );
   }
 
-  public async add(data: IAddQuestionDto): Promise<QuestionModel> {
+  public async add(data: IAddQuestion): Promise<QuestionModel> {
     return this.baseAdd(data, DefaultQuestionAdapterOptions);
   }
 
   public async editById(
     questionId: number,
-    data: IEditQuestionDto
+    data: IEditQuestion
   ): Promise<QuestionModel> {
     return this.baseEditById(questionId, data, DefaultQuestionAdapterOptions);
   }

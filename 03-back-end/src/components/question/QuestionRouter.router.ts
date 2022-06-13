@@ -1,6 +1,7 @@
 import * as express from "express";
 import IApplicationResources from "../../common/IApplicationResources.interface";
 import IRouter from "../../common/IRouter.interface";
+import AnswerController from "../answer/AnswerController.controller";
 import QuestionController from "./QuestionController.controller";
 
 class QuestionRouter implements IRouter {
@@ -9,6 +10,9 @@ class QuestionRouter implements IRouter {
     resources: IApplicationResources
   ) {
     const questionController: QuestionController = new QuestionController(
+      resources.services
+    );
+    const answerController: AnswerController = new AnswerController(
       resources.services
     );
 
@@ -36,6 +40,12 @@ class QuestionRouter implements IRouter {
       "/api/question/:qid",
       questionController.delete.bind(questionController)
     );
+    application.get("/api/question/:qid/answer"),
+      answerController.getAllByQuestionId.bind(answerController);
+    application.post("/api/question/:qid/answer"),
+      answerController.add.bind(answerController);
+    application.put("/api/question/:qid/answer/:aid"),
+      answerController.edit.bind(answerController);
   }
 }
 

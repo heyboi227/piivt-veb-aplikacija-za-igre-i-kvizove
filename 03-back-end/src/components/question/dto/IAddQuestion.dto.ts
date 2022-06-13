@@ -4,7 +4,7 @@ import IServiceData from "../../../common/IServiceData.interface";
 const ajv = new Ajv();
 
 export default interface IAddQuestion extends IServiceData {
-  gameId: number;
+  game_id: number;
 }
 
 interface IAddQuestionDto {

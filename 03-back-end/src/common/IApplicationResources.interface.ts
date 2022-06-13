@@ -5,6 +5,7 @@ import WordService from "../components/word/WordService.service";
 import CountryService from "../components/country/CountryService.service";
 import ExpressionService from "../components/expression/ExpressionService.service";
 import QuestionService from "../components/question/QuestionService.service";
+import AnswerService from "../components/answer/AnswerService.service";
 
 export interface IServices {
   game: GameService;
@@ -13,6 +14,7 @@ export interface IServices {
   country: CountryService;
   expression: ExpressionService;
   question: QuestionService;
+  answer: AnswerService;
 }
 
 export default interface IApplicationResources {

@@ -12,6 +12,7 @@ import GameService from "./components/game/GameService.service";
 import WordService from "./components/word/WordService.service";
 import UserService from "./components/user/UserService.service";
 import QuestionService from "./components/question/QuestionService.service";
+import AnswerService from "./components/answer/AnswerService.service";
 
 async function main() {
   const config: IConfig = DevConfig;
@@ -41,6 +42,7 @@ async function main() {
       country: null,
       expression: null,
       question: null,
+      answer: null,
     },
   };
 
@@ -54,6 +56,9 @@ async function main() {
     applicationResources
   );
   applicationResources.services.question = new QuestionService(
+    applicationResources
+  );
+  applicationResources.services.answer = new AnswerService(
     applicationResources
   );
 

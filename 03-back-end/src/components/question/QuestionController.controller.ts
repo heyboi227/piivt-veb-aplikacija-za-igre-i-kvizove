@@ -80,7 +80,7 @@ export default class QuestionController extends BaseController {
     this.services.question.startTransaction().then(() => {
       this.services.question
         .add({
-          gameId: data.gameId,
+          game_id: data.gameId,
         })
         .then(async (result) => {
           await this.services.question.commitChanges();
@@ -115,7 +115,7 @@ export default class QuestionController extends BaseController {
         .then(async () => {
           try {
             const question = await this.services.question.editById(id, {
-              gameId: data.gameId,
+              game_id: data.gameId,
             });
             await this.services.question.commitChanges();
             res.send(question);
