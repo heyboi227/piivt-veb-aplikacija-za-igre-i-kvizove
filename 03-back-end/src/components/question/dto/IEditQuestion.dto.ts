@@ -5,10 +5,12 @@ const ajv = new Ajv();
 
 export default interface IEditQuestion extends IServiceData {
   game_id: number;
+  title: string;
 }
 
 interface IEditQuestionDto {
   gameId: number;
+  title: string;
 }
 
 const EditQuestionSchema = {
@@ -16,9 +18,16 @@ const EditQuestionSchema = {
   properties: {
     gameId: {
       type: "number",
+      minimum: 3,
+      maximum: 4,
+    },
+    title: {
+      type: "string",
+      minLength: 2,
+      maxLength: 128,
     },
   },
-  required: ["gameId"],
+  required: ["gameId", "title"],
   additionalProperties: false,
 };
 

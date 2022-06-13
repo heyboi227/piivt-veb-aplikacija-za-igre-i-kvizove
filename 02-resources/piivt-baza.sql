@@ -20,6 +20,20 @@ DROP DATABASE IF EXISTS `piivt_app`;
 CREATE DATABASE IF NOT EXISTS `piivt_app` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci */;
 USE `piivt_app`;
 
+-- Dumping structure for table piivt_app.answer
+DROP TABLE IF EXISTS `answer`;
+CREATE TABLE IF NOT EXISTS `answer` (
+  `answer_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `question_id` int(10) unsigned NOT NULL,
+  `answer_value` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `is_correct` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  PRIMARY KEY (`answer_id`),
+  KEY `fk_answer_question_id` (`question_id`),
+  CONSTRAINT `fk_answer_question_id` FOREIGN KEY (`question_id`) REFERENCES `question` (`question_id`) ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Data exporting was unselected.
+
 -- Dumping structure for table piivt_app.country
 DROP TABLE IF EXISTS `country`;
 CREATE TABLE IF NOT EXISTS `country` (
@@ -60,26 +74,13 @@ DROP TABLE IF EXISTS `question`;
 CREATE TABLE IF NOT EXISTS `question` (
   `question_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `game_id` int(10) unsigned NOT NULL,
-  `answers` longtext COLLATE utf8mb4_unicode_ci NOT NULL CHECK (json_valid(`answers`)),
+  `title` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
   PRIMARY KEY (`question_id`),
   KEY `fk_question_game_id` (`game_id`),
   CONSTRAINT `fk_question_game_id` FOREIGN KEY (`game_id`) REFERENCES `game` (`game_id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Data exporting was unselected.
-
--- Dumping structure for table piivt_app.score
-DROP TABLE IF EXISTS `score`;
-CREATE TABLE IF NOT EXISTS `score` (
-  `score_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` int(10) unsigned NOT NULL,
-  `score` int(10) unsigned NOT NULL DEFAULT 0,
-  PRIMARY KEY (`score_id`),
-  KEY `fk_score_user_id` (`user_id`),
-  CONSTRAINT `fk_score_user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Data exporting was unselected.
 
@@ -90,13 +91,15 @@ CREATE TABLE IF NOT EXISTS `user` (
   `username` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
   `email` varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `password_hash` varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `is_active` tinyint(1) unsigned NOT NULL DEFAULT 1,
+  `is_active` tinyint(1) unsigned NOT NULL DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
+  `activation_code` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `uq_user_username` (`username`),
-  UNIQUE KEY `uq_user_email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  UNIQUE KEY `uq_user_email` (`email`),
+  UNIQUE KEY `uq_user_activation_code` (`activation_code`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Data exporting was unselected.
 
@@ -116,7 +119,7 @@ DROP TRIGGER IF EXISTS `bi_question`;
 SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION';
 DELIMITER //
 CREATE TRIGGER `bi_question` BEFORE INSERT ON `question` FOR EACH ROW BEGIN
-IF (NEW.game_id <> 3) OR (NEW.game_id <> 4) THEN
+IF NEW.game_id NOT IN (3, 4) THEN
 	SIGNAL SQLSTATE '50001' SET MESSAGE_TEXT = 'Allowed ids for column game_id are 3 and 4.';
 END IF;
 END//
@@ -128,7 +131,7 @@ DROP TRIGGER IF EXISTS `bu_question`;
 SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION';
 DELIMITER //
 CREATE TRIGGER `bu_question` BEFORE UPDATE ON `question` FOR EACH ROW BEGIN
-IF (NEW.game_id <> 3) OR (NEW.game_id <> 4) THEN
+IF NEW.game_id NOT IN (3, 4) THEN
 	SIGNAL SQLSTATE '50001' SET MESSAGE_TEXT = 'Allowed ids for column game_id are 3 and 4.';
 END IF;
 END//

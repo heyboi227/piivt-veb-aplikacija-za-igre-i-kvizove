@@ -5,6 +5,7 @@ import GameModel from "../game/GameModel.model";
 class QuestionModel implements IModel {
   questionId: number;
   gameId: number;
+  title: string;
   createdAt: string;
   updatedAt?: string;
 

@@ -81,6 +81,7 @@ export default class QuestionController extends BaseController {
       this.services.question
         .add({
           game_id: data.gameId,
+          title: data.title,
         })
         .then(async (result) => {
           await this.services.question.commitChanges();
@@ -116,6 +117,7 @@ export default class QuestionController extends BaseController {
           try {
             const question = await this.services.question.editById(id, {
               game_id: data.gameId,
+              title: data.title,
             });
             await this.services.question.commitChanges();
             res.send(question);
