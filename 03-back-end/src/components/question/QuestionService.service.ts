@@ -30,7 +30,7 @@ export default class QuestionService extends BaseService<
 
     question.questionId = +data?.question_id;
     question.gameId = +data?.game_id;
-    question.title = data.title;
+    question.title = data?.title;
     question.createdAt = data?.created_at;
     question.updatedAt = data?.updated_at;
 
