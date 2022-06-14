@@ -24,13 +24,26 @@ USE `piivt_app`;
 DROP TABLE IF EXISTS `answer`;
 CREATE TABLE IF NOT EXISTS `answer` (
   `answer_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `question_id` int(10) unsigned NOT NULL,
   `answer_value` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL,
   `is_correct` tinyint(3) unsigned NOT NULL DEFAULT 0,
-  PRIMARY KEY (`answer_id`),
-  KEY `fk_answer_question_id` (`question_id`),
-  CONSTRAINT `fk_answer_question_id` FOREIGN KEY (`question_id`) REFERENCES `question` (`question_id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  PRIMARY KEY (`answer_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Data exporting was unselected.
+
+-- Dumping structure for table piivt_app.answer_question
+DROP TABLE IF EXISTS `answer_question`;
+CREATE TABLE IF NOT EXISTS `answer_question` (
+  `answer_question_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `answer_id` int(10) unsigned NOT NULL,
+  `question_id` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`answer_question_id`),
+  UNIQUE KEY `uq_answer_question_answer_id_question_id` (`answer_id`,`question_id`),
+  KEY `fk_answer_question_question_id` (`question_id`),
+  KEY `fk_answer_question_answer_id` (`answer_id`),
+  CONSTRAINT `fk_answer_question_answer_id` FOREIGN KEY (`answer_id`) REFERENCES `answer` (`answer_id`) ON UPDATE CASCADE,
+  CONSTRAINT `fk_answer_question_question_id` FOREIGN KEY (`question_id`) REFERENCES `question` (`question_id`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Data exporting was unselected.
 
@@ -81,7 +94,7 @@ CREATE TABLE IF NOT EXISTS `question` (
   UNIQUE KEY `uq_question_title` (`title`),
   KEY `fk_question_game_id` (`game_id`),
   CONSTRAINT `fk_question_game_id` FOREIGN KEY (`game_id`) REFERENCES `game` (`game_id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Data exporting was unselected.
 
