@@ -1,9 +1,6 @@
 import IConfig from "./common/IConfig.interface";
-import CountryRouter from "./components/country/CountryRouter.router";
 import GameRouter from "./components/game/GameRouter.router";
 import UserRouter from "./components/user/UserRouter.router";
-import WordRouter from "./components/word/WordRouter.router";
-import ExpressionRouter from "./components/expression/ExpressionRouter.router";
 import { MailConfigurationParameters } from "./config.mail";
 import { readFileSync } from "fs";
 import QuestionRouter from "./components/question/QuestionRouter.router";
@@ -39,10 +36,7 @@ const DevConfig: IConfig = {
   },
   routers: [
     new GameRouter(),
-    new WordRouter(),
     new UserRouter(),
-    new CountryRouter(),
-    new ExpressionRouter(),
     new QuestionRouter(),
   ],
   mail: {

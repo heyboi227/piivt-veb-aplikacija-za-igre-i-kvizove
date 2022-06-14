@@ -4,12 +4,10 @@ import { DevConfig } from "./configs";
 import IConfig from "./common/IConfig.interface";
 import * as fs from "fs";
 import * as morgan from "morgan";
+import axios from "axios";
 import IApplicationResources from "./common/IApplicationResources.interface";
 import * as mysql2 from "mysql2/promise";
-import CountryService from "./components/country/CountryService.service";
-import ExpressionService from "./components/expression/ExpressionService.service";
 import GameService from "./components/game/GameService.service";
-import WordService from "./components/word/WordService.service";
 import UserService from "./components/user/UserService.service";
 import QuestionService from "./components/question/QuestionService.service";
 import AnswerService from "./components/answer/AnswerService.service";
@@ -37,24 +35,14 @@ async function main() {
     databaseConnection: db,
     services: {
       game: null,
-      word: null,
       user: null,
-      country: null,
-      expression: null,
       question: null,
       answer: null,
     },
   };
 
   applicationResources.services.game = new GameService(applicationResources);
-  applicationResources.services.word = new WordService(applicationResources);
   applicationResources.services.user = new UserService(applicationResources);
-  applicationResources.services.country = new CountryService(
-    applicationResources
-  );
-  applicationResources.services.expression = new ExpressionService(
-    applicationResources
-  );
   applicationResources.services.question = new QuestionService(
     applicationResources
   );
@@ -93,6 +81,18 @@ async function main() {
 
   application.get("/welcome", (_req, res) => {
     res.send("<h1>Flagalica</h1><p>Dobrošli u naš kviz!</p>");
+  });
+
+  application.get("/countries-json", () => {
+    axios({
+      method: "get",
+      url: "https://flagcdn.com/en/codes.json",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => console.log(res.data))
+      .catch((error) => console.error(error));
   });
 
   application.use((_req, res) => {
