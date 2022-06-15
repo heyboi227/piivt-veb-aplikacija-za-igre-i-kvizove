@@ -1,5 +1,5 @@
 import IModel from "../../common/IModel.interface";
-import GameModel from "../../../dist/src/components/game/GameModel.model";
+import GameModel from "../game/GameModel.model";
 
 class AnswerModel implements IModel {
   answerId: number;

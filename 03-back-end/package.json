@@ -2,11 +2,11 @@
   "name": "projekat-piivt-back-end",
   "version": "0.0.1",
   "description": "",
-  "main": "dist/main.js",
+  "main": "./dist/src/main.js",
   "scripts": {
     "clean": "rimraf ./dist",
     "build": "npm run clean && tsc",
-    "start": "npm run build && node --trace-warnings ./dist/main.js",
+    "start": "npm run build && node --trace-warnings ./dist/src/main.js",
     "start:dev": "ts-node-dev --trace-warnings --respawn -- ./src/main.ts"
   },
   "author": "Miloš Jeknić <milos.jeknic.18@singimail.rs>",
