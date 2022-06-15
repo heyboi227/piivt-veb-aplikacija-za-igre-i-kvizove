@@ -1,13 +1,12 @@
 import IModel from "../../common/IModel.interface";
-import QuestionModel from "../question/QuestionModel.model";
+import GameModel from "../../../dist/src/components/game/GameModel.model";
 
 class AnswerModel implements IModel {
   answerId: number;
-  questionId: number;
+  gameId: number;
   answerValue: string;
-  isCorrect: boolean;
 
-  question?: QuestionModel = null;
+  game?: GameModel = null;
 }
 
 export default AnswerModel;

@@ -1,15 +1,14 @@
 import IAdapterOptions from "../../common/IAdapterOptions.interface";
 import BaseService from "../../common/BaseService";
 import AnswerModel from "./AnswerModel.model";
-import IAddAnswer from "./dto/IAddAnswer.dto";
-import IEditAnswer from "./dto/IEditAnswer.dto";
+import { IQuestionAnswer } from "../question/QuestionModel.model";
 
 export class AnswerAdapterOptions implements IAdapterOptions {
-  loadQuestion: boolean;
+  loadGame: boolean;
 }
 
 export const DefaultAnswerAdapterOptions: AnswerAdapterOptions = {
-  loadQuestion: false,
+  loadGame: true,
 };
 
 export default class AnswerService extends BaseService<
@@ -27,40 +26,54 @@ export default class AnswerService extends BaseService<
     const answer: AnswerModel = new AnswerModel();
 
     answer.answerId = +data?.answer_id;
-    answer.questionId = +data?.question_id;
+    answer.gameId = +data?.game_id;
     answer.answerValue = data?.answer_value;
-    answer.isCorrect = +data?.is_correct === 1;
 
-    if (options.loadQuestion) {
-      answer.question = await this.services.question.getById(
-        answer.questionId,
-        {
-          loadGame: true,
-          showAnswers: false,
-        }
-      );
+    if (options.loadGame) {
+      answer.game = await this.services.game.getById(answer.gameId, {});
     }
 
     return answer;
   }
 
-  public async getAllByQuestionId(questionId: number) {
-    return this.getAllByFieldNameAndValue(
-      "question_id",
-      DefaultAnswerAdapterOptions,
-      questionId
-    );
-  }
+  public async getAllByQuestionId(
+    questionId: number
+  ): Promise<IQuestionAnswer[]> {
+    return new Promise((resolve, reject) => {
+      this.getAllFromTableByFieldNameAndValue<{
+        question_answer_id: number;
+        question_id: number;
+        answer_id: number;
+        is_correct: number;
+      }>("question_answer", "question_id", questionId)
+        .then(async (result) => {
+          if (result.length === 0) {
+            return resolve([]);
+          }
 
-  public async add(data: IAddAnswer): Promise<AnswerModel> {
-    return this.baseAdd(data, DefaultAnswerAdapterOptions);
-  }
+          const items: IQuestionAnswer[] = await Promise.all(
+            result.map(async (row) => {
+              const answer = await this.getById(
+                row.answer_id,
+                DefaultAnswerAdapterOptions
+              );
 
-  public async editById(answerId: number, data: IEditAnswer): Promise<AnswerModel> {
-    return this.baseEditById(answerId, data, DefaultAnswerAdapterOptions);
-  }
+              return {
+                answer: {
+                  answerId: row.answer_id,
+                  gameId: answer.gameId,
+                  answerValue: answer.answerValue,
+                },
+                isCorrect: row.is_correct === 1,
+              };
+            })
+          );
 
-  public async deleteById(answerId: number) {
-    return this.baseDeleteById(answerId);
+          resolve(items);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
   }
 }

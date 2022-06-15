@@ -4,6 +4,7 @@ import UserRouter from "./components/user/UserRouter.router";
 import { MailConfigurationParameters } from "./config.mail";
 import { readFileSync } from "fs";
 import QuestionRouter from "./components/question/QuestionRouter.router";
+import AnswerRouter from "./components/answer/AnswerRouter.router";
 
 const DevConfig: IConfig = {
   server: {
@@ -38,6 +39,7 @@ const DevConfig: IConfig = {
     new GameRouter(),
     new UserRouter(),
     new QuestionRouter(),
+    new AnswerRouter(),
   ],
   mail: {
     host: "smtp.office365.com",

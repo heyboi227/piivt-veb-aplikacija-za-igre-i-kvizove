@@ -2,6 +2,11 @@ import IModel from "../../common/IModel.interface";
 import AnswerModel from "../answer/AnswerModel.model";
 import GameModel from "../game/GameModel.model";
 
+export interface IQuestionAnswer {
+  answer: AnswerModel;
+  isCorrect: boolean;
+}
+
 class QuestionModel implements IModel {
   questionId: number;
   gameId: number;
@@ -10,7 +15,7 @@ class QuestionModel implements IModel {
   updatedAt?: string;
 
   game?: GameModel = null;
-  answers?: AnswerModel[] = null;
+  answers?: IQuestionAnswer[] = null;
 }
 
 export default QuestionModel;
