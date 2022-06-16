@@ -47,14 +47,6 @@ const EditQuestionSchema = {
               answerId: {
                 type: "number",
               },
-              gameId: {
-                type: "number",
-              },
-              answerValue: {
-                type: "string",
-                minLength: 2,
-                maxLength: 128,
-              },
             },
             required: ["answerId"],
             additionalProperties: false,
