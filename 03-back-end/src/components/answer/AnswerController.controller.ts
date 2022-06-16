@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import BaseController from "../../common/BaseController";
+import { IQuestionAnswerDto } from "../question/dto/IAddQuestion.dto";
 import { DefaultAnswerAdapterOptions } from "./AnswerService.service";
 
 export default class AnswerController extends BaseController {

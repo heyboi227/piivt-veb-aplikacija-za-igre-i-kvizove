@@ -83,6 +83,28 @@ export default class QuestionController extends BaseController {
           game_id: data.gameId,
           title: data.title,
         })
+        .then((result) => {
+          return this.services.question.getById(
+            result.questionId,
+            DefaultQuestionAdapterOptions
+          );
+        })
+        .then((result) => {
+          data.answers.forEach((answer) => {
+            this.services.answer.addQuestionAnswer({
+              question_id: result.questionId,
+              answer_id: answer.answer.answerId,
+              is_correct: answer.isCorrect,
+            });
+          });
+          return result;
+        })
+        .then((result) => {
+          return this.services.question.getById(
+            result.questionId,
+            DefaultQuestionAdapterOptions
+          );
+        })
         .then(async (result) => {
           await this.services.question.commitChanges();
           res.send(result);
@@ -153,7 +175,7 @@ export default class QuestionController extends BaseController {
 
           this.services.question
             .deleteById(id)
-            .then(async (_result) => {
+            .then(async () => {
               await this.services.question.commitChanges();
               res.send("This question has been deleted!");
             })

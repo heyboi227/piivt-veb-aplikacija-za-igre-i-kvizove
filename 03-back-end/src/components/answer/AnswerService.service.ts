@@ -2,6 +2,7 @@ import IAdapterOptions from "../../common/IAdapterOptions.interface";
 import BaseService from "../../common/BaseService";
 import AnswerModel from "./AnswerModel.model";
 import { IQuestionAnswer } from "../question/QuestionModel.model";
+import { IQuestionAnswerDto } from "../question/dto/IAddQuestion.dto";
 
 export class AnswerAdapterOptions implements IAdapterOptions {
   loadGame: boolean;
@@ -70,6 +71,23 @@ export default class AnswerService extends BaseService<
           );
 
           resolve(items);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  }
+
+  public async addQuestionAnswer(data: IQuestionAnswerDto): Promise<number> {
+    return new Promise((resolve, reject) => {
+      const sql: string =
+        "INSERT `question_answer` SET `question_id` = ?, `answer_id` = ?, `is_correct` = ?;";
+
+      this.db
+        .execute(sql, [data.question_id, data.answer_id, data.is_correct])
+        .then(async (result) => {
+          const info: any = result;
+          resolve(+info[0]?.insertId);
         })
         .catch((error) => {
           reject(error);

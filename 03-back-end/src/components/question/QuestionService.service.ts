@@ -39,7 +39,6 @@ export default class QuestionService extends BaseService<
     }
 
     if (options.showAnswers) {
-      // TODO: create an answer component
       question.answers = await this.services.answer.getAllByQuestionId(
         question.questionId
       );
