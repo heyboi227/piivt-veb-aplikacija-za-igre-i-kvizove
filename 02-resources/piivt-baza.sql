@@ -27,33 +27,10 @@ CREATE TABLE IF NOT EXISTS `answer` (
   `game_id` int(10) unsigned NOT NULL,
   `answer_value` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`answer_id`),
+  UNIQUE KEY `uq_answer_answer_value` (`answer_value`),
   KEY `fk_answer_game_id` (`game_id`),
   CONSTRAINT `fk_answer_game_id` FOREIGN KEY (`game_id`) REFERENCES `game` (`game_id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=197 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Data exporting was unselected.
-
--- Dumping structure for table piivt_app.country
-DROP TABLE IF EXISTS `country`;
-CREATE TABLE IF NOT EXISTS `country` (
-  `country_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `country_code` varchar(2) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
-  PRIMARY KEY (`country_id`),
-  UNIQUE KEY `uq_country_name` (`name`),
-  UNIQUE KEY `uq_country_country_code` (`country_code`)
-) ENGINE=InnoDB AUTO_INCREMENT=197 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Data exporting was unselected.
-
--- Dumping structure for table piivt_app.expression
-DROP TABLE IF EXISTS `expression`;
-CREATE TABLE IF NOT EXISTS `expression` (
-  `expression_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `value` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL,
-  PRIMARY KEY (`expression_id`),
-  UNIQUE KEY `uq_expression_value` (`value`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=391 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Data exporting was unselected.
 
@@ -80,7 +57,7 @@ CREATE TABLE IF NOT EXISTS `question` (
   UNIQUE KEY `uq_question_title` (`title`),
   KEY `fk_question_game_id` (`game_id`),
   CONSTRAINT `fk_question_game_id` FOREIGN KEY (`game_id`) REFERENCES `game` (`game_id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Data exporting was unselected.
 
@@ -92,12 +69,12 @@ CREATE TABLE IF NOT EXISTS `question_answer` (
   `answer_id` int(10) unsigned NOT NULL,
   `is_correct` tinyint(1) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`question_answer_id`) USING BTREE,
-  UNIQUE KEY `uq_answer_question_answer_id_question_id` (`answer_id`,`question_id`),
-  KEY `fk_answer_question_question_id` (`question_id`),
-  KEY `fk_answer_question_answer_id` (`answer_id`),
-  CONSTRAINT `fk_answer_question_answer_id` FOREIGN KEY (`answer_id`) REFERENCES `answer` (`answer_id`) ON UPDATE CASCADE,
-  CONSTRAINT `fk_answer_question_question_id` FOREIGN KEY (`question_id`) REFERENCES `question` (`question_id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  UNIQUE KEY `uq_question_answer_question_id_answer_id` (`answer_id`,`question_id`) USING BTREE,
+  KEY `fk_question_answer_question_id` (`question_id`) USING BTREE,
+  KEY `fk_question_answer_answer_id` (`answer_id`) USING BTREE,
+  CONSTRAINT `fk_question_answer_answer_id` FOREIGN KEY (`answer_id`) REFERENCES `answer` (`answer_id`) ON UPDATE CASCADE,
+  CONSTRAINT `fk_question_answer_question_id` FOREIGN KEY (`question_id`) REFERENCES `question` (`question_id`) ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Data exporting was unselected.
 
@@ -116,17 +93,6 @@ CREATE TABLE IF NOT EXISTS `user` (
   UNIQUE KEY `uq_user_username` (`username`),
   UNIQUE KEY `uq_user_email` (`email`),
   UNIQUE KEY `uq_user_activation_code` (`activation_code`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Data exporting was unselected.
-
--- Dumping structure for table piivt_app.word
-DROP TABLE IF EXISTS `word`;
-CREATE TABLE IF NOT EXISTS `word` (
-  `word_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
-  PRIMARY KEY (`word_id`),
-  UNIQUE KEY `uq_word_name` (`name`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Data exporting was unselected.
