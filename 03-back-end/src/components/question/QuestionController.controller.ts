@@ -137,9 +137,27 @@ export default class QuestionController extends BaseController {
         })
         .then(async () => {
           try {
+            const date = new Date();
+            const dateWithOffset = new Date(
+              date.getTime() - date.getTimezoneOffset() * 60000
+            );
             const question = await this.services.question.editById(id, {
               game_id: data.gameId,
               title: data.title,
+              updated_at: dateWithOffset
+                .toISOString()
+                .slice(0, 19)
+                .replace("T", " "),
+            });
+            await this.services.answer.deleteQuestionAnswer(
+              question.questionId
+            );
+            data.answers.forEach((answer) => {
+              this.services.answer.addQuestionAnswer({
+                question_id: question.questionId,
+                answer_id: answer.answer.answerId,
+                is_correct: answer.isCorrect,
+              });
             });
             await this.services.question.commitChanges();
             res.send(question);
@@ -173,8 +191,11 @@ export default class QuestionController extends BaseController {
             };
           }
 
-          this.services.question
-            .deleteById(id)
+          this.services.answer
+            .deleteQuestionAnswer(id)
+            .then(() => {
+              this.services.question.deleteById(id);
+            })
             .then(async () => {
               await this.services.question.commitChanges();
               res.send("This question has been deleted!");

@@ -94,4 +94,21 @@ export default class AnswerService extends BaseService<
         });
     });
   }
+
+  public async deleteQuestionAnswer(questionId: number): Promise<number> {
+    return new Promise((resolve, reject) => {
+      const sql: string =
+        "DELETE FROM `question_answer` WHERE `question_id` = ?;";
+
+      this.db
+        .execute(sql, [questionId])
+        .then(async (result) => {
+          const info: any = result;
+          resolve(+info[0]?.affectedRows);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  }
 }

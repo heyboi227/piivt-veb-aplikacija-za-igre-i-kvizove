@@ -14,8 +14,6 @@ interface IAddQuestionDto {
   answers: {
     answer: {
       answerId: number;
-      gameId: number;
-      answerValue: string;
     };
     isCorrect: boolean;
   }[];
@@ -54,16 +52,8 @@ const AddQuestionSchema = {
               answerId: {
                 type: "number",
               },
-              gameId: {
-                type: "number",
-              },
-              answerValue: {
-                type: "string",
-                minLength: 2,
-                maxLength: 128,
-              },
             },
-            required: ["answerId", "gameId", "answerValue"],
+            required: ["answerId"],
             additionalProperties: false,
           },
           isCorrect: {
