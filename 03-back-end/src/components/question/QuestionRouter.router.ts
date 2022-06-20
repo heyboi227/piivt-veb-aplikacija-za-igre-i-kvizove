@@ -1,4 +1,5 @@
 import * as express from "express";
+import AuthMiddleware from "../../../middlewares/AuthMiddleware";
 import IApplicationResources from "../../common/IApplicationResources.interface";
 import IRouter from "../../common/IRouter.interface";
 import AnswerController from "../answer/AnswerController.controller";
@@ -18,26 +19,32 @@ class QuestionRouter implements IRouter {
 
     application.get(
       "/api/question",
+      AuthMiddleware.getVerifier("activeUser", "user"),
       questionController.getAll.bind(questionController)
     );
     application.get(
       "/api/question/:qid",
+      AuthMiddleware.getVerifier("activeUser", "user"),
       questionController.getById.bind(questionController)
     );
     application.get(
       "/api/question/game/:gid",
+      AuthMiddleware.getVerifier("activeUser", "user"),
       questionController.getByGameId.bind(questionController)
     );
     application.post(
       "/api/question",
+      AuthMiddleware.getVerifier("activeUser"),
       questionController.add.bind(questionController)
     );
     application.put(
       "/api/question/:qid",
+      AuthMiddleware.getVerifier("activeUser"),
       questionController.edit.bind(questionController)
     );
     application.delete(
       "/api/question/:qid",
+      AuthMiddleware.getVerifier("activeUser"),
       questionController.delete.bind(questionController)
     );
   }
