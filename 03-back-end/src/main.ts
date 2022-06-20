@@ -31,6 +31,28 @@ async function main() {
     supportBigNumbers: config.database.supportBigNumbers,
   });
 
+  function attachConnectionMonitoring(db: mysql2.Connection) {
+    db.on("error", async (error) => {
+      if (!error.fatal) {
+        return;
+      }
+
+      if (error?.code !== "PROTOCOL_CONNECTION_LOST") {
+        throw error;
+      }
+
+      console.log("Reconnecting to the database server...");
+
+      db = await mysql2.createConnection(db.config);
+
+      attachConnectionMonitoring(db);
+
+      db.connect();
+    });
+  }
+
+  attachConnectionMonitoring(db);
+
   const applicationResources: IApplicationResources = {
     databaseConnection: db,
     services: {
@@ -63,6 +85,7 @@ async function main() {
 
   application.use(cors());
   application.use(express.json());
+  application.use(express.urlencoded({ extended: true }));
 
   application.use(
     config.server.static.route,
@@ -79,21 +102,17 @@ async function main() {
     router.setupRoutes(application, applicationResources);
   }
 
-  application.get("/welcome", (_req, res) => {
-    res.send("<h1>Flagalica</h1><p>Dobrošli u naš kviz!</p>");
-  });
-
-  application.get("/countries-json", () => {
-    axios({
-      method: "get",
-      url: "https://flagcdn.com/en/codes.json",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => console.log(res.data))
-      .catch((error) => console.error(error));
-  });
+  // application.get("/countries-json", () => {
+  //   axios({
+  //     method: "get",
+  //     url: "https://flagcdn.com/en/codes.json",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //   })
+  //     .then((res) => console.log(res.data))
+  //     .catch((error) => console.error(error));
+  // });
 
   application.use((_req, res) => {
     res.sendStatus(404);
