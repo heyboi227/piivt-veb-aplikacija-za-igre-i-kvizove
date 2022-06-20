@@ -91,7 +91,7 @@ export default class QuestionController extends BaseController {
         })
         .then((result) => {
           data.answers.forEach((answer) => {
-            this.services.answer.addQuestionAnswer({
+            this.services.question.addQuestionAnswer({
               question_id: result.questionId,
               answer_id: answer.answer.answerId,
               is_correct: answer.isCorrect,
@@ -149,11 +149,11 @@ export default class QuestionController extends BaseController {
                 .slice(0, 19)
                 .replace("T", " "),
             });
-            await this.services.answer.deleteQuestionAnswer(
+            await this.services.question.deleteQuestionAnswer(
               question.questionId
             );
             data.answers.forEach((answer) => {
-              this.services.answer.addQuestionAnswer({
+              this.services.question.addQuestionAnswer({
                 question_id: question.questionId,
                 answer_id: answer.answer.answerId,
                 is_correct: answer.isCorrect,
@@ -191,7 +191,7 @@ export default class QuestionController extends BaseController {
             };
           }
 
-          this.services.answer
+          this.services.question
             .deleteQuestionAnswer(id)
             .then(() => {
               this.services.question.deleteById(id);
