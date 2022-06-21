@@ -11,14 +11,16 @@ export default interface IRegisterUser extends IServiceData {
   password_hash?: string;
   is_active?: number;
   activation_code?: string;
+  is_claimed?: number;
 }
 
 interface IRegisterUserDto {
   username?: string;
   email?: string;
   password?: string;
-  is_active?: boolean;
+  isActive?: boolean;
   activationCode?: string;
+  isClaimed?: boolean;
 }
 
 const RegisterUserSchema = {

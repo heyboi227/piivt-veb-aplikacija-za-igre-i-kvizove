@@ -9,6 +9,7 @@ class UserModel implements IModel {
   updatedAt: string;
   isActive: boolean;
   activationCode: string;
+  isClaimed: boolean;
 }
 
 export default UserModel;

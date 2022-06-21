@@ -38,6 +38,7 @@ export default class UserService extends BaseService<
     user.updatedAt = data?.updated_at;
     user.isActive = +data?.is_active === 1;
     user.activationCode = data?.activation_code ? data?.activation_code : null;
+    user.isClaimed = +data?.is_claimed === 1;
 
     if (options.removePassword) {
       user.passwordHash = null;
@@ -54,7 +55,7 @@ export default class UserService extends BaseService<
     return this.getByFieldNameAndValue(
       "username",
       {
-        removePassword: true,
+        removePassword: false,
         removeEmail: false,
         removeActivationCode: true,
       },
@@ -66,7 +67,7 @@ export default class UserService extends BaseService<
     return this.getByFieldNameAndValue(
       "email",
       {
-        removePassword: true,
+        removePassword: false,
         removeEmail: false,
         removeActivationCode: true,
       },
@@ -89,7 +90,7 @@ export default class UserService extends BaseService<
     return this.baseEditById(userId, data, {
       removeActivationCode: true,
       removeEmail: false,
-      removePassword: true,
+      removePassword: false,
     });
   }
 
