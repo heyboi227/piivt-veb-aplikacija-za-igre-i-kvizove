@@ -31,3 +31,5 @@ class AuthRouter implements IRouter {
     );
   }
 }
+
+export default AuthRouter;
