@@ -5,6 +5,7 @@ import { MailConfigurationParameters } from "./config.mail";
 import { readFileSync } from "fs";
 import QuestionRouter from "./components/question/QuestionRouter.router";
 import AnswerRouter from "./components/answer/AnswerRouter.router";
+import AuthRouter from "./components/auth/AuthRouter.router";
 
 const DevConfig: IConfig = {
   server: {
@@ -40,6 +41,7 @@ const DevConfig: IConfig = {
     new UserRouter(),
     new QuestionRouter(),
     new AnswerRouter(),
+    new AuthRouter(),
   ],
   mail: {
     host: "smtp.office365.com",
@@ -89,7 +91,7 @@ const DevConfig: IConfig = {
         },
       },
     },
-    allowAllRoutesWithoutAuthTokens: true,
+    allowAllRoutesWithoutAuthTokens: false,
   },
 };
 
