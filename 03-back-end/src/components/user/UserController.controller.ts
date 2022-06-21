@@ -16,7 +16,7 @@ export default class UserController extends BaseController {
   getAll(req: Request, res: Response) {
     this.services.user
       .getAll({
-        removePassword: true,
+        removePassword: false,
         removeEmail: false,
         removeActivationCode: true,
       })
@@ -33,9 +33,18 @@ export default class UserController extends BaseController {
   getById(req: Request, res: Response) {
     const id: number = +req.params?.uid;
 
+    if (
+      req.authorization?.role === "user" ||
+      req.authorization?.role === "activeUser"
+    ) {
+      if (req.authorization?.id !== id) {
+        return res.status(403).send("You do not have access to this resource!");
+      }
+    }
+
     this.services.user
       .getById(id, {
-        removePassword: true,
+        removePassword: false,
         removeEmail: false,
         removeActivationCode: true,
       })
@@ -250,6 +259,7 @@ export default class UserController extends BaseController {
           return this.services.user.editById(user.userId, {
             is_active: 1,
             activation_code: null,
+            is_claimed: 1,
           });
         })
         .then(async (user) => {
@@ -272,6 +282,15 @@ export default class UserController extends BaseController {
     const id: number = +req.params?.uid;
     const data = req.body as IRegisterUserDto;
 
+    if (
+      req.authorization?.role === "user" ||
+      req.authorization?.role === "activeUser"
+    ) {
+      if (req.authorization?.id !== id) {
+        return res.status(403).send("You do not have access to this resource!");
+      }
+    }
+
     if (!RegisterUserValidator(data)) {
       return res.status(400).send(RegisterUserValidator.errors);
     }
@@ -281,7 +300,7 @@ export default class UserController extends BaseController {
     this.services.user.startTransaction().then(() => {
       this.services.user
         .getById(id, {
-          removePassword: true,
+          removePassword: false,
           removeEmail: false,
           removeActivationCode: true,
         })
@@ -299,12 +318,21 @@ export default class UserController extends BaseController {
               username: data.username,
               email: data.email,
               password_hash: passwordHash,
-              activation_code: uuid.v4(),
             });
-            const sendEmail = await this.sendRegistrationEmail(user);
-            await this.services.user.commitChanges();
-            const editedUser = sendEmail;
-            res.send(editedUser);
+            if (user.isClaimed === false) {
+              const inactiveUser = await this.services.user.editById(id, {
+                username: data.username,
+                email: data.email,
+                password_hash: passwordHash,
+                activation_code: uuid.v4(),
+              });
+              await this.sendRegistrationEmail(inactiveUser);
+              await this.services.user.commitChanges();
+              res.send(inactiveUser);
+            } else {
+              await this.services.user.commitChanges();
+              res.send(user);
+            }
           } catch (error) {
             throw {
               status: 400,
