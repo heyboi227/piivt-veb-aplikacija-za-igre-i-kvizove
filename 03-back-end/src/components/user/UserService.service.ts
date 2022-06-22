@@ -51,28 +51,18 @@ export default class UserService extends BaseService<
     return user;
   }
 
-  public async getByUsername(username: string): Promise<UserModel> {
-    return this.getByFieldNameAndValue(
-      "username",
-      {
-        removePassword: false,
-        removeEmail: false,
-        removeActivationCode: true,
-      },
-      username
-    );
+  public async getByUsername(
+    username: string,
+    options: UserAdapterOptions = DefaultUserAdapterOptions
+  ): Promise<UserModel> {
+    return this.getByFieldNameAndValue("username", options, username);
   }
 
-  public async getByEmail(email: string): Promise<UserModel> {
-    return this.getByFieldNameAndValue(
-      "email",
-      {
-        removePassword: false,
-        removeEmail: false,
-        removeActivationCode: true,
-      },
-      email
-    );
+  public async getByEmail(
+    email: string,
+    options: UserAdapterOptions = DefaultUserAdapterOptions
+  ): Promise<UserModel> {
+    return this.getByFieldNameAndValue("email", options, email);
   }
 
   public async add(data: IAddUserDto): Promise<UserModel> {
