@@ -11,12 +11,13 @@ import * as nodemailer from "nodemailer";
 import * as Mailer from "nodemailer/lib/mailer";
 import UserModel from "./UserModel.model";
 import { DevConfig } from "../../configs";
+import { DefaultUserAdapterOptions } from "./UserService.service";
 
 export default class UserController extends BaseController {
   getAll(req: Request, res: Response) {
     this.services.user
       .getAll({
-        removePassword: false,
+        removePassword: true,
         removeEmail: false,
         removeActivationCode: true,
       })
@@ -44,7 +45,7 @@ export default class UserController extends BaseController {
 
     this.services.user
       .getById(id, {
-        removePassword: false,
+        removePassword: true,
         removeEmail: false,
         removeActivationCode: true,
       })
@@ -66,7 +67,11 @@ export default class UserController extends BaseController {
     const username: string = req.params?.uusername;
 
     this.services.user
-      .getByUsername(username)
+      .getByUsername(username, {
+        removePassword: true,
+        removeEmail: false,
+        removeActivationCode: true,
+      })
       .then((result) => {
         if (result === null) {
           res.status(404).send("User not found!");
@@ -85,7 +90,11 @@ export default class UserController extends BaseController {
     const email: string = req.params?.uemail;
 
     this.services.user
-      .getByEmail(email)
+      .getByEmail(email, {
+        removePassword: true,
+        removeEmail: false,
+        removeActivationCode: true,
+      })
       .then((result) => {
         if (result === null) {
           res.status(404).send("User not found!");
@@ -125,6 +134,9 @@ export default class UserController extends BaseController {
 
   private async sendRegistrationEmail(user: UserModel): Promise<UserModel> {
     return new Promise((resolve, reject) => {
+      user.passwordHash = null;
+      user.activationCode = null;
+
       const transport = nodemailer.createTransport(
         {
           host: DevConfig.mail.host,
@@ -167,7 +179,6 @@ export default class UserController extends BaseController {
         .sendMail(mailOptions)
         .then(() => {
           transport.close();
-          user.activationCode = null;
           resolve(user);
         })
         .catch((error) => {
@@ -222,7 +233,6 @@ export default class UserController extends BaseController {
         .sendMail(mailOptions)
         .then(() => {
           transport.close();
-          user.activationCode = null;
           resolve(user);
         })
         .catch((error) => {
@@ -240,9 +250,9 @@ export default class UserController extends BaseController {
     this.services.user.startTransaction().then(() => {
       this.services.user
         .getUserByActivationCode(code, {
-          removeActivationCode: false,
+          removePassword: true,
           removeEmail: false,
-          removePassword: false,
+          removeActivationCode: false,
         })
         .then((result) => {
           if (result === null) {
@@ -300,7 +310,7 @@ export default class UserController extends BaseController {
     this.services.user.startTransaction().then(() => {
       this.services.user
         .getById(id, {
-          removePassword: false,
+          removePassword: true,
           removeEmail: false,
           removeActivationCode: true,
         })
@@ -354,11 +364,7 @@ export default class UserController extends BaseController {
 
     this.services.user.startTransaction().then(() => {
       this.services.user
-        .getById(id, {
-          removePassword: false,
-          removeEmail: false,
-          removeActivationCode: false,
-        })
+        .getById(id, DefaultUserAdapterOptions)
         .then((result) => {
           if (result === null) {
             throw {
