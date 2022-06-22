@@ -134,24 +134,7 @@ export default class UserController extends BaseController {
 
   private async sendRegistrationEmail(user: UserModel): Promise<UserModel> {
     return new Promise((resolve, reject) => {
-      const transport = nodemailer.createTransport(
-        {
-          host: DevConfig.mail.host,
-          port: DevConfig.mail.port,
-          secure: false,
-          tls: {
-            ciphers: "SSLv3",
-          },
-          debug: DevConfig.mail.debug,
-          auth: {
-            user: DevConfig.mail.email,
-            pass: DevConfig.mail.password,
-          },
-        },
-        {
-          from: DevConfig.mail.email,
-        }
-      );
+      const transport = this.getMailTransport();
 
       const mailOptions: Mailer.Options = {
         to: user.email,
@@ -189,26 +172,30 @@ export default class UserController extends BaseController {
     });
   }
 
+  private getMailTransport() {
+    return nodemailer.createTransport(
+      {
+        host: DevConfig.mail.host,
+        port: DevConfig.mail.port,
+        secure: false,
+        tls: {
+          ciphers: "SSLv3",
+        },
+        debug: DevConfig.mail.debug,
+        auth: {
+          user: DevConfig.mail.email,
+          pass: DevConfig.mail.password,
+        },
+      },
+      {
+        from: DevConfig.mail.email,
+      }
+    );
+  }
+
   private async sendActivationEmail(user: UserModel): Promise<UserModel> {
     return new Promise((resolve, reject) => {
-      const transport = nodemailer.createTransport(
-        {
-          host: DevConfig.mail.host,
-          port: DevConfig.mail.port,
-          secure: false,
-          tls: {
-            ciphers: "SSLv3",
-          },
-          debug: DevConfig.mail.debug,
-          auth: {
-            user: DevConfig.mail.email,
-            pass: DevConfig.mail.password,
-          },
-        },
-        {
-          from: DevConfig.mail.email,
-        }
-      );
+      const transport = this.getMailTransport();
 
       const mailOptions: Mailer.Options = {
         to: user.email,
@@ -268,7 +255,6 @@ export default class UserController extends BaseController {
           return this.services.user.editById(user.userId, {
             is_active: 1,
             activation_code: null,
-            is_claimed: 1,
           });
         })
         .then(async (user) => {
