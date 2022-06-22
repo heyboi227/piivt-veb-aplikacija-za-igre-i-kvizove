@@ -18,6 +18,10 @@ export default class AuthMiddleware {
     next: NextFunction,
     allowedRoles: ("user" | "activeUser")[]
   ) {
+    if (DevConfig.auth.allowAllRoutesWithoutAuthTokens) {
+      return next();
+    }
+
     const tokenHeader: string = req.headers?.authorization ?? "";
 
     try {
