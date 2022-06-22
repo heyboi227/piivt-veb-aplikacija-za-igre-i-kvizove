@@ -134,9 +134,6 @@ export default class UserController extends BaseController {
 
   private async sendRegistrationEmail(user: UserModel): Promise<UserModel> {
     return new Promise((resolve, reject) => {
-      user.passwordHash = null;
-      user.activationCode = null;
-
       const transport = nodemailer.createTransport(
         {
           host: DevConfig.mail.host,
@@ -179,6 +176,8 @@ export default class UserController extends BaseController {
         .sendMail(mailOptions)
         .then(() => {
           transport.close();
+          user.passwordHash = null;
+          user.activationCode = null;
           resolve(user);
         })
         .catch((error) => {
