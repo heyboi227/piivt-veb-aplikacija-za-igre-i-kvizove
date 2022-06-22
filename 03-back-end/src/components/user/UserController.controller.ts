@@ -12,6 +12,7 @@ import * as Mailer from "nodemailer/lib/mailer";
 import UserModel from "./UserModel.model";
 import { DevConfig } from "../../configs";
 import { DefaultUserAdapterOptions } from "./UserService.service";
+import { EditUserValidator, IEditUserDto } from "./dto/IEditUser.dto";
 
 export default class UserController extends BaseController {
   getAll(req: Request, res: Response) {
@@ -261,8 +262,10 @@ export default class UserController extends BaseController {
           await this.services.user.commitChanges();
           return this.sendActivationEmail(user);
         })
-        .then((user) => {
-          res.send(user);
+        .then(() => {
+          res.send(
+            "Your account was successfully activated! Welcome onboard! <br /><br /> You can now log into your account using the login form, and create, modify and delete the questions for the app as well. Happy playing!"
+          );
         })
         .catch(async (error) => {
           await this.services.user.rollbackChanges();
@@ -275,7 +278,8 @@ export default class UserController extends BaseController {
 
   edit(req: Request, res: Response) {
     const id: number = +req.params?.uid;
-    const data = req.body as IRegisterUserDto;
+    const registerData = req.body as IRegisterUserDto;
+    const editData = req.body as IEditUserDto;
 
     if (
       req.authorization?.role === "user" ||
@@ -285,12 +289,6 @@ export default class UserController extends BaseController {
         return res.status(403).send("You do not have access to this resource!");
       }
     }
-
-    if (!RegisterUserValidator(data)) {
-      return res.status(400).send(RegisterUserValidator.errors);
-    }
-
-    const passwordHash = bcrypt.hashSync(data.password, 10);
 
     this.services.user.startTransaction().then(() => {
       this.services.user
@@ -306,27 +304,37 @@ export default class UserController extends BaseController {
               message: "The user is not found!",
             };
           }
+
+          return result;
         })
-        .then(async () => {
+        .then(async (result) => {
           try {
-            const user = await this.services.user.editById(id, {
-              username: data.username,
-              email: data.email,
-              password_hash: passwordHash,
-            });
-            if (user.isClaimed === false) {
+            if (result.isActive === true) {
+              if (!EditUserValidator(editData)) {
+                return res.status(400).send(EditUserValidator.errors);
+              }
+
+              const activeUser = await this.services.user.editById(id, {
+                username: editData.username,
+              });
+              await this.services.user.commitChanges();
+              res.send(activeUser);
+            } else {
+              if (!RegisterUserValidator(registerData)) {
+                return res.status(400).send(RegisterUserValidator.errors);
+              }
+
+              const passwordHash = bcrypt.hashSync(registerData.password, 10);
+
               const inactiveUser = await this.services.user.editById(id, {
-                username: data.username,
-                email: data.email,
+                username: registerData.username,
+                email: registerData.email,
                 password_hash: passwordHash,
                 activation_code: uuid.v4(),
               });
               await this.sendRegistrationEmail(inactiveUser);
               await this.services.user.commitChanges();
               res.send(inactiveUser);
-            } else {
-              await this.services.user.commitChanges();
-              res.send(user);
             }
           } catch (error) {
             throw {
