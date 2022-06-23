@@ -59,6 +59,7 @@ function handleApiError(
       refreshToken()
         .then((token) => {
           if (!token) {
+            // eslint-disable-next-line no-throw-literal
             throw {
               status: "login",
               data: "You must log in again!",
