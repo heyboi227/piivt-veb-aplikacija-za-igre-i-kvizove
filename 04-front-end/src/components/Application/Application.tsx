@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container } from 'react-bootstrap';
-import LoginPage from '../User/LoginPage/LoginPage';
+import LoginPage from '../User/UserLoginPage/UserLoginPage';
 import ContactPage from '../Pages/ContactPage/ContactPage';
 import { Routes, Route } from 'react-router-dom';
 import Menu from '../Menu/Menu';
