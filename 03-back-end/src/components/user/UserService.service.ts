@@ -39,7 +39,6 @@ export default class UserService extends BaseService<
     user.updatedAt = data?.updated_at;
     user.isActive = +data?.is_active === 1;
     user.activationCode = data?.activation_code ? data?.activation_code : null;
-    user.isClaimed = +data?.is_claimed === 1;
 
     if (options.removePassword) {
       user.passwordHash = null;
