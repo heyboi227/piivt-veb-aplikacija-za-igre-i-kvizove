@@ -89,38 +89,13 @@ CREATE TABLE IF NOT EXISTS `user` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
   `activation_code` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `is_claimed` tinyint(1) unsigned DEFAULT 0,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `uq_user_username` (`username`),
   UNIQUE KEY `uq_user_email` (`email`),
   UNIQUE KEY `uq_user_activation_code` (`activation_code`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Data exporting was unselected.
-
--- Dumping structure for trigger piivt_app.bi_question
-DROP TRIGGER IF EXISTS `bi_question`;
-SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION';
-DELIMITER //
-CREATE TRIGGER `bi_question` BEFORE INSERT ON `question` FOR EACH ROW BEGIN
-IF NEW.game_id NOT IN (3, 4) THEN
-	SIGNAL SQLSTATE '50001' SET MESSAGE_TEXT = 'Allowed ids for column game_id are 3 and 4.';
-END IF;
-END//
-DELIMITER ;
-SET SQL_MODE=@OLDTMP_SQL_MODE;
-
--- Dumping structure for trigger piivt_app.bu_question
-DROP TRIGGER IF EXISTS `bu_question`;
-SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION';
-DELIMITER //
-CREATE TRIGGER `bu_question` BEFORE UPDATE ON `question` FOR EACH ROW BEGIN
-IF NEW.game_id NOT IN (3, 4) THEN
-	SIGNAL SQLSTATE '50001' SET MESSAGE_TEXT = 'Allowed ids for column game_id are 3 and 4.';
-END IF;
-END//
-DELIMITER ;
-SET SQL_MODE=@OLDTMP_SQL_MODE;
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
