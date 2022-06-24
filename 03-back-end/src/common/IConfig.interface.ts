@@ -57,6 +57,7 @@ interface IConfig {
   auth: {
     user: IAuthTokenOptions;
     activeUser: IAuthTokenOptions;
+    administrator: IAuthTokenOptions;
     allowAllRoutesWithoutAuthTokens: boolean;
   };
 }
