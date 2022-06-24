@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import * as jwt from "jsonwebtoken";
-import ITokenData from "../src/components/auth/dto/ITokenData";
-import { DevConfig } from "../src/configs";
+import ITokenData from "../components/auth/dto/ITokenData";
+import { DevConfig } from "../configs";
 
 export default class AuthMiddleware {
   public static getVerifier(
-    ...allowedRoles: ("user" | "activeUser")[]
+    ...allowedRoles: ("user" | "activeUser" | "administrator")[]
   ): (req: Request, res: Response, next: NextFunction) => void {
     return (req: Request, res: Response, next: NextFunction) => {
       this.verifyAuthToken(req, res, next, allowedRoles);
@@ -16,7 +16,7 @@ export default class AuthMiddleware {
     req: Request,
     res: Response,
     next: NextFunction,
-    allowedRoles: ("user" | "activeUser")[]
+    allowedRoles: ("user" | "activeUser" | "administrator")[]
   ) {
     if (DevConfig.auth.allowAllRoutesWithoutAuthTokens) {
       return next();
@@ -54,7 +54,7 @@ export default class AuthMiddleware {
 
   public static validateTokenAs(
     tokenString: string,
-    role: "user" | "activeUser",
+    role: "user" | "activeUser" | "administrator",
     type: "auth" | "refresh"
   ): ITokenData {
     if (tokenString === "") {
