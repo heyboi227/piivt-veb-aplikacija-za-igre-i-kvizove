@@ -18,7 +18,7 @@ export default class AuthController extends BaseController {
         if (result === null) {
           throw {
             status: 404,
-            message: "The user account is not found!",
+            message: "The user account is not found! Please create a new one.",
           };
         }
 
@@ -28,7 +28,7 @@ export default class AuthController extends BaseController {
         if (!bcrypt.compareSync(data.password, user.passwordHash)) {
           throw {
             status: 404,
-            message: "The user account is not found!",
+            message: "Wrong password for the given user account!",
           };
         }
 
@@ -38,7 +38,7 @@ export default class AuthController extends BaseController {
         if (!user.isActive) {
           throw {
             status: 404,
-            message: "The user account is not active!",
+            message: "The user account is not active! Please contact the administrator for reactivation.",
           };
         }
 
