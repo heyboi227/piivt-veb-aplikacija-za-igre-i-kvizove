@@ -352,6 +352,46 @@ export default class UserController extends BaseController {
     });
   }
 
+  deactivate(req: Request, res: Response) {
+    const id: number = +req.params?.uid;
+    const editData = req.body as IEditUserDto;
+
+    this.services.user.startTransaction().then(() => {
+      this.services.user
+        .getById(id, DefaultUserAdapterOptions)
+        .then((result) => {
+          if (result === null) {
+            throw {
+              status: 404,
+              message: "The user is not found!",
+            };
+          }
+
+          this.services.user
+            .editById(id, {
+              username: result.username,
+              is_active: 0,
+            })
+            .then(async (_result) => {
+              await this.services.user.commitChanges();
+              res.send("This user has been deactivated!");
+            })
+            .catch((error) => {
+              throw {
+                status: 500,
+                message: error?.message,
+              };
+            });
+        })
+        .catch(async (error) => {
+          await this.services.user.rollbackChanges();
+          setTimeout(() => {
+            res.status(error?.status ?? 500).send(error?.message);
+          }, 500);
+        });
+    });
+  }
+
   delete(req: Request, res: Response) {
     const id: number = +req.params?.uid;
 

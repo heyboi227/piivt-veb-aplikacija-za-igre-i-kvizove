@@ -1,5 +1,5 @@
 import * as express from "express";
-import AuthMiddleware from "../../../middlewares/AuthMiddleware";
+import AuthMiddleware from "../../middlewares/AuthMiddleware";
 import IApplicationResources from "../../common/IApplicationResources.interface";
 import IRouter from "../../common/IRouter.interface";
 import AnswerController from "../answer/AnswerController.controller";
