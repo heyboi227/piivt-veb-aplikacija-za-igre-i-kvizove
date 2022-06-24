@@ -29,6 +29,15 @@ class AuthRouter implements IRouter {
       "/api/auth/user/refresh",
       authController.userRefresh.bind(authController)
     );
+
+    application.post(
+      "/api/auth/administrator/login",
+      authController.administratorLogin.bind(authController)
+    );
+    application.post(
+      "/api/auth/administrator/refresh",
+      authController.administratorRefresh.bind(authController)
+    );
   }
 }
 
