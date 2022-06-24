@@ -11,6 +11,7 @@ import GameService from "./components/game/GameService.service";
 import UserService from "./components/user/UserService.service";
 import QuestionService from "./components/question/QuestionService.service";
 import AnswerService from "./components/answer/AnswerService.service";
+import AdministratorService from "./components/administrator/AdministratorService.service";
 
 async function main() {
   const config: IConfig = DevConfig;
@@ -60,6 +61,7 @@ async function main() {
       user: null,
       question: null,
       answer: null,
+      administrator: null,
     },
   };
 
@@ -69,6 +71,9 @@ async function main() {
     applicationResources
   );
   applicationResources.services.answer = new AnswerService(
+    applicationResources
+  );
+  applicationResources.services.administrator = new AdministratorService(
     applicationResources
   );
 
