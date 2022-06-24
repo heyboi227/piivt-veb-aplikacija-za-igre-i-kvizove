@@ -7,6 +7,7 @@ import * as jwt from "jsonwebtoken";
 import { DevConfig } from "../../configs";
 import AuthMiddleware from "../../middlewares/AuthMiddleware";
 import { IUserLoginDto } from "./dto/IUserLogin.dto";
+import { IAdministratorLoginDto } from "./dto/IAdministratorLogin.dto";
 
 export default class AuthController extends BaseController {
   public async activeUserLogin(req: Request, res: Response) {
