@@ -6,6 +6,7 @@ import { readFileSync } from "fs";
 import QuestionRouter from "./components/question/QuestionRouter.router";
 import AnswerRouter from "./components/answer/AnswerRouter.router";
 import AuthRouter from "./components/auth/AuthRouter.router";
+import AdministratorRouter from "./components/administrator/AdministratorRouter.router";
 
 const DevConfig: IConfig = {
   server: {
@@ -42,6 +43,7 @@ const DevConfig: IConfig = {
     new QuestionRouter(),
     new AnswerRouter(),
     new AuthRouter(),
+    new AdministratorRouter(),
   ],
   mail: {
     host: "smtp.office365.com",
