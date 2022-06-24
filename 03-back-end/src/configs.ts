@@ -91,6 +91,26 @@ const DevConfig: IConfig = {
         },
       },
     },
+    administrator: {
+      algorithm: "RS256",
+      issuer: "PIiVT",
+      tokens: {
+        auth: {
+          duration: 60 * 60 * 24,
+          keys: {
+            public: readFileSync("./.keystore/app.public", "ascii"),
+            private: readFileSync("./.keystore/app.private", "ascii"),
+          },
+        },
+        refresh: {
+          duration: 60 * 60 * 24 * 60,
+          keys: {
+            public: readFileSync("./.keystore/app.public", "ascii"),
+            private: readFileSync("./.keystore/app.private", "ascii"),
+          },
+        },
+      },
+    },
     allowAllRoutesWithoutAuthTokens: true,
   },
 };
