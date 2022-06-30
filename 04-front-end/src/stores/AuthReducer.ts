@@ -1,5 +1,5 @@
 export interface IAuthStoreData {
-  role: "visitor" | "user" | "activeUser";
+  role: "visitor" | "user" | "activeUser" | "administrator";
   identity: string;
   id: number;
   authToken: string;
@@ -19,7 +19,7 @@ let InitialAuthStoreData: IAuthStoreData = DefaultAuthStoreData;
 type TUpdateRole = {
   type: "auth.update";
   key: "role";
-  value: "visitor" | "user" | "activeUser";
+  value: "visitor" | "user" | "activeUser" | "administrator";
 };
 type TUpdateId = { type: "auth.update"; key: "id"; value: number };
 type TUpdateStrings = {
