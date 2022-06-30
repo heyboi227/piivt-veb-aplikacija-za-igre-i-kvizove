@@ -1,0 +1,10 @@
+export default interface IUser {
+  userId: number;
+  username: string;
+  email: string | null;
+  passwordHash: string | null;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string | null;
+  activationCode: string | null;
+}
