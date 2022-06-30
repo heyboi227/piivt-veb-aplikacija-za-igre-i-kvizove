@@ -20,6 +20,18 @@ class AnswerRouter implements IRouter {
       "/api/answer/:aid",
       answerController.getById.bind(answerController)
     );
+    application.post(
+      "/api/answer",
+      answerController.add.bind(answerController)
+    );
+    application.put(
+      "/api/answer/:aid",
+      answerController.edit.bind(answerController)
+    );
+    application.delete(
+      "/api/answer/:aid",
+      answerController.delete.bind(answerController)
+    );
   }
 }
 

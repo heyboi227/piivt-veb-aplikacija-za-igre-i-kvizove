@@ -2,6 +2,8 @@ import IAdapterOptions from "../../common/IAdapterOptions.interface";
 import BaseService from "../../common/BaseService";
 import AnswerModel from "./AnswerModel.model";
 import { IQuestionAnswer } from "../question/QuestionModel.model";
+import IAddAnswer from "./dto/IAddAnswer.dto";
+import IEditAnswer from "./dto/IEditAnswer.dto";
 
 export class AnswerAdapterOptions implements IAdapterOptions {
   loadGame: boolean;
@@ -75,5 +77,20 @@ export default class AnswerService extends BaseService<
           reject(error);
         });
     });
+  }
+
+  public async add(data: IAddAnswer): Promise<AnswerModel> {
+    return this.baseAdd(data, DefaultAnswerAdapterOptions);
+  }
+
+  public async editById(
+    questionId: number,
+    data: IEditAnswer
+  ): Promise<AnswerModel> {
+    return this.baseEditById(questionId, data, DefaultAnswerAdapterOptions);
+  }
+
+  public async deleteById(id: number): Promise<true> {
+    return this.baseDeleteById(id);
   }
 }
