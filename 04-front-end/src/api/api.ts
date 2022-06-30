@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from "axios";
 import Config from "../config";
 import AppStore from "../stores/AppStore";
 export type TApiMethod = "get" | "post" | "put" | "delete";
-export type TApiRole = "user" | "activeUser";
+export type TApiRole = "user" | "activeUser" | "administrator";
 export type TApiResponse = "ok" | "error" | "login";
 
 export interface IApiResponse {
