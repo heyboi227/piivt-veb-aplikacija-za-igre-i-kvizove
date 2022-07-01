@@ -11,7 +11,7 @@ export default class AnswerController extends BaseController {
       .then((result) => {
         res.send(result);
       })
-      .catch((error: { message: any }) => {
+      .catch((error) => {
         setTimeout(() => {
           res.status(500).send(error?.message);
         }, 500);
@@ -25,14 +25,17 @@ export default class AnswerController extends BaseController {
       .getById(id, DefaultAnswerAdapterOptions)
       .then((result) => {
         if (result === null) {
-          res.status(404).send("Answer not found!");
+          throw {
+            status: 404,
+            message: "Answer not found!",
+          };
         }
 
         res.send(result);
       })
       .catch((error) => {
         setTimeout(() => {
-          res.status(500).send(error?.message);
+          res.status(error?.status ?? 500).send(error?.message);
         }, 500);
       });
   }
