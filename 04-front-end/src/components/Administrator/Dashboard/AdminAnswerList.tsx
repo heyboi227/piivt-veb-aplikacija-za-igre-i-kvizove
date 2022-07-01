@@ -13,14 +13,19 @@ export default function AdminAnswerList() {
     const [showAddNewAnswer, setShowAddNewAnswer] = useState<boolean>(false);
 
     function AdminAnswerListRow(props: IAdminAnswerListRowProperties) {
+        const [gameId, setGameId] = useState<number>(props.answer.gameId);
         const [answerValue, setAnswerValue] = useState<string>(props.answer.answerValue);
+
+        const gameIdChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
+            setGameId(+e.target.value);
+        }
 
         const answerValueChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
             setAnswerValue(e.target.value);
         }
 
         const doEditAnswer = (e: any) => {
-            api("put", "/api/answer/" + props.answer.answerId, "administrator", { answerValue })
+            api("put", "/api/answer/" + props.answer.answerId, "administrator", { gameId, answerValue })
                 .then(res => {
                     if (res.status === 'error') {
                         return setErrorMessage("Could not edit this answer!");
@@ -30,9 +35,34 @@ export default function AdminAnswerList() {
                 })
         }
 
+        const doDeleteAnswer = (e: any) => {
+            api("delete", "/api/answer/" + props.answer.answerId, "administrator")
+                .then(res => {
+                    if (res.status === "error") {
+                        return setErrorMessage("Could not delete this answer!");
+                    }
+
+                    loadAnswers();
+                })
+        }
+
         return (
             <tr>
                 <td>{props.answer.answerId}</td>
+                <td>
+                    <div className="input-group">
+                        <input className="form-control form-control-sm"
+                            type="number"
+                            onChange={e => gameIdChanged(e)}
+                            value={gameId} />
+                        {props.answer.gameId !== gameId
+                            ? <button className="btn btn-primary btn-sm" onClick={e => doEditAnswer(e)}>
+                                Save
+                            </button>
+                            : ''
+                        }
+                    </div>
+                </td>
                 <td>
                     <div className="input-group">
                         <input className="form-control form-control-sm"
@@ -48,21 +78,28 @@ export default function AdminAnswerList() {
                     </div>
                 </td>
                 <td>
-
+                    <button className="btn btn-danger btn-sm" onClick={e => doDeleteAnswer(e)}>
+                        Delete
+                    </button>
                 </td>
             </tr>
         );
     }
 
     function AdminAnswerListAddRow() {
+        const [gameId, setGameId] = useState<number>(1);
         const [answerValue, setAnswerValue] = useState<string>("");
+
+        const gameIdChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
+            setGameId(+e.target.value);
+        }
 
         const answerValueChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
             setAnswerValue(e.target.value);
         }
 
         const doAddAnswer = (e: any) => {
-            api("post", "/api/answer", "administrator", { answerValue })
+            api("post", "/api/answer", "administrator", { gameId, answerValue })
                 .then(res => {
                     if (res.status === 'error') {
                         return setErrorMessage("Could not add this answer!");
@@ -70,6 +107,7 @@ export default function AdminAnswerList() {
 
                     loadAnswers();
 
+                    setGameId(1);
                     setAnswerValue("");
                     setShowAddNewAnswer(false);
                 });
@@ -81,20 +119,30 @@ export default function AdminAnswerList() {
                 <td>
                     <div className="input-group">
                         <input className="form-control form-control-sm"
-                            type="text"
-                            onChange={e => answerValueChanged(e)}
-                            value={answerValue} />
-                        {answerValue.trim().length >= 4 && answerValue.trim().length <= 32
-                            ? <button className="btn btn-primary btn-sm" onClick={e => doAddAnswer(e)}>
-                                Save
-                            </button>
-                            : ''
-                        }
+                            type="number"
+                            onChange={e => gameIdChanged(e)}
+                            value={gameId} />
                     </div>
                 </td>
                 <td>
+                    <div className="input-group">
+                        <input className="form-control form-control-sm"
+                            type="text"
+                            onChange={e => answerValueChanged(e)}
+                            value={answerValue} />
+                    </div>
+                </td>
+                <td>
+                    {answerValue.trim().length >= 4 && answerValue.trim().length <= 32
+                        && gameId > 0 && gameId <= 4
+                        ? <button className="btn btn-primary btn-sm" onClick={e => doAddAnswer(e)}>
+                            Save
+                        </button>
+                        : ''
+                    }
                     <button className="btn btn-danger btn-sm" onClick={() => {
                         setShowAddNewAnswer(false);
+                        setGameId(1);
                         setAnswerValue("");
                     }}>
                         Cancel
@@ -133,6 +181,7 @@ export default function AdminAnswerList() {
                         <thead>
                             <tr>
                                 <th className="answer-row-id">ID</th>
+                                <th>Game ID</th>
                                 <th>Answer value</th>
                                 <th className="answer-row-options">Options</th>
                             </tr>
