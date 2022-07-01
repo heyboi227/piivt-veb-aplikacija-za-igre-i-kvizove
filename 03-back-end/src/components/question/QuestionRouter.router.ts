@@ -19,32 +19,32 @@ class QuestionRouter implements IRouter {
 
     application.get(
       "/api/question",
-      AuthMiddleware.getVerifier("activeUser", "user"),
+      AuthMiddleware.getVerifier("activeUser", "user", "administrator"),
       questionController.getAll.bind(questionController)
     );
     application.get(
       "/api/question/:qid",
-      AuthMiddleware.getVerifier("activeUser", "user"),
+      AuthMiddleware.getVerifier("activeUser", "user", "administrator"),
       questionController.getById.bind(questionController)
     );
     application.get(
       "/api/question/game/:gid",
-      AuthMiddleware.getVerifier("activeUser", "user"),
+      AuthMiddleware.getVerifier("activeUser", "user", "administrator"),
       questionController.getByGameId.bind(questionController)
     );
     application.post(
       "/api/question",
-      AuthMiddleware.getVerifier("activeUser"),
+      AuthMiddleware.getVerifier("activeUser", "administrator"),
       questionController.add.bind(questionController)
     );
     application.put(
       "/api/question/:qid",
-      AuthMiddleware.getVerifier("activeUser"),
+      AuthMiddleware.getVerifier("activeUser", "administrator"),
       questionController.edit.bind(questionController)
     );
     application.delete(
       "/api/question/:qid",
-      AuthMiddleware.getVerifier("activeUser"),
+      AuthMiddleware.getVerifier("activeUser", "administrator"),
       questionController.delete.bind(questionController)
     );
   }
