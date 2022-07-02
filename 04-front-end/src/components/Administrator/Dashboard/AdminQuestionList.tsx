@@ -31,6 +31,17 @@ export default function AdminQuestionList() {
                 })
         }
 
+        const doDeleteQuestion = (e: any) => {
+            api("delete", "/api/question/" + props.question.questionId, "administrator")
+                .then(res => {
+                    if (res.status === 'error') {
+                        return setErrorMessage("Could not delete this question!");
+                    }
+
+                    loadQuestions();
+                })
+        }
+
         return (
             <tr>
                 <td>{props.question.questionId}</td>
@@ -58,6 +69,12 @@ export default function AdminQuestionList() {
                     <Link className="btn btn-primary btn-sm" to={"/admin/dashboard/question/" + props.question.questionId + "/answers/add"}>
                         Add answer
                     </Link>
+
+                    &nbsp;&nbsp;
+
+                    <button className="btn btn-danger btn-sm" onClick={e => doDeleteQuestion(e)}>
+                        Delete
+                    </button>
                 </td>
             </tr>
         );
