@@ -3,7 +3,7 @@ import { api } from "../../../api/api";
 import IAnswer from "../../../models/IAnswer.model";
 import './AdminAnswerList.sass';
 
-interface IAdminAnswerListRowProperties {
+export interface IAdminAnswerListRowProperties {
     answer: IAnswer,
 }
 
