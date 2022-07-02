@@ -53,6 +53,8 @@ export default function AdminAnswerList() {
                     <div className="input-group">
                         <input className="form-control form-control-sm"
                             type="number"
+                            min={1}
+                            max={4}
                             onChange={e => gameIdChanged(e)}
                             value={gameId} />
                         {props.answer.gameId !== gameId
@@ -120,6 +122,8 @@ export default function AdminAnswerList() {
                     <div className="input-group">
                         <input className="form-control form-control-sm"
                             type="number"
+                            min={1}
+                            max={4}
                             onChange={e => gameIdChanged(e)}
                             value={gameId} />
                     </div>
