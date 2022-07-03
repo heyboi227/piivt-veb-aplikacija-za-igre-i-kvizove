@@ -1,7 +1,7 @@
 import IAdapterOptions from "../../common/IAdapterOptions.interface";
 import QuestionModel from "./QuestionModel.model";
 import IEditQuestion from "./dto/IEditQuestion.dto";
-import IAddQuestion, { IQuestionAnswerDto } from "./dto/IAddQuestion.dto";
+import IAddQuestion, { IQuestionAnswer } from "./dto/IAddQuestion.dto";
 import BaseService from "../../common/BaseService";
 
 export class QuestionAdapterOptions implements IAdapterOptions {
@@ -70,13 +70,13 @@ export default class QuestionService extends BaseService<
     return this.baseDeleteById(id);
   }
 
-  public async addQuestionAnswer(data: IQuestionAnswerDto): Promise<number> {
+  public async addQuestionAnswer(data: IQuestionAnswer): Promise<number> {
     return new Promise((resolve, reject) => {
       const sql: string =
-        "INSERT `question_answer` SET `question_id` = ?, `answer_id` = ?, `is_correct` = ?;";
+        "INSERT `question_answer` SET `question_id` = ?, `answer_id` = ?;";
 
       this.db
-        .execute(sql, [data.question_id, data.answer_id, data.is_correct])
+        .execute(sql, [data.question_id, data.answer_id])
         .then(async (result) => {
           const info: any = result;
           resolve(+info[0]?.insertId);
@@ -87,7 +87,46 @@ export default class QuestionService extends BaseService<
     });
   }
 
-  public async deleteQuestionAnswer(questionId: number): Promise<number> {
+  public async editQuestionAnswer(data: IQuestionAnswer): Promise<number> {
+    return new Promise((resolve, reject) => {
+      const sql: string =
+        "UPDATE `question_answer` SET `is_correct` = ? WHERE question_id = ? AND answer_id = ?;";
+
+      this.db
+        .execute(sql, [data.is_correct, data.question_id, data.answer_id])
+        .then(async (result) => {
+          const info: any = result;
+          resolve(+info[0]?.affectedRows);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  }
+
+  public async deleteQuestionAnswer(
+    questionId: number,
+    answerId: number
+  ): Promise<number> {
+    return new Promise((resolve, reject) => {
+      const sql: string =
+        "DELETE FROM `question_answer` WHERE `question_id` = ? AND `answer_id`= ?;";
+
+      this.db
+        .execute(sql, [questionId, answerId])
+        .then(async (result) => {
+          const info: any = result;
+          resolve(+info[0]?.affectedRows);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  }
+
+  public async deleteQuestionAnswerByQuestion(
+    questionId: number
+  ): Promise<number> {
     return new Promise((resolve, reject) => {
       const sql: string =
         "DELETE FROM `question_answer` WHERE `question_id` = ?;";

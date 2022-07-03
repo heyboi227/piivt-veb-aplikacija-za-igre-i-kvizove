@@ -1,7 +1,11 @@
 import { Request, Response } from "express";
 import BaseController from "../../common/BaseController";
 import { DefaultQuestionAdapterOptions } from "./QuestionService.service";
-import { AddQuestionValidator, IAddQuestionDto } from "./dto/IAddQuestion.dto";
+import {
+  AddQuestionValidator,
+  IAddQuestionDto,
+  IQuestionAnswerDto,
+} from "./dto/IAddQuestion.dto";
 import {
   EditQuestionValidator,
   IEditQuestionDto,
@@ -22,10 +26,10 @@ export default class QuestionController extends BaseController {
   }
 
   getById(req: Request, res: Response) {
-    const id: number = +req.params?.qid;
+    const questionId: number = +req.params?.qid;
 
     this.services.question
-      .getById(id, DefaultQuestionAdapterOptions)
+      .getById(questionId, DefaultQuestionAdapterOptions)
       .then((result) => {
         if (result === null) {
           res.status(404).send("Question not found!");
@@ -89,22 +93,6 @@ export default class QuestionController extends BaseController {
             DefaultQuestionAdapterOptions
           );
         })
-        .then((result) => {
-          data.answers.forEach((answer) => {
-            this.services.question.addQuestionAnswer({
-              question_id: result.questionId,
-              answer_id: answer.answer.answerId,
-              is_correct: answer.isCorrect,
-            });
-          });
-          return result;
-        })
-        .then((result) => {
-          return this.services.question.getById(
-            result.questionId,
-            DefaultQuestionAdapterOptions
-          );
-        })
         .then(async (result) => {
           await this.services.question.commitChanges();
           res.send(result);
@@ -117,7 +105,7 @@ export default class QuestionController extends BaseController {
   }
 
   edit(req: Request, res: Response) {
-    const id: number = +req.params?.qid;
+    const questionId: number = +req.params?.qid;
     const data = req.body as IEditQuestionDto;
 
     if (!EditQuestionValidator(data)) {
@@ -126,7 +114,7 @@ export default class QuestionController extends BaseController {
 
     this.services.question.startTransaction().then(() => {
       this.services.question
-        .getById(id, DefaultQuestionAdapterOptions)
+        .getById(questionId, DefaultQuestionAdapterOptions)
         .then((result) => {
           if (result === null) {
             throw {
@@ -137,27 +125,9 @@ export default class QuestionController extends BaseController {
         })
         .then(async () => {
           try {
-            const date = new Date();
-            const dateWithOffset = new Date(
-              date.getTime() - date.getTimezoneOffset() * 60000
-            );
-            const question = await this.services.question.editById(id, {
+            const question = await this.services.question.editById(questionId, {
               game_id: data.gameId,
               title: data.title,
-              updated_at: dateWithOffset
-                .toISOString()
-                .slice(0, 19)
-                .replace("T", " "),
-            });
-            await this.services.question.deleteQuestionAnswer(
-              question.questionId
-            );
-            data.answers.forEach((answer) => {
-              this.services.question.addQuestionAnswer({
-                question_id: question.questionId,
-                answer_id: answer.answer.answerId,
-                is_correct: answer.isCorrect,
-              });
             });
             await this.services.question.commitChanges();
             res.send(question);
@@ -178,11 +148,11 @@ export default class QuestionController extends BaseController {
   }
 
   delete(req: Request, res: Response) {
-    const id: number = +req.params?.qid;
+    const questionId: number = +req.params?.qid;
 
     this.services.question.startTransaction().then(() => {
       this.services.question
-        .getById(id, DefaultQuestionAdapterOptions)
+        .getById(questionId, DefaultQuestionAdapterOptions)
         .then((result) => {
           if (result === null) {
             throw {
@@ -192,9 +162,9 @@ export default class QuestionController extends BaseController {
           }
 
           this.services.question
-            .deleteQuestionAnswer(id)
+            .deleteQuestionAnswerByQuestion(questionId)
             .then(() => {
-              this.services.question.deleteById(id);
+              this.services.question.deleteById(questionId);
             })
             .then(async () => {
               await this.services.question.commitChanges();
@@ -212,6 +182,68 @@ export default class QuestionController extends BaseController {
           setTimeout(() => {
             res.status(error?.status ?? 500).send(error?.message);
           }, 500);
+        });
+    });
+  }
+
+  addQuestionAnswer(req: Request, res: Response) {
+    const questionId: number = +req.params?.qid;
+    const data = req.body as IQuestionAnswerDto;
+
+    this.services.question.startTransaction().then(() => {
+      this.services.question
+        .addQuestionAnswer({
+          question_id: questionId,
+          answer_id: data.answerId,
+        })
+        .then(async (result) => {
+          await this.services.question.commitChanges();
+          res.send(result);
+        })
+        .catch(async (error) => {
+          await this.services.question.rollbackChanges();
+          res.status(400).send(error?.message);
+        });
+    });
+  }
+
+  editQuestionAnswer(req: Request, res: Response) {
+    const questionId: number = +req.params?.qid;
+    const answerId: number = +req.params?.aid;
+    const data = req.body as IQuestionAnswerDto;
+
+    this.services.question.startTransaction().then(() => {
+      this.services.question
+        .editQuestionAnswer({
+          question_id: questionId,
+          answer_id: answerId,
+          is_correct: data.isCorrect,
+        })
+        .then(async (result) => {
+          await this.services.question.commitChanges();
+          res.send(result);
+        })
+        .catch(async (error) => {
+          await this.services.question.rollbackChanges();
+          res.status(400).send(error?.message);
+        });
+    });
+  }
+
+  deleteQuestionAnswer(req: Request, res: Response) {
+    const questionId: number = +req.params?.qid;
+    const answerId: number = +req.params?.aid;
+
+    this.services.question.startTransaction().then(() => {
+      this.services.question
+        .deleteQuestionAnswer(questionId, answerId)
+        .then(async (result) => {
+          await this.services.question.commitChanges();
+          res.send(result);
+        })
+        .catch(async (error) => {
+          await this.services.question.rollbackChanges();
+          res.status(400).send(error?.message);
         });
     });
   }
