@@ -1,11 +1,10 @@
+/* eslint-disable no-throw-literal */
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { api } from "../../../api/api";
 import './AdminQuestionAnswerList.sass';
 import IQuestion from '../../../models/IQuestion.model';
 import IQuestionAnswer from "../../../models/IQuestionAnswer.model";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSquare, faSquareCheck } from "@fortawesome/free-regular-svg-icons";
 
 interface IAdminQuestionAnswerListRowProperties {
     questionAnswer: IQuestionAnswer,
@@ -20,7 +19,7 @@ export default function AdminQuestionAnswerList() {
 
     const [question, setQuestion] = useState<IQuestion>();
     const [errorMessage, setErrorMessage] = useState<string>("");
-    const [showAddNewAnswer, setShowAddNewAnswer] = useState<boolean>(false);
+    const [showAddNewQuestionAnswer, setShowAddNewQuestionAnswer] = useState<boolean>(false);
 
     useEffect(() => {
         loadQuestionData(+(params.qid ?? 0));
@@ -39,37 +38,35 @@ export default function AdminQuestionAnswerList() {
 
                 setQuestion(res.data);
 
-                setShowAddNewAnswer(false);
+                setShowAddNewQuestionAnswer(false);
             })
     }
 
-    function AdminAnswerListRow(props: IAdminQuestionAnswerListRowProperties) {
-        const [answerValue, setAnswerValue] = useState<string>(props.questionAnswer.answer.answerValue);
+    function AdminQuestionAnswerListRow(props: IAdminQuestionAnswerListRowProperties) {
+        const [answerValue] = useState<string>(props.questionAnswer.answer.answerValue);
         const [deleteRequested, setDeleteRequested] = useState<boolean>(false);
 
         const correctSideClass = props.questionAnswer.isCorrect ? " btn-primary" : " btn-light";
         const incorrectSideClass = !props.questionAnswer.isCorrect ? " btn-primary" : " btn-light";
 
-        const answerValueChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
-            setAnswerValue(e.target.value);
-        }
-
-        const doEditAnswer = (e: any) => {
-            api("put", "/api/answer/" + props.questionAnswer.answer.answerId, "administrator", { answerValue })
+        function doToggleQuestionAnswerCorrectState() {
+            api("put", "/api/question/" + params.qid + "/answer/" + props.questionAnswer.answer.answerId, "administrator", {
+                isCorrect: !props.questionAnswer.isCorrect,
+            })
                 .then(res => {
-                    if (res.status === 'error') {
-                        return setErrorMessage("Could not edit this answer!");
+                    if (res.status === "error") {
+                        return setErrorMessage(res.data + "");
                     }
 
                     loadQuestionData(+(params.qid ?? 0));
                 })
         }
 
-        const doDeleteAnswer = (e: any) => {
-            api("delete", "/api/answer/" + props.questionAnswer.answer.answerId, "administrator")
+        const doDeleteQuestionAnswer = (e: any) => {
+            api("delete", "/api/question/" + params.qid + "/answer/" + props.questionAnswer.answer.answerId, "administrator")
                 .then(res => {
                     if (res.status === "error") {
-                        return setErrorMessage("Could not delete this answer!");
+                        return setErrorMessage("Could not delete this answer from current question!");
                     }
 
                     loadQuestionData(+(params.qid ?? 0));
@@ -83,28 +80,22 @@ export default function AdminQuestionAnswerList() {
                     <div className="input-group">
                         <input className="form-control form-control-sm"
                             type="text"
-                            onChange={e => answerValueChanged(e)}
+                            readOnly={true}
                             value={answerValue} />
-                        {props.questionAnswer.answer.answerValue !== answerValue
-                            ? <button className="btn btn-primary btn-sm" onClick={e => doEditAnswer(e)}>
-                                Save
-                            </button>
-                            : ''
-                        }
                     </div>
                 </td>
                 <td>
-                    <div className="btn-group">
+                    <div className="btn-group" onClick={() => doToggleQuestionAnswerCorrectState()}>
                         <div className={"btn btn-sm" + correctSideClass}>
-                            <FontAwesomeIcon icon={faSquareCheck} />
+                            Correct
                         </div>
                         <div className={"btn btn-sm" + incorrectSideClass}>
-                            <FontAwesomeIcon icon={faSquare} />
+                            Incorrect
                         </div>
                     </div>
                 </td>
                 <td>
-                    <button className="btn btn-danger btn-sm" onClick={e => doDeleteAnswer(e)}>
+                    <button className="btn btn-danger btn-sm" onClick={e => doDeleteQuestionAnswer(e)}>
                         Delete
                     </button>
                 </td>
@@ -112,24 +103,48 @@ export default function AdminQuestionAnswerList() {
         );
     }
 
-    function AdminAnswerAddRow() {
+    function AdminQuestionAnswerAddRow() {
         const [answerValue, setAnswerValue] = useState<string>("");
 
         const answerValueChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
             setAnswerValue(e.target.value);
         }
 
-        const doAddAnswer = (e: any) => {
-            api("post", "/api/answer", "administrator", { answerValue })
+        const doAddQuestionAnswer = (e: any) => {
+            console.log(answerValue);
+
+            api("get", "/api/answer/answer-value/" + answerValue, "administrator")
                 .then(res => {
                     if (res.status === 'error') {
-                        return setErrorMessage("Could not add this answer!");
+                        throw {
+                            message: "The answer does not exist! Reason: " + res.data
+                        }
                     }
 
-                    loadQuestionData(+(params.qid ?? 0));
+                    return res.data.answerId as number;
+                })
+                .then(answerId => {
+                    console.log(answerId);
+                    api("post", "/api/question/" + params.qid + "/answer", "administrator", { answerId })
+                        .then(res => {
+                            if (res.status === 'error') {
+                                throw {
+                                    message: "Could not add this answer for current question! Reason: " + res.data
+                                }
+                            }
 
-                    setAnswerValue("");
-                    setShowAddNewAnswer(false);
+                            loadQuestionData(+(params.qid ?? 0));
+
+                            setAnswerValue("");
+                            setShowAddNewQuestionAnswer(false);
+                        })
+                        .catch(error => {
+                            setErrorMessage(error?.message ?? "Could not add this answer for current question!");
+
+                            setTimeout(() => {
+                                setErrorMessage("");
+                            }, 3500);
+                        });
                 });
         }
 
@@ -145,14 +160,14 @@ export default function AdminQuestionAnswerList() {
                     </div>
                 </td>
                 <td>
-                    {answerValue.trim().length >= 4 && answerValue.trim().length <= 32
-                        ? <button className="btn btn-primary btn-sm" onClick={e => doAddAnswer(e)}>
+                    {answerValue.trim().length >= 2 && answerValue.trim().length <= 128
+                        ? <button className="btn btn-primary btn-sm" onClick={e => doAddQuestionAnswer(e)}>
                             Save
                         </button>
                         : ''
                     }
                     <button className="btn btn-danger btn-sm" onClick={() => {
-                        setShowAddNewAnswer(false);
+                        setShowAddNewQuestionAnswer(false);
                         setAnswerValue("");
                     }}>
                         Cancel
@@ -169,7 +184,7 @@ export default function AdminQuestionAnswerList() {
                     <Link className="btn btn-secondary btn-sm" to="/admin/dashboard/question/list">
                         &laquo; Back to question &quot;{question.title}&quot;
                     </Link>
-                    <button className="btn btn-primary btn-sm" onClick={() => { setShowAddNewAnswer(true) }}>Add new answer</button>
+                    <button className="btn btn-primary btn-sm" onClick={() => { setShowAddNewQuestionAnswer(true) }}>Add new answer</button>
                 </div>
 
                 <table className="table table-sm table-hover">
@@ -181,9 +196,9 @@ export default function AdminQuestionAnswerList() {
                         </tr>
                     </thead>
                     <tbody>
-                        {showAddNewAnswer && <AdminAnswerAddRow />}
+                        {showAddNewQuestionAnswer && <AdminQuestionAnswerAddRow />}
 
-                        {question.answers?.map(answer => <AdminAnswerListRow key={"answer-" + answer.answer.answerId} questionAnswer={answer} />)}
+                        {question.answers?.map(answer => <AdminQuestionAnswerListRow key={"answer-" + answer.answer.answerId} questionAnswer={answer} />)}
                     </tbody>
                 </table>
             </div>

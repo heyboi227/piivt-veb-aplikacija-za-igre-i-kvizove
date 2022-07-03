@@ -137,8 +137,8 @@ export default function AdminAnswerList() {
                     </div>
                 </td>
                 <td>
-                    {answerValue.trim().length >= 4 && answerValue.trim().length <= 32
-                        && gameId > 0 && gameId <= 4
+                    {answerValue.trim().length >= 2 && answerValue.trim().length <= 128
+                        && gameId >= 1 && gameId <= 4
                         ? <button className="btn btn-primary btn-sm" onClick={e => doAddAnswer(e)}>
                             Save
                         </button>
