@@ -40,6 +40,28 @@ export default class AnswerController extends BaseController {
       });
   }
 
+  getByAnswerValue(req: Request, res: Response) {
+    const answerValue: string = req.params?.avalue;
+
+    this.services.answer
+      .getByAnswerValue(answerValue, DefaultAnswerAdapterOptions)
+      .then((result) => {
+        if (result === null) {
+          throw {
+            status: 404,
+            message: "Answer not found!",
+          };
+        }
+
+        res.send(result);
+      })
+      .catch((error) => {
+        setTimeout(() => {
+          res.status(error?.status ?? 500).send(error?.message);
+        }, 500);
+      });
+  }
+
   add(req: Request, res: Response) {
     const data = req.body as IAddAnswerDto;
 

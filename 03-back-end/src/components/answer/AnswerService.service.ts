@@ -38,6 +38,13 @@ export default class AnswerService extends BaseService<
     return answer;
   }
 
+  public async getByAnswerValue(
+    answerValue: string,
+    options: AnswerAdapterOptions = DefaultAnswerAdapterOptions
+  ): Promise<AnswerModel> {
+    return this.getByFieldNameAndValue("answer_value", options, answerValue);
+  }
+
   public async getAllByQuestionId(
     questionId: number
   ): Promise<IQuestionAnswer[]> {

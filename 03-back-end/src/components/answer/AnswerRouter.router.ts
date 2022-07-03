@@ -23,6 +23,11 @@ class AnswerRouter implements IRouter {
       AuthMiddleware.getVerifier("administrator"),
       answerController.getById.bind(answerController)
     );
+    application.get(
+      "/api/answer/answer-value/:avalue",
+      AuthMiddleware.getVerifier("activeUser", "administrator"),
+      answerController.getByAnswerValue.bind(answerController)
+    );
     application.post(
       "/api/answer",
       AuthMiddleware.getVerifier("administrator"),
