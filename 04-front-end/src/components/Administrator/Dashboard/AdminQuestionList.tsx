@@ -14,14 +14,19 @@ export default function AdminQuestionList() {
     const [showAddNewQuestion, setShowAddNewQuestion] = useState<boolean>(false);
 
     function AdminQuestionListRow(props: IAdminQuestionListRowProperties) {
+        const [gameId, setGameId] = useState<number>(props.question.gameId);
         const [title, setTitle] = useState<string>(props.question.title);
+
+        const gameIdChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
+            setGameId(+e.target.value);
+        }
 
         const titleChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
             setTitle(e.target.value);
         }
 
         const doEditQuestion = (e: any) => {
-            api("put", "/api/question/" + props.question.questionId, "administrator", { title })
+            api("put", "/api/question/" + props.question.questionId, "administrator", { gameId, title })
                 .then(res => {
                     if (res.status === 'error') {
                         return setErrorMessage("Could not edit this question!");
@@ -45,6 +50,22 @@ export default function AdminQuestionList() {
         return (
             <tr>
                 <td>{props.question.questionId}</td>
+                <td>
+                    <div className="input-group">
+                        <input className="form-control form-control-sm"
+                            type="number"
+                            min={1}
+                            max={4}
+                            onChange={e => gameIdChanged(e)}
+                            value={gameId} />
+                        {props.question.gameId !== gameId
+                            ? <button className="btn btn-primary btn-sm" onClick={e => doEditQuestion(e)}>
+                                Save
+                            </button>
+                            : ''
+                        }
+                    </div>
+                </td>
                 <td>
                     <div className="input-group">
                         <input className="form-control form-control-sm"
@@ -81,14 +102,19 @@ export default function AdminQuestionList() {
     }
 
     function AdminQuestionAddRow() {
+        const [gameId, setGameId] = useState<number>(1);
         const [title, setTitle] = useState<string>("");
+
+        const gameIdChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
+            setGameId(+e.target.value);
+        }
 
         const titleChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
             setTitle(e.target.value);
         }
 
         const doAddQuestion = (e: any) => {
-            api("post", "/api/question/", "administrator", { title })
+            api("post", "/api/question/", "administrator", { gameId, title })
                 .then(res => {
                     if (res.status === 'error') {
                         return setErrorMessage("Could not add this question!");
@@ -96,6 +122,7 @@ export default function AdminQuestionList() {
 
                     loadQuestions();
 
+                    setGameId(1);
                     setTitle("");
                     setShowAddNewQuestion(false);
                 });
@@ -107,10 +134,20 @@ export default function AdminQuestionList() {
                 <td>
                     <div className="input-group">
                         <input className="form-control form-control-sm"
+                            type="number"
+                            min={1}
+                            max={4}
+                            onChange={e => gameIdChanged(e)}
+                            value={gameId} />
+                    </div>
+                </td>
+                <td>
+                    <div className="input-group">
+                        <input className="form-control form-control-sm"
                             type="text"
                             onChange={e => titleChanged(e)}
                             value={title} />
-                        {title.trim().length >= 4 && title.trim().length <= 32
+                        {title.trim().length >= 2 && title.trim().length <= 128 && gameId >= 1 && gameId <= 4
                             ? <button className="btn btn-primary btn-sm" onClick={e => doAddQuestion(e)}>
                                 Save
                             </button>
@@ -133,7 +170,6 @@ export default function AdminQuestionList() {
     const loadQuestions = () => {
         api("get", "/api/question", "administrator")
             .then(apiResponse => {
-                console.log("GET questions response: ", apiResponse);
 
                 if (apiResponse.status === 'ok') {
                     return setQuestions(apiResponse.data);
@@ -161,6 +197,7 @@ export default function AdminQuestionList() {
                         <thead>
                             <tr>
                                 <th className="question-row-id">ID</th>
+                                <th>Game ID</th>
                                 <th>Title</th>
                                 <th className="question-row-options">Options</th>
                             </tr>
