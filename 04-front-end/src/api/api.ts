@@ -49,6 +49,37 @@ export function api(
   });
 }
 
+export function apiForm(
+  method: TApiMethod,
+  path: string,
+  role: TApiRole,
+  data: FormData,
+  attemptToRefreshToken: boolean = true
+): Promise<IApiResponse> {
+  return new Promise((resolve) => {
+    axios({
+      method: method,
+      baseURL: Config.API_PATH,
+      url: path,
+      data: data,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + AppStore.getState().auth.authToken,
+      },
+    })
+      .then((res) => handleApiResponse(res, resolve))
+      .catch((err) =>
+        handleApiError(err, resolve, {
+          method,
+          path,
+          role,
+          data,
+          attemptToRefreshToken,
+        })
+      );
+  });
+}
+
 function handleApiError(
   err: any,
   resolve: (value: IApiResponse | PromiseLike<IApiResponse>) => void,
