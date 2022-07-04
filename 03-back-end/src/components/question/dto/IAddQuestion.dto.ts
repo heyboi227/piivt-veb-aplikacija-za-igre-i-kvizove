@@ -8,21 +8,19 @@ export default interface IAddQuestion extends IServiceData {
   title: string;
 }
 
-interface IAddQuestionDto {
+export interface IAddQuestionDto {
   gameId: number;
   title: string;
+  answers: {
+    answerId: number;
+    isCorrect: boolean;
+  }[];
 }
 
 export interface IQuestionAnswer extends IServiceData {
   question_id: number;
   answer_id: number;
   is_correct?: boolean;
-}
-
-interface IQuestionAnswerDto {
-  questionId: number;
-  answerId: number;
-  isCorrect: boolean;
 }
 
 const AddQuestionSchema = {
@@ -38,11 +36,29 @@ const AddQuestionSchema = {
       minLength: 2,
       maxLength: 128,
     },
+    answers: {
+      type: "array",
+      minItems: 1,
+      uniqueItems: true,
+      items: {
+        type: "object",
+        properties: {
+          answerId: {
+            type: "integer",
+          },
+          isCorrect: {
+            type: "boolean",
+          },
+        },
+        required: ["answerId", "isCorrect"],
+        additionalProperties: false,
+      },
+    },
   },
-  required: ["gameId", "title"],
+  required: ["gameId", "title", "answers"],
   additionalProperties: false,
 };
 
 const AddQuestionValidator = ajv.compile(AddQuestionSchema);
 
-export { AddQuestionValidator, IAddQuestionDto, IQuestionAnswerDto };
+export { AddQuestionValidator };
