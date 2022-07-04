@@ -62,6 +62,36 @@ export default class AnswerController extends BaseController {
       });
   }
 
+  getByGameId(req: Request, res: Response) {
+    const gameId: number = +req.params?.gid;
+
+    this.services.game
+      .getById(gameId, {})
+      .then((result) => {
+        if (result === null) {
+          throw {
+            status: 404,
+            message: "Game not found!",
+          };
+        }
+
+        this.services.answer
+          .getAllByGameId(gameId)
+          .then((result) => {
+            res.send(result);
+          })
+          .catch((error) => {
+            throw {
+              status: 500,
+              message: error?.message,
+            };
+          });
+      })
+      .catch((error) => {
+        res.status(error?.status ?? 500).send(error?.message);
+      });
+  }
+
   add(req: Request, res: Response) {
     const data = req.body as IAddAnswerDto;
 

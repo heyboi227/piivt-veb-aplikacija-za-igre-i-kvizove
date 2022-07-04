@@ -28,6 +28,11 @@ class AnswerRouter implements IRouter {
       AuthMiddleware.getVerifier("activeUser", "administrator"),
       answerController.getByAnswerValue.bind(answerController)
     );
+    application.get(
+      "/api/answer/game/:gid",
+      AuthMiddleware.getVerifier("activeUser", "administrator"),
+      answerController.getByGameId.bind(answerController)
+    );
     application.post(
       "/api/answer",
       AuthMiddleware.getVerifier("administrator"),

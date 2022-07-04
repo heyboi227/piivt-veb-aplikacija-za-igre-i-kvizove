@@ -45,6 +45,13 @@ export default class AnswerService extends BaseService<
     return this.getByFieldNameAndValue("answer_value", options, answerValue);
   }
 
+  public async getAllByGameId(
+    gameId: number,
+    options: AnswerAdapterOptions = DefaultAnswerAdapterOptions
+  ): Promise<AnswerModel[]> {
+    return this.getAllByFieldNameAndValue("game_id", options, gameId);
+  }
+
   public async getAllByQuestionId(
     questionId: number
   ): Promise<IQuestionAnswer[]> {
