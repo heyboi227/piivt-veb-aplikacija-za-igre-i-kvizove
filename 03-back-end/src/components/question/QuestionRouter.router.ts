@@ -47,21 +47,6 @@ class QuestionRouter implements IRouter {
       AuthMiddleware.getVerifier("activeUser", "administrator"),
       questionController.delete.bind(questionController)
     );
-    application.post(
-      "/api/question/:qid/answer",
-      AuthMiddleware.getVerifier("activeUser", "administrator"),
-      questionController.addQuestionAnswer.bind(questionController)
-    );
-    application.put(
-      "/api/question/:qid/answer/:aid",
-      AuthMiddleware.getVerifier("activeUser", "administrator"),
-      questionController.editQuestionAnswer.bind(questionController)
-    );
-    application.delete(
-      "/api/question/:qid/answer/:aid",
-      AuthMiddleware.getVerifier("activeUser", "administrator"),
-      questionController.deleteQuestionAnswer.bind(questionController)
-    );
   }
 }
 
