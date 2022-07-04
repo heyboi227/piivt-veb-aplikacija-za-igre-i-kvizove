@@ -54,7 +54,7 @@ function AddQuestionFormReducer(oldState: IAddQuestionFormState, action: AddQues
             return {
                 ...oldState,
                 // This changes:
-                answers: [...oldState.answers.map(answer => { return { ...answer } }), { answerId: action.value, isCorrect: false }],
+                answers: [...oldState.answers.map(answer => { return { ...answer } }), { answerId: action.value, isCorrect: true }],
             }
         }
 
@@ -109,7 +109,7 @@ export default function AdminQuestionAdd() {
     });
 
     const loadAnswers = () => {
-        api("get", "/api/answer", "administrator")
+        api("get", "/api/answer/game/" + formState.gameId, "administrator")
             .then(res => {
                 if (res.status !== "ok") {
                     throw new Error("Could not load answer information!");
@@ -153,7 +153,7 @@ export default function AdminQuestionAdd() {
 
     useEffect(() => {
         loadAnswers()
-    }, []);
+    }, [formState.gameId, loadAnswers]);
 
     return (
         <div>
@@ -206,11 +206,10 @@ export default function AdminQuestionAdd() {
                                                 <>
                                                     <div className="col col-2">
                                                         <div className="input-group input-group-sm">
-                                                            <input type="text"
-                                                                value="no"
-                                                                className="form-control form-control-sm"
-                                                                onChange={e => dispatchFormStateAction({ type: "addQuestionForm/setAnswerIsCorrect", value: { answerId: answer.answerId, isCorrect: e.target.value === "yes" ? true : false } })}
-                                                            />
+                                                            <select onChange={e => dispatchFormStateAction({ type: "addQuestionForm/setAnswerIsCorrect", value: { answerId: answer.answerId, isCorrect: e.target.value === "yes" ? true : false } })}>
+                                                                <option value={"yes"} selected>Yes</option>
+                                                                <option value={"no"}>No</option>
+                                                            </select>
                                                         </div>
                                                     </div>
                                                 </>
