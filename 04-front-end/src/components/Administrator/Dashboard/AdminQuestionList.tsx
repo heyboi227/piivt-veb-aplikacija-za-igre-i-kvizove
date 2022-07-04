@@ -1,3 +1,5 @@
+import { faPlusSquare } from "@fortawesome/free-regular-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../../../api/api";
@@ -11,7 +13,6 @@ interface IAdminQuestionListRowProperties {
 export default function AdminQuestionList() {
     const [questions, setQuestions] = useState<IQuestion[]>([]);
     const [errorMessage, setErrorMessage] = useState<string>("");
-    const [showAddNewQuestion, setShowAddNewQuestion] = useState<boolean>(false);
 
     function AdminQuestionListRow(props: IAdminQuestionListRowProperties) {
         const [gameId, setGameId] = useState<number>(props.question.gameId);
@@ -101,72 +102,6 @@ export default function AdminQuestionList() {
         );
     }
 
-    function AdminQuestionAddRow() {
-        const [gameId, setGameId] = useState<number>(1);
-        const [title, setTitle] = useState<string>("");
-
-        const gameIdChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
-            setGameId(+e.target.value);
-        }
-
-        const titleChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
-            setTitle(e.target.value);
-        }
-
-        const doAddQuestion = (e: any) => {
-            api("post", "/api/question/", "administrator", { gameId, title })
-                .then(res => {
-                    if (res.status === 'error') {
-                        return setErrorMessage("Could not add this question!");
-                    }
-
-                    loadQuestions();
-
-                    setGameId(1);
-                    setTitle("");
-                    setShowAddNewQuestion(false);
-                });
-        }
-
-        return (
-            <tr>
-                <td> </td>
-                <td>
-                    <div className="input-group">
-                        <input className="form-control form-control-sm"
-                            type="number"
-                            min={1}
-                            max={4}
-                            onChange={e => gameIdChanged(e)}
-                            value={gameId} />
-                    </div>
-                </td>
-                <td>
-                    <div className="input-group">
-                        <input className="form-control form-control-sm"
-                            type="text"
-                            onChange={e => titleChanged(e)}
-                            value={title} />
-                        {title.trim().length >= 2 && title.trim().length <= 128 && gameId >= 1 && gameId <= 4
-                            ? <button className="btn btn-primary btn-sm" onClick={e => doAddQuestion(e)}>
-                                Save
-                            </button>
-                            : ''
-                        }
-                    </div>
-                </td>
-                <td>
-                    <button className="btn btn-danger btn-sm" onClick={() => {
-                        setShowAddNewQuestion(false);
-                        setTitle("");
-                    }}>
-                        Cancel
-                    </button>
-                </td>
-            </tr>
-        );
-    }
-
     const loadQuestions = () => {
         api("get", "/api/question", "administrator")
             .then(apiResponse => {
@@ -191,7 +126,9 @@ export default function AdminQuestionList() {
             {errorMessage && <p>Error: {errorMessage}</p>}
             {!errorMessage &&
                 <div>
-                    <button className="btn btn-primary btn-sm" onClick={() => setShowAddNewQuestion(true)}>Add new question</button>
+                    <Link className="btn btn-sm btn-primary" to={"/admin/dashboard/question/add"}>
+                        <FontAwesomeIcon icon={faPlusSquare} /> Add new question
+                    </Link>
 
                     <table className="table table-bordered table-striped table-hover table-sm mt-3">
                         <thead>
@@ -203,7 +140,6 @@ export default function AdminQuestionList() {
                             </tr>
                         </thead>
                         <tbody>
-                            {showAddNewQuestion && <AdminQuestionAddRow />}
                             {questions.map(question => <AdminQuestionListRow key={"question-row-" + question.questionId} question={question} />)}
                         </tbody>
                     </table>
