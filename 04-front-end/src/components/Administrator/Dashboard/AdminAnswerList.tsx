@@ -13,8 +13,8 @@ export default function AdminAnswerList() {
     const [showAddNewAnswer, setShowAddNewAnswer] = useState<boolean>(false);
 
     function AdminAnswerListRow(props: IAdminAnswerListRowProperties) {
-        const [gameId, setGameId] = useState<number>(props.answer.gameId);
-        const [answerValue, setAnswerValue] = useState<string>(props.answer.answerValue);
+        const [gameId, setGameId] = useState<number>(props.answer.answer.gameId);
+        const [answerValue, setAnswerValue] = useState<string>(props.answer.answer.answerValue);
 
         const gameIdChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
             setGameId(+e.target.value);
@@ -25,7 +25,7 @@ export default function AdminAnswerList() {
         }
 
         const doEditAnswer = (e: any) => {
-            api("put", "/api/answer/" + props.answer.answerId, "administrator", { gameId, answerValue })
+            api("put", "/api/answer/" + props.answer.answer.answerId, "administrator", { gameId, answerValue })
                 .then(res => {
                     if (res.status === 'error') {
                         return setErrorMessage("Could not edit this answer!");
@@ -36,7 +36,7 @@ export default function AdminAnswerList() {
         }
 
         const doDeleteAnswer = (e: any) => {
-            api("delete", "/api/answer/" + props.answer.answerId, "administrator")
+            api("delete", "/api/answer/" + props.answer.answer.answerId, "administrator")
                 .then(res => {
                     if (res.status === "error") {
                         return setErrorMessage("Could not delete this answer!");
@@ -48,7 +48,7 @@ export default function AdminAnswerList() {
 
         return (
             <tr>
-                <td>{props.answer.answerId}</td>
+                <td>{props.answer.answer.answerId}</td>
                 <td>
                     <div className="input-group">
                         <input className="form-control form-control-sm"
@@ -57,7 +57,7 @@ export default function AdminAnswerList() {
                             max={4}
                             onChange={e => gameIdChanged(e)}
                             value={gameId} />
-                        {props.answer.gameId !== gameId
+                        {props.answer.answer.gameId !== gameId
                             ? <button className="btn btn-primary btn-sm" onClick={e => doEditAnswer(e)}>
                                 Save
                             </button>
@@ -71,7 +71,7 @@ export default function AdminAnswerList() {
                             type="text"
                             onChange={e => answerValueChanged(e)}
                             value={answerValue} />
-                        {props.answer.answerValue !== answerValue
+                        {props.answer.answer.answerValue !== answerValue
                             ? <button className="btn btn-primary btn-sm" onClick={e => doEditAnswer(e)}>
                                 Save
                             </button>
@@ -192,7 +192,7 @@ export default function AdminAnswerList() {
                         </thead>
                         <tbody>
                             {showAddNewAnswer && <AdminAnswerListAddRow />}
-                            {answers.map(answer => <AdminAnswerListRow key={"answer-row-" + answer.answerId} answer={answer} />)}
+                            {answers.map(answer => <AdminAnswerListRow key={"answer-row-" + answer.answer.answerId} answer={answer} />)}
                         </tbody>
                     </table>
                 </div>
