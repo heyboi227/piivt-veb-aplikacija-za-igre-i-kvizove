@@ -1,11 +1,8 @@
 import { Request, Response } from "express";
 import BaseController from "../../common/BaseController";
 import { DefaultQuestionAdapterOptions } from "./QuestionService.service";
-import {
-  AddQuestionValidator,
-  IAddQuestionDto,
-  IQuestionAnswerDto,
-} from "./dto/IAddQuestion.dto";
+import { DefaultAnswerAdapterOptions } from "../answer/AnswerService.service";
+import { AddQuestionValidator, IAddQuestionDto } from "./dto/IAddQuestion.dto";
 import {
   EditQuestionValidator,
   IEditQuestionDto,
@@ -81,27 +78,63 @@ export default class QuestionController extends BaseController {
       return res.status(400).send(AddQuestionValidator.errors);
     }
 
-    this.services.question.startTransaction().then(() => {
-      this.services.question
-        .add({
+    this.services.answer
+      .getAll(DefaultAnswerAdapterOptions)
+      .then((answers) => {
+        const availableAnswerIds: number[] = answers.map(
+          (answer) => answer.answerId
+        );
+
+        for (let givenAnswerInformation of data.answers) {
+          if (!availableAnswerIds.includes(givenAnswerInformation.answerId)) {
+            throw {
+              status: 404,
+              message: `Answer with ID ${givenAnswerInformation.answerId} not found!`,
+            };
+          }
+        }
+      })
+      .then(() => {
+        return this.services.question.startTransaction();
+      })
+      .then(() => {
+        return this.services.question.add({
           game_id: data.gameId,
           title: data.title,
-        })
-        .then((result) => {
-          return this.services.question.getById(
-            result.questionId,
-            DefaultQuestionAdapterOptions
-          );
-        })
-        .then(async (result) => {
-          await this.services.question.commitChanges();
-          res.send(result);
-        })
-        .catch(async (error) => {
-          await this.services.question.rollbackChanges();
-          res.status(400).send(error?.message);
         });
-    });
+      })
+      .then((newQuestion) => {
+        for (let givenAnswerInformation of data.answers) {
+          this.services.question
+            .addQuestionAnswer({
+              question_id: newQuestion.questionId,
+              answer_id: givenAnswerInformation.answerId,
+              is_correct: givenAnswerInformation.isCorrect,
+            })
+            .catch((error) => {
+              throw {
+                status: 500,
+                message: error?.message,
+              };
+            });
+        }
+
+        return newQuestion;
+      })
+      .then((newQuestion) => {
+        return this.services.question.getById(
+          newQuestion.questionId,
+          DefaultQuestionAdapterOptions
+        );
+      })
+      .then(async (result) => {
+        await this.services.question.commitChanges();
+        res.send(result);
+      })
+      .catch(async (error) => {
+        await this.services.question.rollbackChanges();
+        res.status(error?.status ?? 500).send(error?.message);
+      });
   }
 
   edit(req: Request, res: Response) {
@@ -162,7 +195,7 @@ export default class QuestionController extends BaseController {
           }
 
           this.services.question
-            .deleteQuestionAnswerByQuestion(questionId)
+            .deleteAllQuestionAnswersByQuestionId(questionId)
             .then(() => {
               this.services.question.deleteById(questionId);
             })
@@ -182,68 +215,6 @@ export default class QuestionController extends BaseController {
           setTimeout(() => {
             res.status(error?.status ?? 500).send(error?.message);
           }, 500);
-        });
-    });
-  }
-
-  addQuestionAnswer(req: Request, res: Response) {
-    const questionId: number = +req.params?.qid;
-    const data = req.body as IQuestionAnswerDto;
-
-    this.services.question.startTransaction().then(() => {
-      this.services.question
-        .addQuestionAnswer({
-          question_id: questionId,
-          answer_id: data.answerId,
-        })
-        .then(async (result) => {
-          await this.services.question.commitChanges();
-          res.send(result);
-        })
-        .catch(async (error) => {
-          await this.services.question.rollbackChanges();
-          res.status(400).send(error?.message);
-        });
-    });
-  }
-
-  editQuestionAnswer(req: Request, res: Response) {
-    const questionId: number = +req.params?.qid;
-    const answerId: number = +req.params?.aid;
-    const data = req.body as IQuestionAnswerDto;
-
-    this.services.question.startTransaction().then(() => {
-      this.services.question
-        .editQuestionAnswer({
-          question_id: questionId,
-          answer_id: answerId,
-          is_correct: data.isCorrect,
-        })
-        .then(async (result) => {
-          await this.services.question.commitChanges();
-          res.send(result);
-        })
-        .catch(async (error) => {
-          await this.services.question.rollbackChanges();
-          res.status(400).send(error?.message);
-        });
-    });
-  }
-
-  deleteQuestionAnswer(req: Request, res: Response) {
-    const questionId: number = +req.params?.qid;
-    const answerId: number = +req.params?.aid;
-
-    this.services.question.startTransaction().then(() => {
-      this.services.question
-        .deleteQuestionAnswer(questionId, answerId)
-        .then(async (result) => {
-          await this.services.question.commitChanges();
-          res.send(result);
-        })
-        .catch(async (error) => {
-          await this.services.question.rollbackChanges();
-          res.status(400).send(error?.message);
         });
     });
   }

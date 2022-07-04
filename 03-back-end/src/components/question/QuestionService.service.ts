@@ -104,41 +104,22 @@ export default class QuestionService extends BaseService<
     });
   }
 
-  public async deleteQuestionAnswer(
-    questionId: number,
-    answerId: number
-  ): Promise<number> {
-    return new Promise((resolve, reject) => {
-      const sql: string =
-        "DELETE FROM `question_answer` WHERE `question_id` = ? AND `answer_id`= ?;";
-
-      this.db
-        .execute(sql, [questionId, answerId])
-        .then(async (result) => {
-          const info: any = result;
-          resolve(+info[0]?.affectedRows);
-        })
-        .catch((error) => {
-          reject(error);
-        });
-    });
-  }
-
-  public async deleteQuestionAnswerByQuestion(
+  public async deleteAllQuestionAnswersByQuestionId(
     questionId: number
-  ): Promise<number> {
+  ): Promise<true> {
     return new Promise((resolve, reject) => {
       const sql: string =
         "DELETE FROM `question_answer` WHERE `question_id` = ?;";
 
       this.db
         .execute(sql, [questionId])
-        .then(async (result) => {
-          const info: any = result;
-          resolve(+info[0]?.affectedRows);
+        .then(() => {
+          resolve(true);
         })
         .catch((error) => {
-          reject(error);
+          throw {
+            message: error?.message ?? "Could not delete question answers!",
+          };
         });
     });
   }
