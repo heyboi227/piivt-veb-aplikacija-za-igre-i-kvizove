@@ -4,10 +4,10 @@ import { Link, useParams } from "react-router-dom";
 import { api } from "../../../api/api";
 import './AdminQuestionAnswerList.sass';
 import IQuestion from '../../../models/IQuestion.model';
-import IQuestionAnswer from "../../../models/IQuestionAnswer.model";
+import IAnswer from "../../../models/IAnswer.model";
 
 interface IAdminQuestionAnswerListRowProperties {
-    questionAnswer: IQuestionAnswer,
+    questionAnswer: IAnswer,
 }
 
 export interface IAdminQuestionAnswerListUrlParams extends Record<string, string | undefined> {
