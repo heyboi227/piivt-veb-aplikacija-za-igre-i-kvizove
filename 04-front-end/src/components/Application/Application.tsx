@@ -13,6 +13,7 @@ import AdminAdministratorList from '../Administrator/Dashboard/AdminAdministrato
 import AdminAdministratorAdd from '../Administrator/Dashboard/AdminAdministratorAdd';
 import AdminAnswerList from '../Administrator/Dashboard/AdminAnswerList';
 import AdminQuestionAnswerList from '../Administrator/Dashboard/AdminQuestionAnswerList';
+import AdminQuestionAdd from '../Administrator/Dashboard/AdminQuestionAdd';
 
 function Application() {
   return (
@@ -31,6 +32,7 @@ function Application() {
 
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/dashboard/question/list" element={<AdminQuestionList />} />
+        <Route path="/admin/dashboard/question/add" element={<AdminQuestionAdd />} />
         <Route path="/admin/dashboard/question/:qid/answers/list" element={<AdminQuestionAnswerList />} />
         {/* TODO <Route path="/admin/dashboard/question/:qid/answers/add" element={<AdminQuestionAnswerAdd />} />
         TODO <Route path="/admin/dashboard/question/:qid/answers/edit/:aid" element={<AdminQuestionAnswerEdit />} /> */}
