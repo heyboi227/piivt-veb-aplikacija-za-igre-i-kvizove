@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `administrator` (
   `is_active` tinyint(1) unsigned NOT NULL DEFAULT 1,
   PRIMARY KEY (`administrator_id`),
   UNIQUE KEY `uq_administrator_username` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Data exporting was unselected.
 
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `answer` (
   UNIQUE KEY `uq_answer_answer_value` (`answer_value`),
   KEY `fk_answer_game_id` (`game_id`),
   CONSTRAINT `fk_answer_game_id` FOREIGN KEY (`game_id`) REFERENCES `game` (`game_id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=391 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=394 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Data exporting was unselected.
 
@@ -66,12 +66,12 @@ CREATE TABLE IF NOT EXISTS `question` (
   `game_id` int(10) unsigned NOT NULL,
   `title` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
   PRIMARY KEY (`question_id`),
   UNIQUE KEY `uq_question_title` (`title`),
   KEY `fk_question_game_id` (`game_id`),
   CONSTRAINT `fk_question_game_id` FOREIGN KEY (`game_id`) REFERENCES `game` (`game_id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Data exporting was unselected.
 
@@ -88,7 +88,7 @@ CREATE TABLE IF NOT EXISTS `question_answer` (
   KEY `fk_question_answer_answer_id` (`answer_id`) USING BTREE,
   CONSTRAINT `fk_question_answer_answer_id` FOREIGN KEY (`answer_id`) REFERENCES `answer` (`answer_id`) ON UPDATE CASCADE,
   CONSTRAINT `fk_question_answer_question_id` FOREIGN KEY (`question_id`) REFERENCES `question` (`question_id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Data exporting was unselected.
 
