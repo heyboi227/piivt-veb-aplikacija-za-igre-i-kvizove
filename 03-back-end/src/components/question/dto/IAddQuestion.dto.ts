@@ -28,7 +28,7 @@ const AddQuestionSchema = {
   properties: {
     gameId: {
       type: "number",
-      minimum: 3,
+      minimum: 1,
       maximum: 4,
     },
     title: {
