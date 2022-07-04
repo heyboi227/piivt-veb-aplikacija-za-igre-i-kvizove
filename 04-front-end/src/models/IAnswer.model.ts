@@ -1,5 +1,9 @@
 export default interface IAnswer {
-    answerId: number;
-    gameId: number;
-    answerValue: string;
+  answer: IAnswerModel;
+  isCorrect: boolean;
+}
+export interface IAnswerModel {
+  answerId: number;
+  gameId: number;
+  answerValue: string;
 }

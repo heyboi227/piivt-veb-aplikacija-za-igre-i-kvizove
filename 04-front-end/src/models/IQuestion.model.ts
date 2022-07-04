@@ -1,5 +1,5 @@
+import IAnswer from "./IAnswer.model";
 import IGame from "./IGame.model";
-import IQuestionAnswer from "./IQuestionAnswer.model";
 
 export default interface IQuestion {
   questionId: number;
@@ -8,5 +8,5 @@ export default interface IQuestion {
   createdAt: string;
   updatedAt: string | null;
   game: IGame;
-  answers: IQuestionAnswer[];
+  answers: IAnswer[];
 }
