@@ -73,10 +73,10 @@ export default class QuestionService extends BaseService<
   public async addQuestionAnswer(data: IQuestionAnswer): Promise<number> {
     return new Promise((resolve, reject) => {
       const sql: string =
-        "INSERT `question_answer` SET `question_id` = ?, `answer_id` = ?;";
+        "INSERT `question_answer` SET `question_id` = ?, `answer_id` = ?, `is_correct` = ?;";
 
       this.db
-        .execute(sql, [data.question_id, data.answer_id])
+        .execute(sql, [data.question_id, data.answer_id, data.is_correct])
         .then(async (result) => {
           const info: any = result;
           resolve(+info[0]?.insertId);

@@ -20,7 +20,7 @@ export interface IAddQuestionDto {
 export interface IQuestionAnswer extends IServiceData {
   question_id: number;
   answer_id: number;
-  is_correct?: boolean;
+  is_correct: boolean;
 }
 
 const AddQuestionSchema = {
