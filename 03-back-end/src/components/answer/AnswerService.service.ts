@@ -107,4 +107,66 @@ export default class AnswerService extends BaseService<
   public async deleteById(id: number): Promise<true> {
     return this.baseDeleteById(id);
   }
+
+  public async hideQuestionAnswer(
+    questionId: number,
+    answerId: number
+  ): Promise<true> {
+    return new Promise((resolve) => {
+      const sql =
+        "UPDATE `question_answer` SET `is_active` = 0 WHERE `question_id` = ? AND `answer_id` = ?;";
+
+      this.db
+        .execute(sql, [questionId, answerId])
+        .then((result) => {
+          const info: any = result;
+
+          if (+info[0]?.affectedRows === 1) {
+            return resolve(true);
+          }
+
+          throw {
+            status: 500,
+            message: "Could not hide this question answer record!",
+          };
+        })
+        .catch((error) => {
+          throw {
+            status: 500,
+            message: error?.message,
+          };
+        });
+    });
+  }
+
+  public async showQuestionAnswer(
+    questionId: number,
+    answerId: number
+  ): Promise<true> {
+    return new Promise((resolve) => {
+      const sql =
+        "UPDATE `question_answer` SET `is_active` = 1 WHERE `question_id` = ? AND `answer_id` = ?;";
+
+      this.db
+        .execute(sql, [questionId, answerId])
+        .then((result) => {
+          const info: any = result;
+
+          if (+info[0]?.affectedRows === 1) {
+            return resolve(true);
+          }
+
+          throw {
+            status: 500,
+            message: "Could not show this question answer record!",
+          };
+        })
+        .catch((error) => {
+          throw {
+            status: 500,
+            message: error?.message,
+          };
+        });
+    });
+  }
 }
