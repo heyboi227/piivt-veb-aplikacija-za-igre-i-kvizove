@@ -1,8 +1,8 @@
 import { faCheckSquare, faSquare } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useReducer, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { api, apiForm } from "../../../api/api";
+import { useNavigate } from "react-router-dom";
+import { api } from "../../../api/api";
 import { IAnswerModel } from "../../../models/IAnswer.model";
 
 interface IAddQuestionFormState {
@@ -108,23 +108,6 @@ export default function AdminQuestionAdd() {
         answers: [],
     });
 
-    const loadAnswers = () => {
-        api("get", "/api/answer/game/" + formState.gameId, "administrator")
-            .then(res => {
-                if (res.status !== "ok") {
-                    throw new Error("Could not load answer information!");
-                }
-
-                return res.data;
-            })
-            .then(answers => {
-                setAnswers(answers);
-            })
-            .catch(error => {
-                setErrorMessage(error?.message ?? "Unknown error!");
-            });
-    };
-
     const doAddQuestion = () => {
         api("post", "/api/question", "administrator", formState)
             .then(res => {
@@ -152,8 +135,21 @@ export default function AdminQuestionAdd() {
     };
 
     useEffect(() => {
-        loadAnswers()
-    }, [formState.gameId, loadAnswers]);
+        api("get", "/api/answer/game/" + formState.gameId, "administrator")
+            .then(res => {
+                if (res.status !== "ok") {
+                    throw new Error("Could not load answer information!");
+                }
+
+                return res.data;
+            })
+            .then(answers => {
+                setAnswers(answers);
+            })
+            .catch(error => {
+                setErrorMessage(error?.message ?? "Unknown error!");
+            });
+    }, [formState.gameId]);
 
     return (
         <div>
@@ -206,9 +202,10 @@ export default function AdminQuestionAdd() {
                                                 <>
                                                     <div className="col col-2">
                                                         <div className="input-group input-group-sm">
-                                                            <select onChange={e => dispatchFormStateAction({ type: "addQuestionForm/setAnswerIsCorrect", value: { answerId: answer.answerId, isCorrect: e.target.value === "yes" ? true : false } })}>
-                                                                <option value={"yes"} selected>Yes</option>
-                                                                <option value={"no"}>No</option>
+                                                            <select onChange={e => dispatchFormStateAction({ type: "addQuestionForm/setAnswerIsCorrect", value: { answerId: answer.answerId, isCorrect: e.target.value === "correct" ? true : false } })} defaultValue={"default"}>
+                                                                <option value={"default"}>Choose if answer is correct:</option>
+                                                                <option value={"correct"}>Correct</option>
+                                                                <option value={"incorrect"}>Incorrect</option>
                                                             </select>
                                                         </div>
                                                     </div>
