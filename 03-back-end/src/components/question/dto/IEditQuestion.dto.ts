@@ -11,6 +11,10 @@ export default interface IEditQuestion extends IServiceData {
 interface IEditQuestionDto {
   gameId: number;
   title: string;
+  answers: {
+    answerId: number;
+    isCorrect: boolean;
+  }[];
 }
 
 const EditQuestionSchema = {
@@ -18,7 +22,7 @@ const EditQuestionSchema = {
   properties: {
     gameId: {
       type: "number",
-      minimum: 3,
+      minimum: 1,
       maximum: 4,
     },
     title: {
@@ -26,8 +30,26 @@ const EditQuestionSchema = {
       minLength: 2,
       maxLength: 128,
     },
+    answers: {
+      type: "array",
+      minItems: 1,
+      uniqueItems: true,
+      items: {
+        type: "object",
+        properties: {
+          answerId: {
+            type: "integer",
+          },
+          isCorrect: {
+            type: "boolean",
+          },
+        },
+        required: ["answerId", "isCorrect"],
+        additionalProperties: false,
+      },
+    },
   },
-  required: ["gameId", "title"],
+  required: ["gameId", "title", "answers"],
   additionalProperties: false,
 };
 
