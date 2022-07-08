@@ -88,8 +88,8 @@ export default function AdminQuestionList() {
 
                     &nbsp;&nbsp;
 
-                    <Link className="btn btn-primary btn-sm" to={"/admin/dashboard/question/" + props.question.questionId + "/answers/add"}>
-                        Add answer
+                    <Link className="btn btn-primary btn-sm" to={"/admin/dashboard/question/" + props.question.questionId + "/edit"}>
+                        Edit
                     </Link>
 
                     &nbsp;&nbsp;
