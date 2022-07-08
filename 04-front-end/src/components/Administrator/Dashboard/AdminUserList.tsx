@@ -31,7 +31,6 @@ export default function AdminUserList() {
         const [editUsernameVisible, setEditUsernameVisible] = useState<boolean>(false);
         const [newPassword, setNewPassword] = useState<string>("");
         const [newUsername, setNewUsername] = useState<string>(props.user.username);
-        const [newEmail, setNewEmail] = useState<string | null>(props.user.email);
 
         const activeSideClass = props.user.isActive ? " btn-primary" : " btn-light";
         const inactiveSideClass = !props.user.isActive ? " btn-primary" : " btn-light";
