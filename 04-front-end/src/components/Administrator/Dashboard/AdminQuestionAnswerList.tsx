@@ -44,34 +44,9 @@ export default function AdminQuestionAnswerList() {
 
     function AdminQuestionAnswerListRow(props: IAdminQuestionAnswerListRowProperties) {
         const [answerValue] = useState<string>(props.questionAnswer.answer.answerValue);
-        const [deleteRequested, setDeleteRequested] = useState<boolean>(false);
 
         const correctSideClass = props.questionAnswer.isCorrect ? " btn-primary" : " btn-light";
         const incorrectSideClass = !props.questionAnswer.isCorrect ? " btn-primary" : " btn-light";
-
-        function doToggleQuestionAnswerCorrectState() {
-            api("put", "/api/question/" + params.qid + "/answer/" + props.questionAnswer.answer.answerId, "administrator", {
-                isCorrect: !props.questionAnswer.isCorrect,
-            })
-                .then(res => {
-                    if (res.status === "error") {
-                        return setErrorMessage(res.data + "");
-                    }
-
-                    loadQuestionData(+(params.qid ?? 0));
-                })
-        }
-
-        const doDeleteQuestionAnswer = (e: any) => {
-            api("delete", "/api/question/" + params.qid + "/answer/" + props.questionAnswer.answer.answerId, "administrator")
-                .then(res => {
-                    if (res.status === "error") {
-                        return setErrorMessage("Could not delete this answer from current question!");
-                    }
-
-                    loadQuestionData(+(params.qid ?? 0));
-                })
-        }
 
         return (
             <tr>
@@ -85,7 +60,7 @@ export default function AdminQuestionAnswerList() {
                     </div>
                 </td>
                 <td>
-                    <div className="btn-group" onClick={() => doToggleQuestionAnswerCorrectState()}>
+                    <div className="btn-group">
                         <div className={"btn btn-sm" + correctSideClass}>
                             Correct
                         </div>
@@ -93,11 +68,6 @@ export default function AdminQuestionAnswerList() {
                             Incorrect
                         </div>
                     </div>
-                </td>
-                <td>
-                    <button className="btn btn-danger btn-sm" onClick={e => doDeleteQuestionAnswer(e)}>
-                        Delete
-                    </button>
                 </td>
             </tr>
         );
@@ -192,7 +162,7 @@ export default function AdminQuestionAnswerList() {
                         <tr>
                             <th>ID</th>
                             <th>Answer value</th>
-                            <th>Options</th>
+                            <th>Is correct</th>
                         </tr>
                     </thead>
                     <tbody>
