@@ -16,12 +16,10 @@
 
 
 -- Dumping database structure for piivt_app
-DROP DATABASE IF EXISTS `piivt_app`;
 CREATE DATABASE IF NOT EXISTS `piivt_app` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci */;
 USE `piivt_app`;
 
 -- Dumping structure for table piivt_app.administrator
-DROP TABLE IF EXISTS `administrator`;
 CREATE TABLE IF NOT EXISTS `administrator` (
   `administrator_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
@@ -35,7 +33,6 @@ CREATE TABLE IF NOT EXISTS `administrator` (
 -- Data exporting was unselected.
 
 -- Dumping structure for table piivt_app.answer
-DROP TABLE IF EXISTS `answer`;
 CREATE TABLE IF NOT EXISTS `answer` (
   `answer_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `game_id` int(10) unsigned NOT NULL,
@@ -49,7 +46,6 @@ CREATE TABLE IF NOT EXISTS `answer` (
 -- Data exporting was unselected.
 
 -- Dumping structure for table piivt_app.game
-DROP TABLE IF EXISTS `game`;
 CREATE TABLE IF NOT EXISTS `game` (
   `game_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -60,7 +56,6 @@ CREATE TABLE IF NOT EXISTS `game` (
 -- Data exporting was unselected.
 
 -- Dumping structure for table piivt_app.question
-DROP TABLE IF EXISTS `question`;
 CREATE TABLE IF NOT EXISTS `question` (
   `question_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `game_id` int(10) unsigned NOT NULL,
@@ -76,12 +71,12 @@ CREATE TABLE IF NOT EXISTS `question` (
 -- Data exporting was unselected.
 
 -- Dumping structure for table piivt_app.question_answer
-DROP TABLE IF EXISTS `question_answer`;
 CREATE TABLE IF NOT EXISTS `question_answer` (
   `question_answer_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `question_id` int(10) unsigned NOT NULL,
   `answer_id` int(10) unsigned NOT NULL,
   `is_correct` tinyint(1) unsigned NOT NULL DEFAULT 0,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (`question_answer_id`) USING BTREE,
   UNIQUE KEY `uq_question_answer_question_id_answer_id` (`answer_id`,`question_id`) USING BTREE,
   KEY `fk_question_answer_question_id` (`question_id`) USING BTREE,
@@ -93,7 +88,6 @@ CREATE TABLE IF NOT EXISTS `question_answer` (
 -- Data exporting was unselected.
 
 -- Dumping structure for table piivt_app.user
-DROP TABLE IF EXISTS `user`;
 CREATE TABLE IF NOT EXISTS `user` (
   `user_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
