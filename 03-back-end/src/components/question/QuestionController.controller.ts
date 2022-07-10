@@ -109,7 +109,8 @@ export default class QuestionController extends BaseController {
             .addQuestionAnswer({
               question_id: newQuestion.questionId,
               answer_id: givenAnswerInformation.answerId,
-              is_correct: givenAnswerInformation.isCorrect,
+              is_correct: +givenAnswerInformation.isCorrect,
+              is_active: 1,
             })
             .catch((error) => {
               throw {
@@ -145,39 +146,107 @@ export default class QuestionController extends BaseController {
       return res.status(400).send(EditQuestionValidator.errors);
     }
 
-    this.services.question.startTransaction().then(() => {
-      this.services.question
-        .getById(questionId, DefaultQuestionAdapterOptions)
-        .then((result) => {
-          if (result === null) {
-            throw {
-              status: 404,
-              message: "The question is not found!",
-            };
-          }
-        })
-        .then(async () => {
-          try {
-            const question = await this.services.question.editById(questionId, {
-              game_id: data.gameId,
-              title: data.title,
-            });
-            await this.services.question.commitChanges();
-            res.send(question);
-          } catch (error) {
-            throw {
-              status: 400,
-              message: error?.message,
-            };
-          }
-        })
-        .catch(async (error) => {
-          await this.services.question.rollbackChanges();
-          setTimeout(() => {
-            res.status(error?.status ?? 500).send(error?.message);
-          }, 500);
+    this.services.question
+      .getById(questionId, DefaultQuestionAdapterOptions)
+      .then((result) => {
+        if (result === null) {
+          throw {
+            status: 404,
+            message: "Question not found!",
+          };
+        }
+
+        return result;
+      })
+      .then(async (result) => {
+        await this.services.question.startTransaction();
+        return result;
+      })
+      .then(async (result) => {
+        const currentAnswerIds = result.answers.map(
+          (answerInfo) => answerInfo.answer.answerId
+        );
+        const currentVisibleAnswerIds = result.answers
+          .filter((answerInfo) => answerInfo.isActive)
+          .map((answerInfo) => answerInfo.answer.answerId);
+        const currentInvisibleAnswerIds = result.answers
+          .filter((answerInfo) => !answerInfo.isActive)
+          .map((answerInfo) => answerInfo.answer.answerId);
+
+        const newAnswerIds = data.answers.map((answer) => answer.answerId);
+
+        const answerIdsToHide = currentVisibleAnswerIds.filter(
+          (id) => !newAnswerIds.includes(id)
+        );
+        const answerIdsToShow = currentInvisibleAnswerIds.filter((id) =>
+          newAnswerIds.includes(id)
+        );
+        const answerIdsToAdd = newAnswerIds.filter(
+          (id) => !currentAnswerIds.includes(id)
+        );
+        const answerIdsUnion = [
+          ...new Set([...newAnswerIds, ...answerIdsToShow]),
+        ];
+        const answerIdsToEdit = answerIdsUnion.filter(
+          (id) => !answerIdsToAdd.includes(id)
+        );
+
+        for (let id of answerIdsToHide) {
+          await this.services.answer.hideQuestionAnswer(result.questionId, id);
+        }
+
+        for (let id of answerIdsToShow) {
+          await this.services.answer.showQuestionAnswer(result.questionId, id);
+        }
+
+        for (let id of answerIdsToAdd) {
+          const answer = data.answers.find((answer) => answer.answerId === id);
+
+          if (!answer) continue;
+
+          await this.services.question.addQuestionAnswer({
+            question_id: result.questionId,
+            answer_id: id,
+            is_correct: +answer.isCorrect,
+            is_active: 1,
+          });
+        }
+
+        for (let id of answerIdsToEdit) {
+          const answer = data.answers.find((answer) => answer.answerId === id);
+
+          if (!answer) continue;
+
+          await this.services.question.editQuestionAnswer({
+            question_id: result.questionId,
+            answer_id: id,
+            is_correct: +answer.isCorrect,
+          });
+        }
+
+        await this.services.question.editById(result.questionId, {
+          game_id: data.gameId,
+          title: data.title,
         });
-    });
+
+        return result;
+      })
+      .then(async (result) => {
+        await this.services.question.commitChanges();
+
+        res.send(
+          await this.services.question.getById(
+            result.questionId,
+            DefaultQuestionAdapterOptions
+          )
+        );
+      })
+      .catch(async (error) => {
+        await this.services.question.rollbackChanges();
+        setTimeout(() => {
+          res.status(error?.status ?? 500).send(error?.message);
+        }, 500);
+      });
   }
 
   delete(req: Request, res: Response) {

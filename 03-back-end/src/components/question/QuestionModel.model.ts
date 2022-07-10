@@ -5,6 +5,7 @@ import GameModel from "../game/GameModel.model";
 export interface IQuestionAnswer {
   answer: AnswerModel;
   isCorrect: boolean;
+  isActive: boolean;
 }
 
 class QuestionModel implements IModel {

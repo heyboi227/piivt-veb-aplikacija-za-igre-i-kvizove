@@ -61,6 +61,7 @@ export default class AnswerService extends BaseService<
         question_id: number;
         answer_id: number;
         is_correct: number;
+        is_active: number;
       }>("question_answer", "question_id", questionId)
         .then(async (result) => {
           if (result.length === 0) {
@@ -81,6 +82,7 @@ export default class AnswerService extends BaseService<
                   answerValue: answer.answerValue,
                 },
                 isCorrect: row.is_correct === 1,
+                isActive: row.is_active === 1,
               };
             })
           );

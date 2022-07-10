@@ -7,11 +7,13 @@ import BaseService from "../../common/BaseService";
 export class QuestionAdapterOptions implements IAdapterOptions {
   loadGame: boolean;
   showAnswers: boolean;
+  hideInactiveAnswers: boolean;
 }
 
 export const DefaultQuestionAdapterOptions: QuestionAdapterOptions = {
   loadGame: true,
   showAnswers: true,
+  hideInactiveAnswers: true,
 };
 
 export default class QuestionService extends BaseService<
@@ -42,6 +44,12 @@ export default class QuestionService extends BaseService<
       question.answers = await this.services.answer.getAllByQuestionId(
         question.questionId
       );
+
+      if (options.hideInactiveAnswers) {
+        question.answers = question.answers.filter(
+          (answerInfo) => answerInfo.isActive
+        );
+      }
     }
 
     return question;

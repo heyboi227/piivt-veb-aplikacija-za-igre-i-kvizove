@@ -14,14 +14,15 @@ export interface IAddQuestionDto {
   answers: {
     answerId: number;
     isCorrect: boolean;
+    isActive: boolean;
   }[];
 }
 
 export interface IQuestionAnswer extends IServiceData {
   question_id: number;
   answer_id: number;
-  is_correct: boolean;
-  is_active?: boolean;
+  is_correct: number;
+  is_active?: number;
 }
 
 const AddQuestionSchema = {

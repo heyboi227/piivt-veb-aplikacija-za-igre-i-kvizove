@@ -14,6 +14,7 @@ interface IEditQuestionDto {
   answers: {
     answerId: number;
     isCorrect: boolean;
+    isActive: boolean;
   }[];
 }
 
