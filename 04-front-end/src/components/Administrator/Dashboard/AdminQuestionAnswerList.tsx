@@ -19,7 +19,6 @@ export default function AdminQuestionAnswerList() {
 
     const [question, setQuestion] = useState<IQuestion>();
     const [errorMessage, setErrorMessage] = useState<string>("");
-    const [showAddNewQuestionAnswer, setShowAddNewQuestionAnswer] = useState<boolean>(false);
 
     useEffect(() => {
         loadQuestionData(+(params.qid ?? 0));
@@ -37,8 +36,6 @@ export default function AdminQuestionAnswerList() {
                 }
 
                 setQuestion(res.data);
-
-                setShowAddNewQuestionAnswer(false);
             })
     }
 
@@ -73,80 +70,6 @@ export default function AdminQuestionAnswerList() {
         );
     }
 
-    function AdminQuestionAnswerAddRow() {
-        const [answerValue, setAnswerValue] = useState<string>("");
-
-        const answerValueChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
-            setAnswerValue(e.target.value);
-        }
-
-        const doAddQuestionAnswer = (e: any) => {
-            console.log(answerValue);
-
-            api("get", "/api/answer/answer-value/" + answerValue, "administrator")
-                .then(res => {
-                    if (res.status === 'error') {
-                        throw {
-                            message: "The answer does not exist! Reason: " + res.data
-                        }
-                    }
-
-                    return res.data.answerId as number;
-                })
-                .then(answerId => {
-                    console.log(answerId);
-                    api("post", "/api/question/" + params.qid + "/answer", "administrator", { answerId })
-                        .then(res => {
-                            if (res.status === 'error') {
-                                throw {
-                                    message: "Could not add this answer for current question! Reason: " + res.data
-                                }
-                            }
-
-                            loadQuestionData(+(params.qid ?? 0));
-
-                            setAnswerValue("");
-                            setShowAddNewQuestionAnswer(false);
-                        })
-                        .catch(error => {
-                            setErrorMessage(error?.message ?? "Could not add this answer for current question!");
-
-                            setTimeout(() => {
-                                setErrorMessage("");
-                            }, 3500);
-                        });
-                });
-        }
-
-        return (
-            <tr>
-                <td> </td>
-                <td>
-                    <div className="input-group">
-                        <input className="form-control form-control-sm"
-                            type="text"
-                            onChange={e => answerValueChanged(e)}
-                            value={answerValue} />
-                    </div>
-                </td>
-                <td>
-                    {answerValue.trim().length >= 2 && answerValue.trim().length <= 128
-                        ? <button className="btn btn-primary btn-sm" onClick={e => doAddQuestionAnswer(e)}>
-                            Save
-                        </button>
-                        : ''
-                    }
-                    <button className="btn btn-danger btn-sm" onClick={() => {
-                        setShowAddNewQuestionAnswer(false);
-                        setAnswerValue("");
-                    }}>
-                        Cancel
-                    </button>
-                </td>
-            </tr>
-        );
-    }
-
     function renderAnswerTable(question: IQuestion) {
         return (
             <div>
@@ -154,7 +77,6 @@ export default function AdminQuestionAnswerList() {
                     <Link className="btn btn-secondary btn-sm" to="/admin/dashboard/question/list">
                         &laquo; Back to question &quot;{question.title}&quot;
                     </Link>
-                    <button className="btn btn-primary btn-sm" onClick={() => { setShowAddNewQuestionAnswer(true) }}>Add new answer</button>
                 </div>
 
                 <table className="table table-sm table-hover">
@@ -166,8 +88,6 @@ export default function AdminQuestionAnswerList() {
                         </tr>
                     </thead>
                     <tbody>
-                        {showAddNewQuestionAnswer && <AdminQuestionAnswerAddRow />}
-
                         {question.answers?.map(answer => <AdminQuestionAnswerListRow key={"answer-" + answer.answer.answerId} questionAnswer={answer} />)}
                     </tbody>
                 </table>
