@@ -5,18 +5,24 @@ import { api } from '../../../api/api';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDeleteLeft } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
+import ShowFirstGameSummaryAction from "../../../helpers/ShowFirstGameSummaryAction";
 
 export default function QuizPage() {
     const [game, setGame] = useState<IGame>();
-    const [gameId, setGameId] = useState<number>(2);
+    const [gameId, setGameId] = useState<number>(1);
+
     const [questionIndex, setQuestionIndex] = useState<number>(0);
     const [questions, setQuestions] = useState<IQuestion[]>();
+
     const [errorMessage, setErrorMessage] = useState<string>("");
     const [isClicked, setIsClicked] = useState<boolean>(false);
+
     const [shuffledLetters, setShuffledLetters] = useState<string[]>([]);
     const [givenWord, setGivenWord] = useState<string>("");
     const [doesGivenWordExist, setDoesGivenWordExist] = useState<boolean>(false);
     const [doesWordExistMessage, setDoesWordExistMessage] = useState<string>("");
+    const [showFirstGameSummaryDialog, setShowFirstGameSummaryDialog] = useState<boolean>(false);
+
     const [givenCountryName, setGivenCountryName] = useState<string>("");
 
 
@@ -86,8 +92,10 @@ export default function QuizPage() {
     }, [gameId]);
 
     useEffect(() => {
-        setShuffledLetters(shuffleWordLetters(questions ? questions[0].answers[0].answer.answerValue.split("") : []));
-    }, [questions])
+        if (gameId === 1) {
+            setShuffledLetters(shuffleWordLetters(questions ? questions[0].answers[0].answer.answerValue.split("") : []));
+        }
+    }, [gameId, questions])
 
     function renderGameInfo(game: IGame) {
         return (
@@ -134,7 +142,7 @@ export default function QuizPage() {
                             <>
                                 {shuffledLetters.map((letter, index) => {
                                     return (<div className="col-3 col-lg-2 col-md-3 col-xl-1" key={"answer-letter-" + letter + "-" + index} onClick={() => setGivenWord(givenWord + letter)}>
-                                        <div className="card">
+                                        <div className="card" onMouseEnter={(e) => e.currentTarget.classList.add("bg-primary")} onMouseLeave={(e) => e.currentTarget.classList.remove("bg-primary")}>
                                             <div className="card-body">
                                                 <div className="card-title m-auto d-flex justify-content-center align-items-center">
                                                     <h1>{letter.toUpperCase()}</h1>
@@ -149,7 +157,7 @@ export default function QuizPage() {
                                             type="text"
                                             value={givenWord}
                                             placeholder="Enter your word here"
-                                            onChange={(e) => setGivenWord(e.target.value)} />
+                                            onChange={(e) => { setGivenWord(e.target.value); checkIfWordExists(givenWord) }} />
                                     </div>
                                     {givenWord.length > 0 && <button className="btn btn-sm btn-danger mt-3 me-2" onClick={() => setGivenWord(givenWord.slice(0, givenWord.length - 1))}><FontAwesomeIcon icon={faDeleteLeft}></FontAwesomeIcon></button>}
                                     {givenWord.length > 0 && <button className="btn btn-sm btn-danger mt-3" style={{ fontSize: ".80rem", width: "70px" }} onClick={() => setGivenWord("")}>Clear all</button>}
@@ -157,7 +165,20 @@ export default function QuizPage() {
                                 <div>
                                     {givenWord.length > 0 && <>
                                         <button className="btn btn-sm btn-success" onClick={() => checkIfWordExists(givenWord)}>Check availability</button>
-                                        <button className="btn btn-sm btn-primary">Submit</button>
+                                        <button className="btn btn-sm btn-primary" onClick={() => setShowFirstGameSummaryDialog(true)}>Submit</button>
+
+                                        {showFirstGameSummaryDialog && <ShowFirstGameSummaryAction
+                                            title="Find the longest word summary"
+                                            onSubmit={() => { setShowFirstGameSummaryDialog(false); setGivenWord(""); setShuffledLetters([]); setGameId(gameId + 1) }}
+                                            givenWord={givenWord}
+                                            targetWord={question.answers[0].answer.answerValue}
+                                            pointsMessage={() => {
+                                                if (doesGivenWordExist || givenWord === question.answers[0].answer.answerValue) {
+                                                    return "You have won " + givenWord.length + " points!";
+                                                } else {
+                                                    return "Unfortunately, you have won no points as the word does not exist.";
+                                                }
+                                            }} />}
                                     </>}
                                     {givenWord.length === 0 && <button className="btn btn-sm btn-primary" disabled={true}>Submit</button>}
                                 </div>
@@ -171,7 +192,48 @@ export default function QuizPage() {
                 </div >
             );
         }
-        if (gameId === 3 || gameId === 4) {
+        if (gameId === 2) {
+            return (<div className="d-flex flex-column justify-content-center align-items-center">
+                <>
+                    <h1>{question.title}</h1>
+                    <div className="row">
+                        <>{question.answers.map((answer) => {
+                            return (<div className="col-6 col-lg-2 col-md-3 col-xl-2 p-3 d-flex flex-column justify-content-center align-items-center" style={{ marginLeft: "50%", transform: "translateX(-50%)" }} key={"answer-" + answer.answer.answerId}>
+                                <div className="card">
+                                    <div className="card-body">
+                                        <div className="card-title m-auto">
+                                            <img
+                                                src={"https://flagcdn.com/h120/" + answer.answer.answerValue.substring(0, 2) + ".png"}
+                                                srcSet={"https://flagcdn.com/h240/" + answer.answer.answerValue.substring(0, 2) + ".png 2x"}
+                                                height="120"
+                                                alt={answer.answer.answerValue} />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>);
+                        })}
+                        </>
+                    </div>
+                    <div className="input-group w-25">
+                        <input className="form-control form-control-sm"
+                            type="text"
+                            value={givenCountryName}
+                            placeholder="Guess the flag"
+                            onChange={(e) => setGivenCountryName(e.target.value)} />
+                    </div>
+                    <div>
+                        <button className="btn btn-sm btn-primary mt-3" onClick={() => {
+                            if (question.answers[0].answer.answerValue.includes(givenCountryName)) {
+                                alert("Correct!");
+                            } else {
+                                alert("Incorrect!")
+                            }
+                        }}>Submit</button>
+                    </div>
+                </>
+            </div >);
+        }
+        if (gameId === 3) {
             return (
                 <div>
                     <>
@@ -202,29 +264,29 @@ export default function QuizPage() {
             );
         }
         else {
-            return (<div>
-                <>
-                    <h1>{question.title}</h1>
-                    <div className="row">
-                        <><div className="col-6 col-lg-2 col-md-3 col-xl-2 p-3" key={"answer-" + question.answers[0].answer.answerId}>
-                            <div className="card-body">
-                                <div className="card-title m-auto">
-                                    <img
-                                        src={"https://flagcdn.com/h120/" + question.answers[0].answer.answerValue.substring(0, 2) + ".png"}
-                                        srcSet={"https://flagcdn.com/h240/" + question.answers[0].answer.answerValue.substring(0, 2) + ".png 2x"}
-                                        height="120"
-                                        alt={question.answers[0].answer.answerValue} />
-                                </div>
-                            </div>
+            return (
+                <div>
+                    <>
+                        <h1>{question.title}</h1>
+                        <div className="row">
+                            <>
+                                {question.answers.map((answer) => {
+                                    return (<div className="col-6 col-lg-2 col-md-3 col-xl-2 p-3" key={"answer-" + answer.answer.answerId}>
+                                        <div className={!isClicked ? "card" : "card" + (answer.isCorrect ? " border-3 border-success" : " border-3 border-danger")} onClick={handleClick}>
+                                            <div className="card-body">
+                                                <div className="card-title m-auto">
+                                                    <h1>{answer.answer.answerValue}</h1>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>);
+                                })}
+                                {isClicked && <button className="btn btn-success btn-sm" onClick={() => { (questionIndex < (questions?.length ?? 0)) ? setQuestionIndex(questionIndex + 1) : setQuestionIndex(0) }}>Next question</button>}
+                            </>
                         </div>
-                            <div className="input-group">
-                                <input className="form-control form-control-sm"
-                                    type="text" />
-                            </div>
-                        </>
-                    </div>
-                </>
-            </div >);
+                    </>
+                </div>
+            );
         }
     }
 
