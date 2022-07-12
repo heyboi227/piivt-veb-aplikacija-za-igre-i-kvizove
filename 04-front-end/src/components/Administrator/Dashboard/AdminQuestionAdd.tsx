@@ -176,12 +176,13 @@ export default function AdminQuestionAdd() {
                             <div className="input-group">
                                 <input type="text" className="form-control form-control-sm"
                                     value={formState.title}
+                                    placeholder="Enter the question title"
                                     onChange={e => dispatchFormStateAction({ type: "addQuestionForm/setTitle", value: e.target.value })}
                                 />
                             </div>
                         </div>
 
-                        <div className="form-froup mb-3">
+                        <div className="form-group mb-3">
                             <label>Answers</label>
 
                             {answers?.map(answer => {
@@ -217,7 +218,7 @@ export default function AdminQuestionAdd() {
                             })}
                         </div>
 
-                        <div className="form-froup mb-3">
+                        <div className="form-group mb-3">
                             <button className="btn btn-primary" onClick={() => doAddQuestion()}>
                                 Add question
                             </button>
