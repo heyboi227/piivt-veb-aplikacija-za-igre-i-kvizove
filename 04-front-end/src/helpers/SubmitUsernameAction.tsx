@@ -1,7 +1,6 @@
-import { useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 
-export interface ISubmitActionProperties {
+export interface ISubmitUsernameActionProperties {
     title: string;
     message: string;
     username: string;
@@ -10,7 +9,7 @@ export interface ISubmitActionProperties {
     onCancel: () => void;
 }
 
-export default function SubmitAction(props: ISubmitActionProperties) {
+export default function SubmitUsernameAction(props: ISubmitUsernameActionProperties) {
 
     return (
         <Modal size="lg" aria-labelledby="contained-modal-title-vcenter" centered show={true}>

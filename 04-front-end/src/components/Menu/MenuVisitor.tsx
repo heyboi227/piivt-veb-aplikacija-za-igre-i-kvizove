@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import SubmitAction from "../../helpers/SubmitAction";
+import SubmitUsernameAction from "../../helpers/SubmitUsernameAction";
 import AppStore from "../../stores/AppStore";
 import { api } from '../../api/api';
 
@@ -68,7 +68,7 @@ export default function MenuVisitor() {
                 <div className="navbar-nav">
                     <Link className="nav-item nav-link" to="#" onClick={() => setShowUsernameSubmitDialog(true)}>Play!</Link>
 
-                    {showUsernameSubmitDialog && <SubmitAction
+                    {showUsernameSubmitDialog && <SubmitUsernameAction
                         title="Enter your username"
                         message="Please enter your username in order to start playing."
                         username={username}
