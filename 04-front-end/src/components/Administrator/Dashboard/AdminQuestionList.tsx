@@ -15,27 +15,8 @@ export default function AdminQuestionList() {
     const [errorMessage, setErrorMessage] = useState<string>("");
 
     function AdminQuestionListRow(props: IAdminQuestionListRowProperties) {
-        const [gameId, setGameId] = useState<number>(props.question.gameId);
-        const [title, setTitle] = useState<string>(props.question.title);
-
-        const gameIdChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
-            setGameId(+e.target.value);
-        }
-
-        const titleChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
-            setTitle(e.target.value);
-        }
-
-        const doEditQuestion = (e: any) => {
-            api("put", "/api/question/" + props.question.questionId, "administrator", { gameId, title })
-                .then(res => {
-                    if (res.status === 'error') {
-                        return setErrorMessage("Could not edit this question!");
-                    }
-
-                    loadQuestions();
-                })
-        }
+        const [gameId] = useState<number>(props.question.gameId);
+        const [title] = useState<string>(props.question.title);
 
         const doDeleteQuestion = (e: any) => {
             api("delete", "/api/question/" + props.question.questionId, "administrator")
@@ -52,34 +33,10 @@ export default function AdminQuestionList() {
             <tr>
                 <td>{props.question.questionId}</td>
                 <td>
-                    <div className="input-group">
-                        <input className="form-control form-control-sm"
-                            type="number"
-                            min={1}
-                            max={4}
-                            onChange={e => gameIdChanged(e)}
-                            value={gameId} />
-                        {props.question.gameId !== gameId
-                            ? <button className="btn btn-primary btn-sm" onClick={e => doEditQuestion(e)}>
-                                Save
-                            </button>
-                            : ''
-                        }
-                    </div>
+                    <p>{gameId}</p>
                 </td>
                 <td>
-                    <div className="input-group">
-                        <input className="form-control form-control-sm"
-                            type="text"
-                            onChange={e => titleChanged(e)}
-                            value={title} />
-                        {props.question.title !== title
-                            ? <button className="btn btn-primary btn-sm" onClick={e => doEditQuestion(e)}>
-                                Save
-                            </button>
-                            : ''
-                        }
-                    </div>
+                    <p>{title}</p>
                 </td>
                 <td>
                     <Link className="btn btn-primary btn-sm" to={"/admin/dashboard/question/" + props.question.questionId + "/answers/list"}>
