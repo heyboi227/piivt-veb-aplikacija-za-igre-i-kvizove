@@ -70,7 +70,7 @@ export default function QuizPage() {
             validateStatus: () => true
         })
             .then(res => {
-                if (res?.status < 200 || res?.status >= 300) {
+                if ((res?.status < 200 || res?.status >= 300) && word === givenWord) {
                     setDoesGivenWordExist(false);
                     setDoesWordExistMessage("The word does not exist!");
                     setTimeout(() => setDoesWordExistMessage(""), 3000);
