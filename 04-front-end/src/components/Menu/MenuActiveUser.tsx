@@ -21,7 +21,7 @@ export default function MenuUser() {
 
             <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div className="navbar-nav">
-                    <Link className="nav-item nav-link" to="/play">
+                    <Link className="nav-item nav-link" to="/quiz">
                         <FontAwesomeIcon icon={faListAlt} /> Play!
                     </Link>
 
