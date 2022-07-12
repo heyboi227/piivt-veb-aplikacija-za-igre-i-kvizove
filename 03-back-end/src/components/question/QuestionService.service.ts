@@ -3,6 +3,7 @@ import QuestionModel from "./QuestionModel.model";
 import IEditQuestion from "./dto/IEditQuestion.dto";
 import IAddQuestion, { IQuestionAnswer } from "./dto/IAddQuestion.dto";
 import BaseService from "../../common/BaseService";
+import * as mysql2 from "mysql2/promise";
 
 export class QuestionAdapterOptions implements IAdapterOptions {
   loadGame: boolean;
@@ -56,11 +57,30 @@ export default class QuestionService extends BaseService<
   }
 
   public async getAllByGameId(gameId: number): Promise<QuestionModel[]> {
-    return this.getAllByFieldNameAndValue(
-      "game_id",
-      DefaultQuestionAdapterOptions,
-      gameId
-    );
+    return new Promise<QuestionModel[]>((resolve, reject) => {
+      const sql: string = `SELECT * FROM \`question\` WHERE \`game_id\` = ${gameId} ORDER BY RAND();`;
+
+      this.db
+        .execute(sql, [gameId])
+        .then(async ([rows]) => {
+          if (rows === undefined) {
+            return resolve([]);
+          }
+
+          const items: QuestionModel[] = [];
+
+          for (const row of rows as mysql2.RowDataPacket[]) {
+            items.push(
+              await this.adaptToModel(row, DefaultQuestionAdapterOptions)
+            );
+          }
+
+          resolve(items);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
   }
 
   public async add(data: IAddQuestion): Promise<QuestionModel> {
