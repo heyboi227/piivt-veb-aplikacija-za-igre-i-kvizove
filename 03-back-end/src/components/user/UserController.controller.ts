@@ -12,7 +12,10 @@ import * as Mailer from "nodemailer/lib/mailer";
 import UserModel from "./UserModel.model";
 import { DevConfig } from "../../configs";
 import { DefaultUserAdapterOptions } from "./UserService.service";
-import { EditUserValidator, IEditUserDto } from "./dto/IEditUser.dto";
+import IEditUser, {
+  EditUserValidator,
+  IEditUserDto,
+} from "./dto/IEditUser.dto";
 
 export default class UserController extends BaseController {
   getAll(req: Request, res: Response) {
@@ -314,11 +317,29 @@ export default class UserController extends BaseController {
                 return res.status(400).send(EditUserValidator.errors);
               }
 
-              const activeUser = await this.services.user.editById(id, {
-                username: editData.username,
-              });
+              const serviceData: IEditUser = {};
+
+              if (editData.password !== undefined) {
+                const passwordHash = bcrypt.hashSync(editData.password, 10);
+                serviceData.password_hash = passwordHash;
+              }
+
+              if (
+                DevConfig.auth.allowAllRoutesWithoutAuthTokens ||
+                req.authorization?.role === "administrator"
+              ) {
+                if (editData.isActive !== undefined) {
+                  serviceData.is_active = editData.isActive ? 1 : 0;
+                }
+              }
+
+              if (editData.username !== undefined) {
+                serviceData.username = editData.username;
+              }
+
+              const user = await this.services.user.editById(id, serviceData);
               await this.services.user.commitChanges();
-              res.send(activeUser);
+              res.send(user);
             } else {
               if (!RegisterUserValidator(registerData)) {
                 return res.status(400).send(RegisterUserValidator.errors);

@@ -1,8 +1,8 @@
 import BaseService from "../../common/BaseService";
 import IAdapterOptions from "../../common/IAdapterOptions.interface";
 import IAddUserDto from "./dto/IAddUser.dto";
-import { IEditUserDto } from "./dto/IEditUser.dto";
-import IRegisterUserDto from "./dto/IRegisterUser.dto";
+import IEditUser from "./dto/IEditUser.dto";
+import IRegisterUser from "./dto/IRegisterUser.dto";
 import UserModel from "./UserModel.model";
 
 export class UserAdapterOptions implements IAdapterOptions {
@@ -75,7 +75,7 @@ export default class UserService extends BaseService<
 
   public async editById(
     userId: number,
-    data: IRegisterUserDto | IEditUserDto
+    data: IRegisterUser | IEditUser
   ): Promise<UserModel> {
     return this.baseEditById(userId, data, {
       removeActivationCode: true,
