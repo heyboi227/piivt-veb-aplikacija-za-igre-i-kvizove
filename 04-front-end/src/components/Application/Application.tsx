@@ -16,6 +16,7 @@ import AdminQuestionAdd from '../Administrator/Dashboard/AdminQuestionAdd';
 import AdminQuestionEdit from '../Administrator/Dashboard/AdminQuestionEdit';
 import UserRegisterPage from '../User/UserRegisterPage/UserRegisterPage';
 import QuizPage from '../Pages/QuizPage/QuizPage';
+import UserProfile from '../User/Profile/UserProfile';
 
 function Application() {
   return (
@@ -34,7 +35,7 @@ function Application() {
         {/* TODO <Route path="/question/:qid/edit" element={<UserQuestionEdit />} /> */}
         {/* TODO <Route path="/question/:qid/answers/list" element={<UserQuestionAnswerList />} /> */}
 
-        {/* TODO <Route path="/profile" element={<UserProfile />} /> */}
+        <Route path="/profile" element={<UserProfile />} />
         {/* TODO <Route path="/myscores" element={<UserScoresPage />} /> */}
 
         <Route path="/quiz" element={<QuizPage />} />
