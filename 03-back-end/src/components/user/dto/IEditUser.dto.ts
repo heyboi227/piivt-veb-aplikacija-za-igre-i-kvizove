@@ -6,11 +6,13 @@ const ajv = new Ajv();
 useFormats(ajv);
 
 export default interface IEditUser extends IServiceData {
+  password_hash?: string;
   username?: string;
   is_active?: number;
 }
 
 interface IEditUserDto {
+  password?: string;
   username?: string;
   isActive?: boolean;
 }
@@ -18,12 +20,19 @@ interface IEditUserDto {
 const EditUserSchema = {
   type: "object",
   properties: {
+    password: {
+      type: "string",
+      pattern: "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{6,}$",
+    },
     username: {
       type: "string",
       pattern: "^[0-9A-Za-z-]{5,64}$",
     },
+    isActive: {
+      type: "boolean",
+    },
   },
-  required: ["username"],
+  required: [],
   additionalProperties: false,
 };
 
