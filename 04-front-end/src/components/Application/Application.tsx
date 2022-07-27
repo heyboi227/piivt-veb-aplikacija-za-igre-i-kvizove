@@ -17,6 +17,7 @@ import AdminQuestionEdit from '../Administrator/Dashboard/AdminQuestionEdit';
 import UserRegisterPage from '../User/UserRegisterPage/UserRegisterPage';
 import QuizPage from '../Pages/QuizPage/QuizPage';
 import UserProfile from '../User/Profile/UserProfile';
+import AdminAnswerAdd from '../Administrator/Dashboard/AdminAnswerAdd';
 
 function Application() {
   return (
@@ -49,8 +50,8 @@ function Application() {
         <Route path="/admin/dashboard/question/:qid/answers/list" element={<AdminQuestionAnswerList />} />
 
         <Route path='/admin/dashboard/answer/list' element={<AdminAnswerList />} />
-        {/* TODO <Route path='/admin/dashboard/answer/add' element={<AdminAnswerAdd />} />
-        TODO <Route path='/admin/dashboard/answer/edit' element={<AdminAnswerEdit />} /> */}
+        <Route path='/admin/dashboard/answer/add' element={<AdminAnswerAdd />} />
+        {/* TODO <Route path='/admin/dashboard/answer/edit' element={<AdminAnswerEdit />} /> */}
 
         <Route path="/admin/dashboard/administrator/list" element={<AdminAdministratorList />} />
         <Route path="/admin/dashboard/administrator/add" element={<AdminAdministratorAdd />} />
