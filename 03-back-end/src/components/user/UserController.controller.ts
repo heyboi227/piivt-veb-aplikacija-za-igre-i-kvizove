@@ -390,7 +390,6 @@ export default class UserController extends BaseController {
 
           this.services.user
             .editById(id, {
-              username: result.username,
               is_active: 0,
             })
             .then(async (_result) => {
