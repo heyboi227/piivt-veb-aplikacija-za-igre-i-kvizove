@@ -12,7 +12,7 @@ const AdministratorLoginValidator = ajv.compile({
     properties: {
         username: {
             type: "string",
-            pattern: "^[a-z\-]{5,64}$",
+            pattern: "^[a-z-]{5,64}$",
         },
         password: {
             type: "string",
