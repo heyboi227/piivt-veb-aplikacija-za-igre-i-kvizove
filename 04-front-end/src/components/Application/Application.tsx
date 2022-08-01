@@ -18,6 +18,8 @@ import UserRegisterPage from '../User/UserRegisterPage/UserRegisterPage';
 import QuizPage from '../Pages/QuizPage/QuizPage';
 import UserProfile from '../User/Profile/UserProfile';
 import AdminAnswerAdd from '../Administrator/Dashboard/AdminAnswerAdd';
+import AdminAnswerEdit from '../Administrator/Dashboard/AdminAnswerEdit';
+import UserQuestionList from '../User/Questions/UserQuestionList';
 
 function Application() {
   return (
@@ -31,7 +33,7 @@ function Application() {
         <Route path='/auth/user/login' element={<UserLoginPage />} />
         <Route path='/auth/user/register' element={<UserRegisterPage />} />
 
-        {/* TODO <Route path="/questions" element={<UserQuestionList />} /> */}
+        <Route path="/question" element={<UserQuestionList />} />
         {/* TODO <Route path="/question/add" element={<UserQuestionAdd />} /> */}
         {/* TODO <Route path="/question/:qid/edit" element={<UserQuestionEdit />} /> */}
         {/* TODO <Route path="/question/:qid/answers/list" element={<UserQuestionAnswerList />} /> */}
@@ -51,7 +53,7 @@ function Application() {
 
         <Route path='/admin/dashboard/answer/list' element={<AdminAnswerList />} />
         <Route path='/admin/dashboard/answer/add' element={<AdminAnswerAdd />} />
-        {/* TODO <Route path='/admin/dashboard/answer/edit' element={<AdminAnswerEdit />} /> */}
+        <Route path='/admin/dashboard/answer/:aid/edit' element={<AdminAnswerEdit />} />
 
         <Route path="/admin/dashboard/administrator/list" element={<AdminAdministratorList />} />
         <Route path="/admin/dashboard/administrator/add" element={<AdminAdministratorAdd />} />
