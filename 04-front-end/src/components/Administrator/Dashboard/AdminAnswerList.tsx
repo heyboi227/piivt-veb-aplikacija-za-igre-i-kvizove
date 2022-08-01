@@ -82,6 +82,12 @@ export default function AdminAnswerList() {
                     </div>
                 </td>
                 <td>
+                    <Link className="btn btn-primary btn-sm" to={"/admin/dashboard/answer/" + props.answer.answerId + "/edit"}>
+                        Edit
+                    </Link>
+
+                    &nbsp;&nbsp;
+
                     <button className="btn btn-danger btn-sm" onClick={e => doDeleteAnswer(e)}>
                         Delete
                     </button>
