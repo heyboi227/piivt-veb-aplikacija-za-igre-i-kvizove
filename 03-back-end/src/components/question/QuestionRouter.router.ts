@@ -32,6 +32,11 @@ class QuestionRouter implements IRouter {
       AuthMiddleware.getVerifier("activeUser", "user", "administrator"),
       questionController.getByGameId.bind(questionController)
     );
+    application.get(
+      "/api/question/user/:uid",
+      AuthMiddleware.getVerifier("activeUser", "administrator"),
+      questionController.getByUserId.bind(questionController)
+    );
     application.post(
       "/api/question",
       AuthMiddleware.getVerifier("activeUser", "administrator"),

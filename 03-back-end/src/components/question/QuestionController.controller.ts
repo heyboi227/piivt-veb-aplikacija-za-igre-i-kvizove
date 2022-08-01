@@ -3,6 +3,7 @@ import BaseController from "../../common/BaseController";
 import { DefaultQuestionAdapterOptions } from "./QuestionService.service";
 import { DefaultAnswerAdapterOptions } from "../answer/AnswerService.service";
 import { AddQuestionValidator, IAddQuestionDto } from "./dto/IAddQuestion.dto";
+import { DefaultUserAdapterOptions } from "../user/UserService.service";
 import {
   EditQuestionValidator,
   IEditQuestionDto,
@@ -56,6 +57,36 @@ export default class QuestionController extends BaseController {
 
         this.services.question
           .getAllByGameId(gameId)
+          .then((result) => {
+            res.send(result);
+          })
+          .catch((error) => {
+            throw {
+              status: 500,
+              message: error?.message,
+            };
+          });
+      })
+      .catch((error) => {
+        res.status(error?.status ?? 500).send(error?.message);
+      });
+  }
+
+  getByUserId(req: Request, res: Response) {
+    const userId: number = +req.params?.uid;
+
+    this.services.user
+      .getById(userId, DefaultUserAdapterOptions)
+      .then((result) => {
+        if (result === null) {
+          throw {
+            status: 404,
+            message: "User not found!",
+          };
+        }
+
+        this.services.question
+          .getAllByUserId(userId)
           .then((result) => {
             res.send(result);
           })
