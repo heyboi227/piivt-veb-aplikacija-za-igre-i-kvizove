@@ -49,6 +49,9 @@ const EditQuestionSchema = {
         additionalProperties: false,
       },
     },
+    userId: {
+      type: "number",
+    },
   },
   required: ["gameId", "title", "answers"],
   additionalProperties: false,

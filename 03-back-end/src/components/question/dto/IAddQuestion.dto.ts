@@ -58,8 +58,11 @@ const AddQuestionSchema = {
         additionalProperties: false,
       },
     },
+    userId: {
+      type: "number",
+    },
   },
-  required: ["gameId", "title", "answers"],
+  required: ["gameId", "title", "answers", "userId"],
   additionalProperties: false,
 };
 
