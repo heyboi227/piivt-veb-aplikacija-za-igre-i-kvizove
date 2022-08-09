@@ -20,6 +20,9 @@ import UserProfile from '../User/Profile/UserProfile';
 import AdminAnswerAdd from '../Administrator/Dashboard/AdminAnswerAdd';
 import AdminAnswerEdit from '../Administrator/Dashboard/AdminAnswerEdit';
 import UserQuestionList from '../User/Questions/UserQuestionList';
+import UserQuestionAdd from '../User/Questions/UserQuestionAdd';
+import UserQuestionEdit from '../User/Questions/UserQuestionEdit';
+import UserQuestionAnswerList from '../User/Questions/UserQuestionAnswerList';
 
 function Application() {
   return (
@@ -34,9 +37,9 @@ function Application() {
         <Route path='/auth/user/register' element={<UserRegisterPage />} />
 
         <Route path="/question" element={<UserQuestionList />} />
-        {/* TODO <Route path="/question/add" element={<UserQuestionAdd />} /> */}
-        {/* TODO <Route path="/question/:qid/edit" element={<UserQuestionEdit />} /> */}
-        {/* TODO <Route path="/question/:qid/answers/list" element={<UserQuestionAnswerList />} /> */}
+        <Route path="/question/add" element={<UserQuestionAdd />} />
+        <Route path="/question/:qid/edit" element={<UserQuestionEdit />} />
+        <Route path="/question/:qid/answers/list" element={<UserQuestionAnswerList />} />
 
         <Route path="/profile" element={<UserProfile />} />
         {/* TODO <Route path="/myscores" element={<UserScoresPage />} /> */}

@@ -98,6 +98,7 @@ export default function UserQuestionList() {
                             </tr>
                         </thead>
                         <tbody>
+                            {!questions && <h1>You have no questions created.</h1>}
                             {questions.map(question => <UserQuestionListRow key={"question-row-" + question.questionId} question={question} />)}
                         </tbody>
                     </table>
