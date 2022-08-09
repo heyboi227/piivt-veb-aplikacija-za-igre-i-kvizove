@@ -132,6 +132,7 @@ export default class QuestionController extends BaseController {
         return this.services.question.add({
           game_id: data.gameId,
           title: data.title,
+          user_id: data.userId,
         });
       })
       .then((newQuestion) => {

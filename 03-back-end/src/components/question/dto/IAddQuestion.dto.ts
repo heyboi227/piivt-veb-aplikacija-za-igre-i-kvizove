@@ -6,6 +6,7 @@ const ajv = new Ajv();
 export default interface IAddQuestion extends IServiceData {
   game_id: number;
   title: string;
+  user_id: number;
 }
 
 export interface IAddQuestionDto {
@@ -16,6 +17,7 @@ export interface IAddQuestionDto {
     isCorrect: boolean;
     isActive: boolean;
   }[];
+  userId: number;
 }
 
 export interface IQuestionAnswer extends IServiceData {

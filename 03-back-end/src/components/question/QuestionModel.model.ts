@@ -1,6 +1,7 @@
 import IModel from "../../common/IModel.interface";
 import AnswerModel from "../answer/AnswerModel.model";
 import GameModel from "../game/GameModel.model";
+import UserModel from "../user/UserModel.model";
 
 export interface IQuestionAnswer {
   answer: AnswerModel;
@@ -17,6 +18,7 @@ class QuestionModel implements IModel {
 
   game?: GameModel = null;
   answers?: IQuestionAnswer[] = null;
+  user: UserModel = null;
 }
 
 export default QuestionModel;
