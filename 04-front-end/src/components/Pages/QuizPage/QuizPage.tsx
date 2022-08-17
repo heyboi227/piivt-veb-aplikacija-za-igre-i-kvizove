@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDeleteLeft } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import ShowFirstGameSummaryAction from "../../../helpers/ShowFirstGameSummaryAction";
+import { useNavigate } from "react-router-dom";
 
 export default function QuizPage() {
     const [game, setGame] = useState<IGame>();
@@ -24,18 +25,14 @@ export default function QuizPage() {
     const [showFirstGameSummaryDialog, setShowFirstGameSummaryDialog] = useState<boolean>(false);
 
     const [givenCountryName, setGivenCountryName] = useState<string>("");
+    const navigate = useNavigate();
 
 
     const handleClick = () => {
-        setIsClicked(current => !current);
-        setTimeout(() => { setIsClicked(current => !current); }, 2000);
+        setIsClicked(true);
     }
 
     function loadGameData() {
-        if (gameId > 4) {
-            return;
-        }
-
         api("get", "/api/game/" + gameId, "user")
             .then(res => {
                 if (res.status === "error") {
@@ -92,16 +89,13 @@ export default function QuizPage() {
     }, [gameId]);
 
     useEffect(() => {
-        if (gameId === 1) {
-            setShuffledLetters(shuffleWordLetters(questions ? questions[0].answers[0].answer.answerValue.split("") : []));
-        }
-    }, [gameId, questions])
+        setShuffledLetters(shuffleWordLetters(questions !== undefined ? questions[0].answers[0].answer.answerValue.split("") : []));
+    }, [questions]);
 
     function renderGameInfo(game: IGame) {
         return (
             <div>
                 <h1>{game.name}</h1>
-                <button className="btn btn-primary btn-sm" onClick={() => setGameId(gameId + 1)}>Submit</button>
             </div>
         );
     }
@@ -169,7 +163,10 @@ export default function QuizPage() {
 
                                         {showFirstGameSummaryDialog && <ShowFirstGameSummaryAction
                                             title="Find the longest word summary"
-                                            onSubmit={() => { setShowFirstGameSummaryDialog(false); setGivenWord(""); setShuffledLetters([]); setGameId(gameId + 1) }}
+                                            onSubmit={() => {
+                                                setShowFirstGameSummaryDialog(false); setGivenWord(""); setShuffledLetters([]); setGameId(2);
+                                                setQuestionIndex(0);
+                                            }}
                                             givenWord={givenWord}
                                             targetWord={question.answers[0].answer.answerValue}
                                             pointsMessage={() => {
@@ -192,7 +189,7 @@ export default function QuizPage() {
                 </div >
             );
         }
-        if (gameId === 2) {
+        else if (gameId === 2) {
             return (<div className="d-flex flex-column justify-content-center align-items-center">
                 <>
                     <h1>{question.title}</h1>
@@ -228,12 +225,20 @@ export default function QuizPage() {
                             } else {
                                 alert("Incorrect!")
                             }
+
+                            if (questionIndex < (questions !== undefined ? questions?.length - 1 : 0)) {
+                                setQuestionIndex(questionIndex + 1);
+                                setGivenCountryName("");
+                            } else {
+                                setGameId(3);
+                                setQuestionIndex(0);
+                            }
                         }}>Submit</button>
                     </div>
                 </>
             </div >);
         }
-        if (gameId === 3) {
+        else if (gameId === 3) {
             return (
                 <div>
                     <>
@@ -256,7 +261,15 @@ export default function QuizPage() {
                                         </div>
                                     </div>);
                                 })}
-                                {isClicked && <button className="btn btn-success btn-sm" onClick={() => { (questionIndex < (questions?.length ?? 0)) ? setQuestionIndex(questionIndex + 1) : setQuestionIndex(0) }}>Next question</button>}
+                                {isClicked && <button className="btn btn-success btn-sm" onClick={() => {
+                                    if (questionIndex < (questions !== undefined ? questions?.length - 1 : 0)) {
+                                        setQuestionIndex(questionIndex + 1);
+                                        setIsClicked(false);
+                                    } else {
+                                        setQuestionIndex(0);
+                                        setGameId(4);
+                                    }
+                                }}>Next question</button>}
                             </>
                         </div>
                     </>
@@ -281,11 +294,20 @@ export default function QuizPage() {
                                         </div>
                                     </div>);
                                 })}
-                                {isClicked && <button className="btn btn-success btn-sm" onClick={() => { (questionIndex < (questions?.length ?? 0)) ? setQuestionIndex(questionIndex + 1) : setQuestionIndex(0) }}>Next question</button>}
+                                {isClicked && <button className="btn btn-success btn-sm" onClick={() => {
+
+                                    if (questionIndex < (questions !== undefined ? questions?.length - 1 : 0)) {
+                                        setQuestionIndex(questionIndex + 1);
+                                        setIsClicked(false);
+                                    }
+                                    else {
+                                        navigate("/", { replace: true });
+                                    }
+                                }}>Next question</button>}
                             </>
                         </div>
                     </>
-                </div>
+                </div >
             );
         }
     }
@@ -293,7 +315,7 @@ export default function QuizPage() {
     return (
         <div>
             {errorMessage && <p className="alert alert-danger mb-3">{errorMessage}</p>}
-            {game && gameId === 3 && renderGameInfo(game)}
+            {game && (gameId === 3 || gameId === 4) && renderGameInfo(game)}
             {questions && RenderQuestionInfo(questions[questionIndex])}
         </div>
     );
