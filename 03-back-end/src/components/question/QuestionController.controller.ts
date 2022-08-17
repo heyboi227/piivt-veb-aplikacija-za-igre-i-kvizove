@@ -2,9 +2,12 @@ import { Request, Response } from "express";
 import BaseController from "../../common/BaseController";
 import { DefaultQuestionAdapterOptions } from "./QuestionService.service";
 import { DefaultAnswerAdapterOptions } from "../answer/AnswerService.service";
-import { AddQuestionValidator, IAddQuestionDto } from "./dto/IAddQuestion.dto";
+import IAddQuestion, {
+  AddQuestionValidator,
+  IAddQuestionDto,
+} from "./dto/IAddQuestion.dto";
 import { DefaultUserAdapterOptions } from "../user/UserService.service";
-import {
+import IEditQuestion, {
   EditQuestionValidator,
   IEditQuestionDto,
 } from "./dto/IEditQuestion.dto";
@@ -109,6 +112,15 @@ export default class QuestionController extends BaseController {
       return res.status(400).send(AddQuestionValidator.errors);
     }
 
+    const serviceData: IAddQuestion = {
+      game_id: data.gameId,
+      title: data.title,
+    };
+
+    if (data.userId !== undefined) {
+      serviceData.user_id = data.userId;
+    }
+
     this.services.answer
       .getAll(DefaultAnswerAdapterOptions)
       .then((answers) => {
@@ -129,11 +141,7 @@ export default class QuestionController extends BaseController {
         return this.services.question.startTransaction();
       })
       .then(() => {
-        return this.services.question.add({
-          game_id: data.gameId,
-          title: data.title,
-          user_id: data.userId,
-        });
+        return this.services.question.add(serviceData);
       })
       .then((newQuestion) => {
         for (let givenAnswerInformation of data.answers) {
