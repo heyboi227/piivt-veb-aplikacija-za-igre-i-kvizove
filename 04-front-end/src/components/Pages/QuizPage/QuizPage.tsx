@@ -10,10 +10,11 @@ import { useNavigate } from "react-router-dom";
 import { faCircleCheck, faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 import "./QuizPage.sass";
 import IAnswer from "../../../models/IAnswer.model";
+import { CountdownTimer } from "../../CountdownTimer/CountdownTimer";
 
 export default function QuizPage() {
     const [game, setGame] = useState<IGame>();
-    const [gameId, setGameId] = useState<number>(3);
+    const [gameId, setGameId] = useState<number>(1);
 
     const [questionIndex, setQuestionIndex] = useState<number>(0);
     const [questions, setQuestions] = useState<IQuestion[]>();
@@ -163,217 +164,229 @@ export default function QuizPage() {
             }
 
             return (
-                <div>
-                    <>
-                        <h1>{question.title}</h1>
-                        <div className="row">
-                            <>
-                                {shuffledLetters.map((letter, index) => {
-                                    return (<div className="col-3 col-lg-2 col-md-3 col-xl-1" key={"answer-letter-" + letter + "-" + index} onClick={() => setGivenWord(givenWord + letter)}>
-                                        <div className="card" onMouseEnter={(e) => e.currentTarget.classList.add("bg-primary")} onMouseLeave={(e) => e.currentTarget.classList.remove("bg-primary")}>
-                                            <div className="card-body">
-                                                <div className="card-title m-auto d-flex justify-content-center align-items-center">
-                                                    <h1>{letter.toUpperCase()}</h1>
+                <>
+                    <div>
+                        <>
+                            <h1>{question.title}</h1>
+                            <div className="row">
+                                <>
+                                    {shuffledLetters.map((letter, index) => {
+                                        return (<div className="col-3 col-lg-2 col-md-3 col-xl-1" key={"answer-letter-" + letter + "-" + index} onClick={() => setGivenWord(givenWord + letter)}>
+                                            <div className="card" onMouseEnter={(e) => e.currentTarget.classList.add("bg-primary")} onMouseLeave={(e) => e.currentTarget.classList.remove("bg-primary")}>
+                                                <div className="card-body">
+                                                    <div className="card-title m-auto d-flex justify-content-center align-items-center">
+                                                        <h1>{letter.toUpperCase()}</h1>
+                                                    </div>
                                                 </div>
                                             </div>
+                                        </div>);
+                                    })}
+                                    <div className="form-group d-flex flex-row align-items-center justify-content-center">
+                                        <div className="input-group mt-3 me-2">
+                                            <input className="form-control form-control-sm"
+                                                type="text"
+                                                value={givenWord}
+                                                placeholder="Enter your word here"
+                                                onChange={(e) => setGivenWord(e.target.value)} />
                                         </div>
-                                    </div>);
-                                })}
-                                <div className="form-group d-flex flex-row align-items-center justify-content-center">
-                                    <div className="input-group mt-3 me-2">
-                                        <input className="form-control form-control-sm"
-                                            type="text"
-                                            value={givenWord}
-                                            placeholder="Enter your word here"
-                                            onChange={(e) => { setGivenWord(e.target.value); checkIfWordExists(givenWord) }} />
+                                        {givenWord.length > 0 && <button className="btn btn-sm btn-danger mt-3 me-2" onClick={() => setGivenWord(givenWord.slice(0, givenWord.length - 1))}><FontAwesomeIcon icon={faDeleteLeft}></FontAwesomeIcon></button>}
+                                        {givenWord.length > 0 && <button className="btn btn-sm btn-danger mt-3" style={{ fontSize: ".80rem", width: "70px" }} onClick={() => setGivenWord("")}>Clear all</button>}
                                     </div>
-                                    {givenWord.length > 0 && <button className="btn btn-sm btn-danger mt-3 me-2" onClick={() => setGivenWord(givenWord.slice(0, givenWord.length - 1))}><FontAwesomeIcon icon={faDeleteLeft}></FontAwesomeIcon></button>}
-                                    {givenWord.length > 0 && <button className="btn btn-sm btn-danger mt-3" style={{ fontSize: ".80rem", width: "70px" }} onClick={() => setGivenWord("")}>Clear all</button>}
-                                </div>
-                                <div>
-                                    {givenWord.length > 0 && <>
-                                        <button className="btn btn-sm btn-success" onClick={() => checkIfWordExists(givenWord)}>Check availability</button>
-                                        <button className="btn btn-sm btn-primary" onClick={() => setShowFirstGameSummaryDialog(true)}>Submit</button>
+                                    <div>
+                                        {givenWord.length > 0 && <>
+                                            <button className="btn btn-sm btn-success" onClick={() => checkIfWordExists(givenWord)}>Check availability</button>
+                                            <button className="btn btn-sm btn-primary" onClick={() => setShowFirstGameSummaryDialog(true)}>Submit</button>
 
-                                        {showFirstGameSummaryDialog && <ShowFirstGameSummaryAction
-                                            title="Find the longest word summary"
-                                            onSubmit={() => {
-                                                setShowFirstGameSummaryDialog(false); setGivenWord(""); setShuffledLetters([]); setGameId(2);
-                                                setQuestionIndex(0);
-                                            }}
-                                            givenWord={givenWord}
-                                            targetWord={question.answers[0].answer.answerValue}
-                                            pointsMessage={() => {
-                                                if (doesGivenWordExist || givenWord === question.answers[0].answer.answerValue) {
-                                                    return "You have won " + givenWord.length + " points!";
-                                                } else {
-                                                    return "Unfortunately, you have won no points as the word does not exist.";
-                                                }
-                                            }} />}
-                                    </>}
-                                    {givenWord.length === 0 && <button className="btn btn-sm btn-primary" disabled={true}>Submit</button>}
-                                </div>
-                                <div>
-                                    {doesWordExistMessage && doesGivenWordExist && <p className="alert alert-success mb-3">{doesWordExistMessage}</p>}
-                                    {doesWordExistMessage && !doesGivenWordExist && <p className="alert alert-danger mb-3">{doesWordExistMessage}</p>}
-                                </div>
-                            </>
-                        </div>
-                    </>
-                </div>
+                                            {showFirstGameSummaryDialog && <ShowFirstGameSummaryAction
+                                                title="Find the longest word summary"
+                                                onSubmit={() => {
+                                                    setShowFirstGameSummaryDialog(false);
+                                                    setGivenWord("");
+                                                    setShuffledLetters([]);
+                                                    setGameId(2);
+                                                    setQuestionIndex(0);
+                                                }}
+                                                givenWord={givenWord !== "" ? givenWord : "Nothing entered"}
+                                                targetWord={question.answers[0].answer.answerValue}
+                                                pointsMessage={() => {
+                                                    if (doesGivenWordExist || givenWord === question.answers[0].answer.answerValue) {
+                                                        return "You have won " + givenWord.length + " points!";
+                                                    } else {
+                                                        return "Unfortunately, you have won no points as the word does not exist.";
+                                                    }
+                                                }} />}
+                                        </>}
+                                        {givenWord.length === 0 && <button className="btn btn-sm btn-primary" disabled={true}>Submit</button>}
+                                    </div>
+                                    <div>
+                                        {doesWordExistMessage && doesGivenWordExist && <p className="alert alert-success mb-3">{doesWordExistMessage}</p>}
+                                        {doesWordExistMessage && !doesGivenWordExist && <p className="alert alert-danger mb-3">{doesWordExistMessage}</p>}
+                                    </div>
+                                </>
+                            </div>
+                        </>
+                    </div>
+                </>
             );
         }
         else if (gameId === 2) {
-            return (<div className="d-flex flex-column justify-content-center align-items-center">
+            return (
                 <>
-                    <h1>{question.title}</h1>
-                    <div className="row">
+                    <div className="d-flex flex-column justify-content-center align-items-center">
                         <>
-                            {question.answers.map((answer) => {
-                                return (<div className="col-6 col-lg-2 col-md-3 col-xl-2 p-3 d-flex flex-column justify-content-center align-items-center" style={{ marginLeft: "50%", transform: "translateX(-50%)" }} key={"answer-" + answer.answer.answerId}>
-                                    <div className="card">
-                                        <div className="card-body">
-                                            <div className="card-title m-auto">
-                                                <img
-                                                    src={"https://flagcdn.com/h120/" + answer.answer.answerValue.substring(0, 2) + ".png"}
-                                                    srcSet={"https://flagcdn.com/h240/" + answer.answer.answerValue.substring(0, 2) + ".png 2x"}
-                                                    height="120"
-                                                    alt={answer.answer.answerValue} />
+                            <h1>{question.title}</h1>
+                            <div className="row">
+                                <>
+                                    {question.answers.map((answer) => {
+                                        return (<div className="col-6 col-lg-2 col-md-3 col-xl-2 p-3 d-flex flex-column justify-content-center align-items-center" style={{ marginLeft: "50%", transform: "translateX(-50%)" }} key={"answer-" + answer.answer.answerId}>
+                                            <div className="card">
+                                                <div className="card-body">
+                                                    <div className="card-title m-auto">
+                                                        <img
+                                                            src={"https://flagcdn.com/h120/" + answer.answer.answerValue.substring(0, 2) + ".png"}
+                                                            srcSet={"https://flagcdn.com/h240/" + answer.answer.answerValue.substring(0, 2) + ".png 2x"}
+                                                            height="120"
+                                                            alt={answer.answer.answerValue} />
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
+                                        </div>);
+                                    })}
+                                </>
+                            </div>
+                            <div className="input-group w-25">
+                                <input className="form-control form-control-sm"
+                                    type="text"
+                                    value={givenCountryName}
+                                    placeholder="Guess the flag"
+                                    onChange={(e) => setGivenCountryName(e.target.value)}
+                                    onKeyUp={(e) => e.key === "Enter" && checkFlagAnswer(question)} />
+                            </div>
+                            {isCountryNameCorrect && isCountryNameCorrectMessageVisible && <div className="correct mt-3"><h1><FontAwesomeIcon icon={faCircleCheck}></FontAwesomeIcon> Correct!</h1></div>}
+                            {!isCountryNameCorrect && isCountryNameCorrectMessageVisible &&
+                                <>
+                                    <div className="d-flex justify-content-center align-items-center flex-column mt-3">
+                                        <h1 className="incorrect"><FontAwesomeIcon icon={faCircleXmark}></FontAwesomeIcon> Incorrect!</h1>
+                                        <h2>The correct answer is: {question.answers[0].answer.answerValue.substring(4, question.answers[0].answer.answerValue.length - 1)}</h2>
                                     </div>
-                                </div>);
-                            })}
+                                </>}
+                            <div>
+                                {!isCountryNameCorrectMessageVisible && <button className="btn btn-sm btn-primary mt-3" onClick={() => checkFlagAnswer(question)}>Submit</button>}
+                                {isCountryNameCorrectMessageVisible && <button className="btn btn-sm btn-success mt-3 ms-3" onClick={() => {
+                                    if (questionIndex < (questions !== undefined ? questions?.length - 1 : 0)) {
+                                        setQuestionIndex(questionIndex + 1);
+                                        setGivenCountryName("");
+                                    } else {
+                                        setGameId(3);
+                                        setQuestionIndex(0);
+                                    }
+
+                                    setIsCountryNameCorrectMessageVisible(false);
+                                }}>Next question</button>}
+                            </div>
                         </>
                     </div>
-                    <div className="input-group w-25">
-                        <input className="form-control form-control-sm"
-                            type="text"
-                            value={givenCountryName}
-                            placeholder="Guess the flag"
-                            onChange={(e) => setGivenCountryName(e.target.value)}
-                            onKeyUp={(e) => e.key === "Enter" && checkFlagAnswer(question)} />
-                    </div>
-                    {isCountryNameCorrect && isCountryNameCorrectMessageVisible && <div className="correct mt-3"><h1><FontAwesomeIcon icon={faCircleCheck}></FontAwesomeIcon> Correct!</h1></div>}
-                    {!isCountryNameCorrect && isCountryNameCorrectMessageVisible &&
-                        <>
-                            <div className="d-flex justify-content-center align-items-center flex-column mt-3">
-                                <h1 className="incorrect"><FontAwesomeIcon icon={faCircleXmark}></FontAwesomeIcon> Incorrect!</h1>
-                                <h2>The correct answer is: {question.answers[0].answer.answerValue.substring(4, question.answers[0].answer.answerValue.length - 1)}</h2>
-                            </div>
-                        </>}
-                    <div>
-                        <button className="btn btn-sm btn-primary mt-3" onClick={() => checkFlagAnswer(question)}>Submit</button>
-                        {isCountryNameCorrectMessageVisible && <button className="btn btn-sm btn-success mt-3 ms-3" onClick={() => {
-                            if (questionIndex < (questions !== undefined ? questions?.length - 1 : 0)) {
-                                setQuestionIndex(questionIndex + 1);
-                                setGivenCountryName("");
-                            } else {
-                                setGameId(3);
-                                setQuestionIndex(0);
-                            }
-
-                            setIsCountryNameCorrectMessageVisible(false);
-                        }}>Next question</button>}
-                    </div>
-                </>
-            </div>);
+                </>);
         }
         else if (gameId === 3) {
             return (
-                <div className="d-flex flex-column justify-content-center align-items-center">
-                    <>
-                        <div>
-                            <h1>{game?.name}</h1>
-                        </div>
-                        <h1>{question.title}</h1>
-                        <div className="row">
-                            <>
-                                {question.answers.map((answer) => {
-                                    return (<div className="col-6 col-md-4 col-lg-4 col-xl-4 p-3 d-flex justify-content-center align-items-center" key={"answer-" + answer.answer.answerId}>
-                                        <div className={!isClicked ? "card" : "card" + (answer.isCorrect ? " border border-3 border-success" : " border border-3 border-danger")} onClick={() => handleClick(answer, 3)}>
-                                            <div className="card-body">
-                                                <div className="card-title m-auto">
-                                                    <img
-                                                        src={"https://flagcdn.com/120x90/" + answer.answer.answerValue.substring(0, 2) + ".png"}
-                                                        srcSet={"https://flagcdn.com/240x180/" + answer.answer.answerValue.substring(0, 2) + ".png 2x"}
-                                                        width="120"
-                                                        height="90"
-                                                        alt={answer.answer.answerValue} />
+                <>
+                    <div className="d-flex flex-column justify-content-center align-items-center">
+                        <>
+                            <div>
+                                <h1>{game?.name}</h1>
+                            </div>
+                            <h1>{question.title}</h1>
+                            <div className="row">
+                                <>
+                                    {question.answers.map((answer) => {
+                                        return (<div className="col-6 col-md-4 col-lg-4 col-xl-4 p-3 d-flex justify-content-center align-items-center" key={"answer-" + answer.answer.answerId}>
+                                            <div className={!isClicked ? "card" : "card" + (answer.isCorrect ? " border border-3 border-success" : " border border-3 border-danger")} onClick={() => handleClick(answer, 3)}>
+                                                <div className="card-body">
+                                                    <div className="card-title m-auto">
+                                                        <img
+                                                            src={"https://flagcdn.com/120x90/" + answer.answer.answerValue.substring(0, 2) + ".png"}
+                                                            srcSet={"https://flagcdn.com/240x180/" + answer.answer.answerValue.substring(0, 2) + ".png 2x"}
+                                                            width="120"
+                                                            height="90"
+                                                            alt={answer.answer.answerValue} />
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>);
-                                })}
-                            </>
-                        </div>
-                        {isCountryFlagCorrect && isCountryFlagCorrectMessageVisible && <div className="correct mt-3"><h1><FontAwesomeIcon icon={faCircleCheck}></FontAwesomeIcon> Correct!</h1></div>}
-                        {!isCountryFlagCorrect && isCountryFlagCorrectMessageVisible &&
-                            <>
-                                <div className="d-flex justify-content-center align-items-center flex-column mt-3">
-                                    <h1 className="incorrect"><FontAwesomeIcon icon={faCircleXmark}></FontAwesomeIcon> Incorrect!</h1>
-                                    {isCountryFlagCorrectMessage && <h2>{isCountryFlagCorrectMessage}</h2>}
-                                </div>
-                            </>}
-                        <div>
-                            {isCountryFlagCorrectMessageVisible && <button className="btn btn-sm btn-success mt-3" onClick={() => {
-                                if (questionIndex < (questions !== undefined ? questions?.length - 1 : 0)) {
-                                    setQuestionIndex(questionIndex + 1);
-                                } else {
-                                    setGameId(4);
-                                    setQuestionIndex(0);
-                                }
+                                        </div>);
+                                    })}
+                                </>
+                            </div>
+                            {isCountryFlagCorrect && isCountryFlagCorrectMessageVisible && <div className="correct mt-3"><h1><FontAwesomeIcon icon={faCircleCheck}></FontAwesomeIcon> Correct!</h1></div>}
+                            {!isCountryFlagCorrect && isCountryFlagCorrectMessageVisible &&
+                                <>
+                                    <div className="d-flex justify-content-center align-items-center flex-column mt-3">
+                                        <h1 className="incorrect"><FontAwesomeIcon icon={faCircleXmark}></FontAwesomeIcon> Incorrect!</h1>
+                                        {isCountryFlagCorrectMessage && <h2>{isCountryFlagCorrectMessage}</h2>}
+                                    </div>
+                                </>}
+                            <div>
+                                {isCountryFlagCorrectMessageVisible && <button className="btn btn-sm btn-success mt-3" onClick={() => {
+                                    if (questionIndex < (questions !== undefined ? questions?.length - 1 : 0)) {
+                                        setQuestionIndex(questionIndex + 1);
+                                    } else {
+                                        setGameId(4);
+                                        setQuestionIndex(0);
+                                    }
 
-                                setIsClicked(false);
-                                setIsCountryFlagCorrectMessageVisible(false);
-                            }}>Next question</button>}
-                        </div>
-                    </>
-                </div>
+                                    setIsClicked(false);
+                                    setIsCountryFlagCorrectMessageVisible(false);
+                                }}>Next question</button>}
+                            </div>
+                        </>
+                    </div>
+                </>
             );
         }
         else {
             return (
-                <div className="d-flex flex-column justify-content-center align-items-center">
-                    <>
-                        <div>
-                            <h1>{game?.name}</h1>
-                        </div>
-                        <h1>{question.title}</h1>
-                        <div className="row">
-                            <>
-                                {question.answers.map((answer) => {
-                                    return (<div className="col-6 col-md-4 col-lg-4 col-xl-4 p-3 d-flex justify-content-center align-items-center" style={{ width: "150px" }} key={"answer-" + answer.answer.answerId}>
-                                        <div className={!isClicked ? "card w-100 d-flex justify-content-center align-items-center" : "card w-100 d-flex justify-content-center align-items-center" + (answer.isCorrect ? " border border-3 border-success" : " border border-3 border-danger")} onClick={() => handleClick(answer, 4)}>
-                                            <div className="card-body">
-                                                <div className="card-title m-auto">
-                                                    <h1>{answer.answer.answerValue}</h1>
+                <>
+                    <div className="d-flex flex-column justify-content-center align-items-center">
+                        <>
+                            <div>
+                                <h1>{game?.name}</h1>
+                            </div>
+                            <h1>{question.title}</h1>
+                            <div className="row">
+                                <>
+                                    {question.answers.map((answer) => {
+                                        return (<div className="col-6 col-md-4 col-lg-4 col-xl-4 p-3 d-flex justify-content-center align-items-center" style={{ width: "150px" }} key={"answer-" + answer.answer.answerId}>
+                                            <div className={!isClicked ? "card w-100 d-flex justify-content-center align-items-center" : "card w-100 d-flex justify-content-center align-items-center" + (answer.isCorrect ? " border border-3 border-success" : " border border-3 border-danger")} onClick={() => handleClick(answer, 4)}>
+                                                <div className="card-body">
+                                                    <div className="card-title m-auto">
+                                                        <h1>{answer.answer.answerValue}</h1>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>);
-                                })}
-                            </>
-                        </div>
-                        {isExpressionResultCorrect && isExpressionResultCorrectMessageVisible && <div className="correct mt-3"><h1><FontAwesomeIcon icon={faCircleCheck}></FontAwesomeIcon> Correct!</h1></div>}
-                        {!isExpressionResultCorrect && isExpressionResultCorrectMessageVisible && <div className="incorrect mt-3"><h1><FontAwesomeIcon icon={faCircleXmark}></FontAwesomeIcon> Incorrect!</h1></div>}
-                        <div>
-                            {isExpressionResultCorrectMessageVisible && <button className="btn btn-sm btn-success mt-3" onClick={() => {
-                                if (questionIndex < (questions !== undefined ? questions?.length - 1 : 0)) {
-                                    setQuestionIndex(questionIndex + 1);
-                                    setGivenCountryName("");
-                                } else {
-                                    setGameId(1);
-                                    setQuestionIndex(0);
-                                    navigate("/", { replace: true });
-                                }
+                                        </div>);
+                                    })}
+                                </>
+                            </div>
+                            {isExpressionResultCorrect && isExpressionResultCorrectMessageVisible && <div className="correct mt-3"><h1><FontAwesomeIcon icon={faCircleCheck}></FontAwesomeIcon> Correct!</h1></div>}
+                            {!isExpressionResultCorrect && isExpressionResultCorrectMessageVisible && <div className="incorrect mt-3"><h1><FontAwesomeIcon icon={faCircleXmark}></FontAwesomeIcon> Incorrect!</h1></div>}
+                            <div>
+                                {isExpressionResultCorrectMessageVisible && <button className="btn btn-sm btn-success mt-3" onClick={() => {
+                                    if (questionIndex < (questions !== undefined ? questions?.length - 1 : 0)) {
+                                        setQuestionIndex(questionIndex + 1);
+                                        setGivenCountryName("");
+                                    } else {
+                                        setGameId(1);
+                                        setQuestionIndex(0);
+                                        navigate("/", { replace: true });
+                                    }
 
-                                setIsClicked(false);
-                                setIsExpressionResultCorrectMessageVisible(false);
-                            }}>Next question</button>}
-                        </div>
-                    </>
-                </div>
+                                    setIsClicked(false);
+                                    setIsExpressionResultCorrectMessageVisible(false);
+                                }}>Next question</button>}
+                            </div>
+                        </>
+                    </div>
+                </>
             );
         }
     }
@@ -381,6 +394,23 @@ export default function QuizPage() {
     return (
         <div>
             {errorMessage && <p className="alert alert-danger mb-3">{errorMessage}</p>}
+
+            {gameId === 1 && <CountdownTimer delay={60000} onComplete={() => {
+                setShowFirstGameSummaryDialog(true);
+            }}></CountdownTimer>}
+
+            {gameId === 2 && <CountdownTimer delay={questions ? (questions.length * 10000) : 10000} onComplete={() => {
+                // TODO: Show summary dialog for other games
+            }}></CountdownTimer>}
+
+            {gameId === 3 && <CountdownTimer delay={questions ? (questions.length * 10000) : 10000} onComplete={() => {
+                // TODO: Show summary dialog for other games
+            }}></CountdownTimer>}
+
+            {gameId === 4 && <CountdownTimer delay={questions ? (questions.length * 30000) : 30000} onComplete={() => {
+                // TODO: Show summary dialog for other games
+            }}></CountdownTimer>}
+
             {questions && RenderQuestionInfo(questions[questionIndex])}
         </div>
     );
