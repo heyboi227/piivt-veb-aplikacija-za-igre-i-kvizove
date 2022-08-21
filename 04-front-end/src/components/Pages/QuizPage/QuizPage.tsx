@@ -121,7 +121,7 @@ export default function QuizPage() {
     }, [gameId]);
 
     useEffect(() => {
-        setShuffledLetters(shuffleWordLetters(questions !== undefined ? questions[0].answers[0].answer.answerValue.split("") : []));
+        setShuffledLetters(shuffleWordLetters(questions ? questions[0].answers[0].answer.answerValue.split("") : []));
     }, [questions]);
 
     function shuffleWordLetters(letterArray: string[]) {
