@@ -1,16 +1,19 @@
 import { useEffect, useState } from "react";
 import IGame from "../../../models/IGame.model"
-import IQuestion from "../../../models/IQuestion.model";
+import IQuestion from '../../../models/IQuestion.model';
 import { api } from '../../../api/api';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDeleteLeft } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import ShowFirstGameSummaryAction from "../../../helpers/ShowFirstGameSummaryAction";
 import { useNavigate } from "react-router-dom";
+import { faCircleCheck, faCircleXmark } from "@fortawesome/free-solid-svg-icons";
+import "./QuizPage.sass";
+import IAnswer from "../../../models/IAnswer.model";
 
 export default function QuizPage() {
     const [game, setGame] = useState<IGame>();
-    const [gameId, setGameId] = useState<number>(1);
+    const [gameId, setGameId] = useState<number>(3);
 
     const [questionIndex, setQuestionIndex] = useState<number>(0);
     const [questions, setQuestions] = useState<IQuestion[]>();
@@ -18,18 +21,47 @@ export default function QuizPage() {
     const [errorMessage, setErrorMessage] = useState<string>("");
     const [isClicked, setIsClicked] = useState<boolean>(false);
 
+    // First game hooks
     const [shuffledLetters, setShuffledLetters] = useState<string[]>([]);
     const [givenWord, setGivenWord] = useState<string>("");
     const [doesGivenWordExist, setDoesGivenWordExist] = useState<boolean>(false);
     const [doesWordExistMessage, setDoesWordExistMessage] = useState<string>("");
     const [showFirstGameSummaryDialog, setShowFirstGameSummaryDialog] = useState<boolean>(false);
 
+    // Second game hooks
     const [givenCountryName, setGivenCountryName] = useState<string>("");
+    const [isCountryNameCorrect, setIsCountryNameCorrect] = useState<boolean>(false);
+    const [isCountryNameCorrectMessageVisible, setIsCountryNameCorrectMessageVisible] = useState<boolean>(false);
+
+    // Third game hooks
+    const [isCountryFlagCorrect, setIsCountryFlagCorrect] = useState<boolean>(false);
+    const [isCountryFlagCorrectMessage, setIsCountryFlagCorrectMessage] = useState<string>("");
+    const [isCountryFlagCorrectMessageVisible, setIsCountryFlagCorrectMessageVisible] = useState<boolean>(false);
+
+    // Fourth game hooks
+    const [isExpressionResultCorrect, setIsExpressionResultCorrect] = useState<boolean>(false);
+    const [isExpressionResultCorrectMessageVisible, setIsExpressionResultCorrectMessageVisible] = useState<boolean>(false);
+
     const navigate = useNavigate();
 
-
-    const handleClick = () => {
+    function handleClick(answer: IAnswer, gameId: number) {
         setIsClicked(true);
+        if (gameId === 3) {
+            setIsCountryFlagCorrectMessageVisible(true);
+            if (answer.isCorrect) {
+                setIsCountryFlagCorrect(true);
+            } else {
+                setIsCountryFlagCorrect(false);
+                setIsCountryFlagCorrectMessage("You have selected the flag of " + answer.answer.answerValue.substring(4, answer.answer.answerValue.length - 1));
+            }
+        } else if (gameId === 4) {
+            setIsExpressionResultCorrectMessageVisible(true);
+            if (answer.isCorrect) {
+                setIsExpressionResultCorrect(true);
+            } else {
+                setIsExpressionResultCorrect(false);
+            }
+        }
     }
 
     function loadGameData() {
@@ -92,14 +124,6 @@ export default function QuizPage() {
         setShuffledLetters(shuffleWordLetters(questions !== undefined ? questions[0].answers[0].answer.answerValue.split("") : []));
     }, [questions]);
 
-    function renderGameInfo(game: IGame) {
-        return (
-            <div>
-                <h1>{game.name}</h1>
-            </div>
-        );
-    }
-
     function shuffleWordLetters(letterArray: string[]) {
         let currentIndex = letterArray.length, randomIndex;
 
@@ -117,6 +141,16 @@ export default function QuizPage() {
 
     function randomElement(array: string[]) {
         return array[Math.floor(Math.random() * array.length)];
+    }
+
+    function checkFlagAnswer(question: IQuestion) {
+        setIsCountryNameCorrectMessageVisible(true);
+
+        if (question.answers[0].answer.answerValue.toLowerCase().includes(givenCountryName.toLowerCase())) {
+            setIsCountryNameCorrect(true);
+        } else {
+            setIsCountryNameCorrect(false);
+        }
     }
 
     function RenderQuestionInfo(question: IQuestion) {
@@ -186,7 +220,7 @@ export default function QuizPage() {
                             </>
                         </div>
                     </>
-                </div >
+                </div>
             );
         }
         else if (gameId === 2) {
@@ -194,21 +228,22 @@ export default function QuizPage() {
                 <>
                     <h1>{question.title}</h1>
                     <div className="row">
-                        <>{question.answers.map((answer) => {
-                            return (<div className="col-6 col-lg-2 col-md-3 col-xl-2 p-3 d-flex flex-column justify-content-center align-items-center" style={{ marginLeft: "50%", transform: "translateX(-50%)" }} key={"answer-" + answer.answer.answerId}>
-                                <div className="card">
-                                    <div className="card-body">
-                                        <div className="card-title m-auto">
-                                            <img
-                                                src={"https://flagcdn.com/h120/" + answer.answer.answerValue.substring(0, 2) + ".png"}
-                                                srcSet={"https://flagcdn.com/h240/" + answer.answer.answerValue.substring(0, 2) + ".png 2x"}
-                                                height="120"
-                                                alt={answer.answer.answerValue} />
+                        <>
+                            {question.answers.map((answer) => {
+                                return (<div className="col-6 col-lg-2 col-md-3 col-xl-2 p-3 d-flex flex-column justify-content-center align-items-center" style={{ marginLeft: "50%", transform: "translateX(-50%)" }} key={"answer-" + answer.answer.answerId}>
+                                    <div className="card">
+                                        <div className="card-body">
+                                            <div className="card-title m-auto">
+                                                <img
+                                                    src={"https://flagcdn.com/h120/" + answer.answer.answerValue.substring(0, 2) + ".png"}
+                                                    srcSet={"https://flagcdn.com/h240/" + answer.answer.answerValue.substring(0, 2) + ".png 2x"}
+                                                    height="120"
+                                                    alt={answer.answer.answerValue} />
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>);
-                        })}
+                                </div>);
+                            })}
                         </>
                     </div>
                     <div className="input-group w-25">
@@ -216,16 +251,20 @@ export default function QuizPage() {
                             type="text"
                             value={givenCountryName}
                             placeholder="Guess the flag"
-                            onChange={(e) => setGivenCountryName(e.target.value)} />
+                            onChange={(e) => setGivenCountryName(e.target.value)}
+                            onKeyUp={(e) => e.key === "Enter" && checkFlagAnswer(question)} />
                     </div>
+                    {isCountryNameCorrect && isCountryNameCorrectMessageVisible && <div className="correct mt-3"><h1><FontAwesomeIcon icon={faCircleCheck}></FontAwesomeIcon> Correct!</h1></div>}
+                    {!isCountryNameCorrect && isCountryNameCorrectMessageVisible &&
+                        <>
+                            <div className="d-flex justify-content-center align-items-center flex-column mt-3">
+                                <h1 className="incorrect"><FontAwesomeIcon icon={faCircleXmark}></FontAwesomeIcon> Incorrect!</h1>
+                                <h2>The correct answer is: {question.answers[0].answer.answerValue.substring(4, question.answers[0].answer.answerValue.length - 1)}</h2>
+                            </div>
+                        </>}
                     <div>
-                        <button className="btn btn-sm btn-primary mt-3" onClick={() => {
-                            if (question.answers[0].answer.answerValue.includes(givenCountryName)) {
-                                alert("Correct!");
-                            } else {
-                                alert("Incorrect!")
-                            }
-
+                        <button className="btn btn-sm btn-primary mt-3" onClick={() => checkFlagAnswer(question)}>Submit</button>
+                        {isCountryNameCorrectMessageVisible && <button className="btn btn-sm btn-success mt-3 ms-3" onClick={() => {
                             if (questionIndex < (questions !== undefined ? questions?.length - 1 : 0)) {
                                 setQuestionIndex(questionIndex + 1);
                                 setGivenCountryName("");
@@ -233,26 +272,31 @@ export default function QuizPage() {
                                 setGameId(3);
                                 setQuestionIndex(0);
                             }
-                        }}>Submit</button>
+
+                            setIsCountryNameCorrectMessageVisible(false);
+                        }}>Next question</button>}
                     </div>
                 </>
-            </div >);
+            </div>);
         }
         else if (gameId === 3) {
             return (
-                <div>
+                <div className="d-flex flex-column justify-content-center align-items-center">
                     <>
+                        <div>
+                            <h1>{game?.name}</h1>
+                        </div>
                         <h1>{question.title}</h1>
                         <div className="row">
                             <>
                                 {question.answers.map((answer) => {
-                                    return (<div className="col-6 col-lg-2 col-md-3 col-xl-2 p-3" key={"answer-" + answer.answer.answerId}>
-                                        <div className={!isClicked ? "card" : "card" + (answer.isCorrect ? " border-3 border-success" : " border-3 border-danger")} onClick={handleClick}>
+                                    return (<div className="col-6 col-md-4 col-lg-4 col-xl-4 p-3 d-flex justify-content-center align-items-center" key={"answer-" + answer.answer.answerId}>
+                                        <div className={!isClicked ? "card" : "card" + (answer.isCorrect ? " border border-3 border-success" : " border border-3 border-danger")} onClick={() => handleClick(answer, 3)}>
                                             <div className="card-body">
                                                 <div className="card-title m-auto">
                                                     <img
-                                                        src={"https://flagcdn.com/120x90/" + answer.answer.answerValue + ".png"}
-                                                        srcSet={"https://flagcdn.com/240x180/" + answer.answer.answerValue + ".png 2x"}
+                                                        src={"https://flagcdn.com/120x90/" + answer.answer.answerValue.substring(0, 2) + ".png"}
+                                                        srcSet={"https://flagcdn.com/240x180/" + answer.answer.answerValue.substring(0, 2) + ".png 2x"}
                                                         width="120"
                                                         height="90"
                                                         alt={answer.answer.answerValue} />
@@ -261,16 +305,28 @@ export default function QuizPage() {
                                         </div>
                                     </div>);
                                 })}
-                                {isClicked && <button className="btn btn-success btn-sm" onClick={() => {
-                                    if (questionIndex < (questions !== undefined ? questions?.length - 1 : 0)) {
-                                        setQuestionIndex(questionIndex + 1);
-                                        setIsClicked(false);
-                                    } else {
-                                        setQuestionIndex(0);
-                                        setGameId(4);
-                                    }
-                                }}>Next question</button>}
                             </>
+                        </div>
+                        {isCountryFlagCorrect && isCountryFlagCorrectMessageVisible && <div className="correct mt-3"><h1><FontAwesomeIcon icon={faCircleCheck}></FontAwesomeIcon> Correct!</h1></div>}
+                        {!isCountryFlagCorrect && isCountryFlagCorrectMessageVisible &&
+                            <>
+                                <div className="d-flex justify-content-center align-items-center flex-column mt-3">
+                                    <h1 className="incorrect"><FontAwesomeIcon icon={faCircleXmark}></FontAwesomeIcon> Incorrect!</h1>
+                                    {isCountryFlagCorrectMessage && <h2>{isCountryFlagCorrectMessage}</h2>}
+                                </div>
+                            </>}
+                        <div>
+                            {isCountryFlagCorrectMessageVisible && <button className="btn btn-sm btn-success mt-3" onClick={() => {
+                                if (questionIndex < (questions !== undefined ? questions?.length - 1 : 0)) {
+                                    setQuestionIndex(questionIndex + 1);
+                                } else {
+                                    setGameId(4);
+                                    setQuestionIndex(0);
+                                }
+
+                                setIsClicked(false);
+                                setIsCountryFlagCorrectMessageVisible(false);
+                            }}>Next question</button>}
                         </div>
                     </>
                 </div>
@@ -278,14 +334,17 @@ export default function QuizPage() {
         }
         else {
             return (
-                <div>
+                <div className="d-flex flex-column justify-content-center align-items-center">
                     <>
+                        <div>
+                            <h1>{game?.name}</h1>
+                        </div>
                         <h1>{question.title}</h1>
                         <div className="row">
                             <>
                                 {question.answers.map((answer) => {
-                                    return (<div className="col-6 col-lg-2 col-md-3 col-xl-2 p-3" key={"answer-" + answer.answer.answerId}>
-                                        <div className={!isClicked ? "card" : "card" + (answer.isCorrect ? " border-3 border-success" : " border-3 border-danger")} onClick={handleClick}>
+                                    return (<div className="col-6 col-md-4 col-lg-4 col-xl-4 p-3 d-flex justify-content-center align-items-center" style={{ width: "150px" }} key={"answer-" + answer.answer.answerId}>
+                                        <div className={!isClicked ? "card w-100 d-flex justify-content-center align-items-center" : "card w-100 d-flex justify-content-center align-items-center" + (answer.isCorrect ? " border border-3 border-success" : " border border-3 border-danger")} onClick={() => handleClick(answer, 4)}>
                                             <div className="card-body">
                                                 <div className="card-title m-auto">
                                                     <h1>{answer.answer.answerValue}</h1>
@@ -294,20 +353,27 @@ export default function QuizPage() {
                                         </div>
                                     </div>);
                                 })}
-                                {isClicked && <button className="btn btn-success btn-sm" onClick={() => {
-
-                                    if (questionIndex < (questions !== undefined ? questions?.length - 1 : 0)) {
-                                        setQuestionIndex(questionIndex + 1);
-                                        setIsClicked(false);
-                                    }
-                                    else {
-                                        navigate("/", { replace: true });
-                                    }
-                                }}>Next question</button>}
                             </>
                         </div>
+                        {isExpressionResultCorrect && isExpressionResultCorrectMessageVisible && <div className="correct mt-3"><h1><FontAwesomeIcon icon={faCircleCheck}></FontAwesomeIcon> Correct!</h1></div>}
+                        {!isExpressionResultCorrect && isExpressionResultCorrectMessageVisible && <div className="incorrect mt-3"><h1><FontAwesomeIcon icon={faCircleXmark}></FontAwesomeIcon> Incorrect!</h1></div>}
+                        <div>
+                            {isExpressionResultCorrectMessageVisible && <button className="btn btn-sm btn-success mt-3" onClick={() => {
+                                if (questionIndex < (questions !== undefined ? questions?.length - 1 : 0)) {
+                                    setQuestionIndex(questionIndex + 1);
+                                    setGivenCountryName("");
+                                } else {
+                                    setGameId(1);
+                                    setQuestionIndex(0);
+                                    navigate("/", { replace: true });
+                                }
+
+                                setIsClicked(false);
+                                setIsExpressionResultCorrectMessageVisible(false);
+                            }}>Next question</button>}
+                        </div>
                     </>
-                </div >
+                </div>
             );
         }
     }
@@ -315,7 +381,6 @@ export default function QuizPage() {
     return (
         <div>
             {errorMessage && <p className="alert alert-danger mb-3">{errorMessage}</p>}
-            {game && (gameId === 3 || gameId === 4) && renderGameInfo(game)}
             {questions && RenderQuestionInfo(questions[questionIndex])}
         </div>
     );
