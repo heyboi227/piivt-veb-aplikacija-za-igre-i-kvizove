@@ -29,7 +29,7 @@ export default function QuizPage() {
 
     // First game hooks
     const [shuffledLetters, setShuffledLetters] = useState<string[]>([]);
-    const [givenWord, setGivenWord] = useState<string>("");
+    const [givenWord, setGivenWord] = useState<{ letter: string, index: number }[]>([]);
     const [doesGivenWordExist, setDoesGivenWordExist] = useState<boolean>(false);
     const [doesWordExistMessage, setDoesWordExistMessage] = useState<string>("");
     const [showFirstGameSummaryDialog, setShowFirstGameSummaryDialog] = useState<boolean>(false);
@@ -107,7 +107,7 @@ export default function QuizPage() {
             validateStatus: () => true
         })
             .then(res => {
-                if ((res?.status < 200 || res?.status >= 300) && word === givenWord) {
+                if ((res?.status < 200 || res?.status >= 300) && word === givenWord.map(word => word.letter).join("")) {
                     setDoesGivenWordExist(false);
                     setDoesWordExistMessage("The word does not exist!");
                     setTimeout(() => setDoesWordExistMessage(""), 3000);
@@ -178,8 +178,18 @@ export default function QuizPage() {
                             <div className="row">
                                 <>
                                     {shuffledLetters.map((letter, index) => {
-                                        return (<div className="col-3 col-lg-2 col-md-3 col-xl-1" key={"answer-letter-" + letter + "-" + index} onClick={() => setGivenWord(givenWord + letter)}>
-                                            <div className="card" onMouseEnter={(e) => e.currentTarget.classList.add("bg-primary")} onMouseLeave={(e) => e.currentTarget.classList.remove("bg-primary")}>
+                                        return (<div className="col-3 col-lg-2 col-md-3 col-xl-1" key={"answer-letter-" + letter + "-" + index}>
+                                            <div className="card" onClick={(e) => {
+                                                setGivenWord(givenWord => [...givenWord, { letter, index }]);
+                                                document.querySelectorAll(".card")[index].classList.add("bg-secondary");
+                                                document.querySelectorAll(".card")[index].classList.add("disable-click");
+                                            }} onMouseEnter={(e) => {
+                                                e.currentTarget.classList.add("bg-primary");
+                                                e.currentTarget.classList.add("pointer");
+                                            }} onMouseLeave={(e) => {
+                                                e.currentTarget.classList.remove("bg-primary");
+                                                e.currentTarget.classList.remove("pointer");
+                                            }}>
                                                 <div className="card-body">
                                                     <div className="card-title m-auto d-flex justify-content-center align-items-center">
                                                         <h1>{letter.toUpperCase()}</h1>
@@ -192,32 +202,39 @@ export default function QuizPage() {
                                         <div className="input-group mt-3 me-2">
                                             <input className="form-control form-control-sm"
                                                 type="text"
-                                                value={givenWord}
                                                 placeholder="Enter your word here"
-                                                onChange={(e) => setGivenWord(e.target.value)} />
+                                                defaultValue={givenWord.map(word => word.letter).join("")} />
                                         </div>
-                                        {givenWord.length > 0 && <button className="btn btn-sm btn-danger mt-3 me-2" onClick={() => setGivenWord(givenWord.slice(0, givenWord.length - 1))}><FontAwesomeIcon icon={faDeleteLeft}></FontAwesomeIcon></button>}
-                                        {givenWord.length > 0 && <button className="btn btn-sm btn-danger mt-3" style={{ fontSize: ".80rem", width: "70px" }} onClick={() => setGivenWord("")}>Clear all</button>}
+                                        {givenWord.length > 0 && <button className="btn btn-sm btn-danger mt-3 me-2" onClick={() => {
+                                            document.querySelectorAll(".card")[givenWord[givenWord.length - 1].index].classList.remove("bg-secondary");
+                                            document.querySelectorAll(".card")[givenWord[givenWord.length - 1].index].classList.remove("disable-click");
+                                            setGivenWord(givenWord.slice(0, givenWord.length - 1));
+                                        }}><FontAwesomeIcon icon={faDeleteLeft}></FontAwesomeIcon></button>}
+                                        {givenWord.length > 0 && <button className="btn btn-sm btn-danger mt-3" style={{ fontSize: ".80rem", width: "70px" }} onClick={() => {
+                                            document.querySelectorAll(".card").forEach(card => card.classList.remove("bg-secondary"));
+                                            document.querySelectorAll(".card").forEach(card => card.classList.remove("disable-click"));
+                                            setGivenWord([]);
+                                        }}>Clear all</button>}
                                     </div>
                                     <div>
                                         {givenWord.length > 0 && <>
-                                            <button className="btn btn-sm btn-success mt-3" onClick={() => checkIfWordExists(givenWord)}>Check availability</button>
+                                            <button className="btn btn-sm btn-success mt-3" onClick={() => checkIfWordExists(givenWord.map(word => word.letter).join(""))}>Check availability</button>
                                             <button className="btn btn-sm btn-primary mt-3 ms-3" onClick={() => setShowFirstGameSummaryDialog(true)}>Submit</button>
 
                                             {showFirstGameSummaryDialog && <ShowFirstGameSummaryAction
                                                 title="Find the longest word summary"
                                                 onSubmit={() => {
                                                     setShowFirstGameSummaryDialog(false);
-                                                    setGivenWord("");
+                                                    setGivenWord([]);
                                                     setShuffledLetters([]);
                                                     setGameId(2);
                                                     setQuestionIndex(0);
                                                     setLoading(true);
                                                 }}
-                                                givenWord={givenWord !== "" ? givenWord : "Nothing entered"}
+                                                givenWord={givenWord.map(word => word.letter).join("") !== "" ? givenWord.map(word => word.letter).join("") : "Nothing entered"}
                                                 targetWord={question.answers[0].answer.answerValue}
                                                 pointsMessage={() => {
-                                                    if (doesGivenWordExist || givenWord === question.answers[0].answer.answerValue) {
+                                                    if (doesGivenWordExist || givenWord.map(word => word.letter).join("") === question.answers[0].answer.answerValue) {
                                                         return "You have won " + givenWord.length + " points!";
                                                     } else {
                                                         return "Unfortunately, you have won no points as the word does not exist.";
