@@ -8,7 +8,7 @@ export interface ICountdownTimerProperties {
 
 const countdownRenderer = ({ minutes, seconds, completed }: any) => {
     if (completed) {
-        return <span>Time's up!</span>;
+        return <span>00:00</span>;
     } else {
         return <span>{zeroPad(minutes)}:{zeroPad(seconds)}</span>
     }

@@ -11,16 +11,21 @@ import { faCircleCheck, faCircleXmark } from "@fortawesome/free-solid-svg-icons"
 import "./QuizPage.sass";
 import IAnswer from "../../../models/IAnswer.model";
 import { CountdownTimer } from "../../CountdownTimer/CountdownTimer";
+import ShowGameSummaryAction from "../../../helpers/ShowGameSummaryAction";
 
 export default function QuizPage() {
     const [game, setGame] = useState<IGame>();
     const [gameId, setGameId] = useState<number>(1);
+
+    const [loading, setLoading] = useState<boolean>(true);
 
     const [questionIndex, setQuestionIndex] = useState<number>(0);
     const [questions, setQuestions] = useState<IQuestion[]>();
 
     const [errorMessage, setErrorMessage] = useState<string>("");
     const [isClicked, setIsClicked] = useState<boolean>(false);
+    const [showGameSummaryDialog, setShowGameSummaryDialog] = useState<boolean>(false);
+    const [showQuizSummaryDialog, setShowQuizSummaryDialog] = useState<boolean>(false);
 
     // First game hooks
     const [shuffledLetters, setShuffledLetters] = useState<string[]>([]);
@@ -85,7 +90,9 @@ export default function QuizPage() {
                     return setTimeout(() => { setErrorMessage("") }, 3000);
                 }
 
+                console.log(res.data);
                 setQuestions(res.data);
+                setLoading(false);
             })
     }
 
@@ -194,8 +201,8 @@ export default function QuizPage() {
                                     </div>
                                     <div>
                                         {givenWord.length > 0 && <>
-                                            <button className="btn btn-sm btn-success" onClick={() => checkIfWordExists(givenWord)}>Check availability</button>
-                                            <button className="btn btn-sm btn-primary" onClick={() => setShowFirstGameSummaryDialog(true)}>Submit</button>
+                                            <button className="btn btn-sm btn-success mt-3" onClick={() => checkIfWordExists(givenWord)}>Check availability</button>
+                                            <button className="btn btn-sm btn-primary mt-3 ms-3" onClick={() => setShowFirstGameSummaryDialog(true)}>Submit</button>
 
                                             {showFirstGameSummaryDialog && <ShowFirstGameSummaryAction
                                                 title="Find the longest word summary"
@@ -205,6 +212,7 @@ export default function QuizPage() {
                                                     setShuffledLetters([]);
                                                     setGameId(2);
                                                     setQuestionIndex(0);
+                                                    setLoading(true);
                                                 }}
                                                 givenWord={givenWord !== "" ? givenWord : "Nothing entered"}
                                                 targetWord={question.answers[0].answer.answerValue}
@@ -270,6 +278,17 @@ export default function QuizPage() {
                                         <h2>The correct answer is: {question.answers[0].answer.answerValue.substring(4, question.answers[0].answer.answerValue.length - 1)}</h2>
                                     </div>
                                 </>}
+                            {showGameSummaryDialog && <ShowGameSummaryAction
+                                title={"Guess the country name summary"}
+                                pointsMessage={() => {
+                                    return ""
+                                }}
+                                onSubmit={() => {
+                                    setShowGameSummaryDialog(false);
+                                    setGameId(3);
+                                    setQuestionIndex(0);
+                                    setLoading(true);
+                                }} />}
                             <div>
                                 {!isCountryNameCorrectMessageVisible && <button className="btn btn-sm btn-primary mt-3" onClick={() => checkFlagAnswer(question)}>Submit</button>}
                                 {isCountryNameCorrectMessageVisible && <button className="btn btn-sm btn-success mt-3 ms-3" onClick={() => {
@@ -277,8 +296,7 @@ export default function QuizPage() {
                                         setQuestionIndex(questionIndex + 1);
                                         setGivenCountryName("");
                                     } else {
-                                        setGameId(3);
-                                        setQuestionIndex(0);
+                                        setShowGameSummaryDialog(true);
                                     }
 
                                     setIsCountryNameCorrectMessageVisible(false);
@@ -325,13 +343,23 @@ export default function QuizPage() {
                                         {isCountryFlagCorrectMessage && <h2>{isCountryFlagCorrectMessage}</h2>}
                                     </div>
                                 </>}
+                            {showGameSummaryDialog && <ShowGameSummaryAction
+                                title={"Guess the country flag summary"}
+                                pointsMessage={() => {
+                                    return "";
+                                }}
+                                onSubmit={() => {
+                                    setShowGameSummaryDialog(false);
+                                    setGameId(4);
+                                    setQuestionIndex(0);
+                                    setLoading(true);
+                                }} />}
                             <div>
                                 {isCountryFlagCorrectMessageVisible && <button className="btn btn-sm btn-success mt-3" onClick={() => {
                                     if (questionIndex < (questions !== undefined ? questions?.length - 1 : 0)) {
                                         setQuestionIndex(questionIndex + 1);
                                     } else {
-                                        setGameId(4);
-                                        setQuestionIndex(0);
+                                        setShowGameSummaryDialog(true);
                                     }
 
                                     setIsClicked(false);
@@ -369,15 +397,25 @@ export default function QuizPage() {
                             </div>
                             {isExpressionResultCorrect && isExpressionResultCorrectMessageVisible && <div className="correct mt-3"><h1><FontAwesomeIcon icon={faCircleCheck}></FontAwesomeIcon> Correct!</h1></div>}
                             {!isExpressionResultCorrect && isExpressionResultCorrectMessageVisible && <div className="incorrect mt-3"><h1><FontAwesomeIcon icon={faCircleXmark}></FontAwesomeIcon> Incorrect!</h1></div>}
+                            {showGameSummaryDialog && <ShowGameSummaryAction
+                                title={"Guess the expression result summary"}
+                                pointsMessage={() => {
+                                    return ""
+                                }}
+                                onSubmit={() => {
+                                    setShowQuizSummaryDialog(false);
+                                    setGameId(1);
+                                    setQuestionIndex(0);
+                                    setLoading(true);
+                                    navigate("/", { replace: true });
+                                }} />}
                             <div>
                                 {isExpressionResultCorrectMessageVisible && <button className="btn btn-sm btn-success mt-3" onClick={() => {
                                     if (questionIndex < (questions !== undefined ? questions?.length - 1 : 0)) {
                                         setQuestionIndex(questionIndex + 1);
                                         setGivenCountryName("");
                                     } else {
-                                        setGameId(1);
-                                        setQuestionIndex(0);
-                                        navigate("/", { replace: true });
+                                        setShowQuizSummaryDialog(true);
                                     }
 
                                     setIsClicked(false);
@@ -395,21 +433,19 @@ export default function QuizPage() {
         <div>
             {errorMessage && <p className="alert alert-danger mb-3">{errorMessage}</p>}
 
-            {gameId === 1 && <CountdownTimer delay={60000} onComplete={() => {
+            {(showFirstGameSummaryDialog || showGameSummaryDialog || showQuizSummaryDialog) && <CountdownTimer delay={0} onComplete={() => { }} />}
+
+            {gameId === 1 && !loading && !showFirstGameSummaryDialog && <CountdownTimer delay={60000} onComplete={() => {
                 setShowFirstGameSummaryDialog(true);
-            }}></CountdownTimer>}
+            }} />}
 
-            {gameId === 2 && <CountdownTimer delay={questions ? (questions.length * 10000) : 10000} onComplete={() => {
-                // TODO: Show summary dialog for other games
-            }}></CountdownTimer>}
+            {(gameId === 2 || gameId === 3) && !loading && !showGameSummaryDialog && <CountdownTimer delay={questions ? (questions.length * 10000) : 10000} onComplete={() => {
+                setShowGameSummaryDialog(true);
+            }} />}
 
-            {gameId === 3 && <CountdownTimer delay={questions ? (questions.length * 10000) : 10000} onComplete={() => {
-                // TODO: Show summary dialog for other games
-            }}></CountdownTimer>}
-
-            {gameId === 4 && <CountdownTimer delay={questions ? (questions.length * 30000) : 30000} onComplete={() => {
-                // TODO: Show summary dialog for other games
-            }}></CountdownTimer>}
+            {gameId === 4 && !loading && !showQuizSummaryDialog && <CountdownTimer delay={questions ? (questions.length * 30000) : 30000} onComplete={() => {
+                setShowQuizSummaryDialog(true);
+            }} />}
 
             {questions && RenderQuestionInfo(questions[questionIndex])}
         </div>
