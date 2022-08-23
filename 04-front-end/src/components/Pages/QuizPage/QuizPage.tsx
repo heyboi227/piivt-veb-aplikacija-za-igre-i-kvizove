@@ -15,10 +15,14 @@ import "./QuizPage.sass";
 import IAnswer from "../../../models/IAnswer.model";
 import { CountdownTimer } from "../../CountdownTimer/CountdownTimer";
 import ShowGameSummaryAction from "../../../helpers/ShowGameSummaryAction";
+import ShowQuizSummaryAction from "../../../helpers/ShowQuizSummaryAction";
 
 export default function QuizPage() {
   const [game, setGame] = useState<IGame>();
   const [gameId, setGameId] = useState<number>(1);
+
+  const [points, setPoints] = useState<number>(0);
+  const [totalPoints, setTotalPoints] = useState<number>(0);
 
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -34,6 +38,7 @@ export default function QuizPage() {
 
   // First game hooks
   const [shuffledLetters, setShuffledLetters] = useState<string[]>([]);
+  const [targetWord, setTargetWord] = useState<string>("");
   const [givenWord, setGivenWord] = useState<
     { letter: string; index: number }[]
   >([]);
@@ -71,12 +76,57 @@ export default function QuizPage() {
 
   const navigate = useNavigate();
 
-  function handleClick(answer: IAnswer, gameId: number) {
+  function checkIfWordExists(word: string) {
+    axios({
+      method: "GET",
+      url: "https://wordsapiv1.p.rapidapi.com/words/" + word,
+      headers: {
+        "X-RapidAPI-Key": "6d9da25073msheeafa7b7195d868p1e35e8jsnda1f1df455a5",
+        "X-RapidAPI-Host": "wordsapiv1.p.rapidapi.com",
+      },
+      validateStatus: () => true,
+    })
+      .then((res) => {
+        if ((res?.status < 200 || res?.status >= 300) && targetWord !== word) {
+          setDoesGivenWordExist(false);
+          setDoesWordExistMessage("The word does not exist!");
+          setTimeout(() => setDoesWordExistMessage(""), 3000);
+          return;
+        }
+
+        setDoesGivenWordExist(true);
+        setDoesWordExistMessage("The word exists!");
+        setTimeout(() => setDoesWordExistMessage(""), 3000);
+      })
+      .catch((err) => {
+        setErrorMessage(err + "");
+      });
+  }
+
+  function checkFlagAnswer(question: IQuestion) {
+    setIsCountryNameCorrectMessageVisible(true);
+
+    if (
+      question.answers[0].answer.answerValue
+        .toLowerCase()
+        .includes(givenCountryName.toLowerCase())
+    ) {
+      setIsCountryNameCorrect(true);
+      setPoints(points + 1);
+      setTotalPoints(totalPoints + 1);
+    } else {
+      setIsCountryNameCorrect(false);
+    }
+  }
+
+  function checkResultForMultipleAnswers(answer: IAnswer, gameId: number) {
     setIsClicked(true);
     if (gameId === 3) {
       setIsCountryFlagCorrectMessageVisible(true);
       if (answer.isCorrect) {
         setIsCountryFlagCorrect(true);
+        setPoints(points + 1);
+        setTotalPoints(totalPoints + 1);
       } else {
         setIsCountryFlagCorrect(false);
         setIsCountryFlagCorrectMessage(
@@ -91,6 +141,8 @@ export default function QuizPage() {
       setIsExpressionResultCorrectMessageVisible(true);
       if (answer.isCorrect) {
         setIsExpressionResultCorrect(true);
+        setPoints(points + 2);
+        setTotalPoints(totalPoints + 2);
       } else {
         setIsExpressionResultCorrect(false);
       }
@@ -119,40 +171,14 @@ export default function QuizPage() {
         }, 3000);
       }
 
-      console.log(res.data);
       setQuestions(res.data);
+
+      if (gameId === 1) {
+        setTargetWord(res.data[0].answers[0].answer.answerValue);
+      }
+
       setLoading(false);
     });
-  }
-
-  function checkIfWordExists(word: string) {
-    axios({
-      method: "GET",
-      url: "https://wordsapiv1.p.rapidapi.com/words/" + word,
-      headers: {
-        "X-RapidAPI-Key": "6d9da25073msheeafa7b7195d868p1e35e8jsnda1f1df455a5",
-        "X-RapidAPI-Host": "wordsapiv1.p.rapidapi.com",
-      },
-      validateStatus: () => true,
-    })
-      .then((res) => {
-        if (
-          (res?.status < 200 || res?.status >= 300) &&
-          word === givenWord.map((word) => word.letter).join("")
-        ) {
-          setDoesGivenWordExist(false);
-          setDoesWordExistMessage("The word does not exist!");
-          setTimeout(() => setDoesWordExistMessage(""), 3000);
-          return;
-        }
-
-        setDoesGivenWordExist(true);
-        setDoesWordExistMessage("The word exists!");
-        setTimeout(() => setDoesWordExistMessage(""), 3000);
-      })
-      .catch((err) => {
-        setErrorMessage(err + "");
-      });
   }
 
   useEffect(() => {
@@ -187,20 +213,6 @@ export default function QuizPage() {
 
   function randomElement(array: string[]) {
     return array[Math.floor(Math.random() * array.length)];
-  }
-
-  function checkFlagAnswer(question: IQuestion) {
-    setIsCountryNameCorrectMessageVisible(true);
-
-    if (
-      question.answers[0].answer.answerValue
-        .toLowerCase()
-        .includes(givenCountryName.toLowerCase())
-    ) {
-      setIsCountryNameCorrect(true);
-    } else {
-      setIsCountryNameCorrect(false);
-    }
   }
 
   function RenderQuestionInfo(question: IQuestion) {
@@ -269,6 +281,7 @@ export default function QuizPage() {
                     </div>
                     {givenWord.length > 0 && (
                       <button
+                        title="Delete previous"
                         className="btn btn-sm btn-danger mt-3 me-2"
                         onClick={() => {
                           document
@@ -319,17 +332,21 @@ export default function QuizPage() {
                       <>
                         <button
                           className="btn btn-sm btn-success mt-3"
-                          onClick={() =>
+                          onClick={() => {
                             checkIfWordExists(
                               givenWord.map((word) => word.letter).join("")
-                            )
-                          }
+                            );
+                          }}
                         >
                           Check availability
                         </button>
                         <button
                           className="btn btn-sm btn-primary mt-3 ms-3"
-                          onClick={() => setShowFirstGameSummaryDialog(true)}
+                          onClick={() => {
+                            setShowFirstGameSummaryDialog(true);
+                            setPoints(points + givenWord.length);
+                            setTotalPoints(points + givenWord.length);
+                          }}
                         >
                           Submit
                         </button>
@@ -339,6 +356,7 @@ export default function QuizPage() {
                             title="Find the longest word summary"
                             onSubmit={() => {
                               setShowFirstGameSummaryDialog(false);
+                              setPoints(0);
                               setGivenWord([]);
                               setShuffledLetters([]);
                               setGameId(2);
@@ -360,11 +378,7 @@ export default function QuizPage() {
                                   .join("") ===
                                   question.answers[0].answer.answerValue
                               ) {
-                                return (
-                                  "You have won " +
-                                  givenWord.length +
-                                  " points!"
-                                );
+                                return "You have won " + points + " points!";
                               } else {
                                 return "Unfortunately, you have won no points as the word does not exist.";
                               }
@@ -484,10 +498,11 @@ export default function QuizPage() {
                 <ShowGameSummaryAction
                   title={"Guess the country name summary"}
                   pointsMessage={() => {
-                    return "";
+                    return "You have won " + points + " points!";
                   }}
                   onSubmit={() => {
                     setShowGameSummaryDialog(false);
+                    setPoints(0);
                     setGameId(3);
                     setQuestionIndex(0);
                     setLoading(true);
@@ -503,26 +518,33 @@ export default function QuizPage() {
                     Submit
                   </button>
                 )}
-                {isCountryNameCorrectMessageVisible && (
-                  <button
-                    className="btn btn-sm btn-success mt-3 ms-3"
-                    onClick={() => {
-                      if (
-                        questionIndex <
-                        (questions !== undefined ? questions?.length - 1 : 0)
-                      ) {
+                {isCountryNameCorrectMessageVisible &&
+                  questionIndex !==
+                    (questions !== undefined ? questions?.length - 1 : 0) && (
+                    <button
+                      className="btn btn-sm btn-success mt-3 ms-3"
+                      onClick={() => {
                         setQuestionIndex(questionIndex + 1);
                         setGivenCountryName("");
-                      } else {
+                        setIsCountryNameCorrectMessageVisible(false);
+                      }}
+                    >
+                      Next question
+                    </button>
+                  )}
+                {isCountryNameCorrectMessageVisible &&
+                  questionIndex ===
+                    (questions !== undefined ? questions?.length - 1 : 0) && (
+                    <button
+                      className="btn btn-sm btn-success mt-3 ms-3"
+                      onClick={() => {
                         setShowGameSummaryDialog(true);
-                      }
-
-                      setIsCountryNameCorrectMessageVisible(false);
-                    }}
-                  >
-                    Next question
-                  </button>
-                )}
+                        setIsCountryNameCorrectMessageVisible(false);
+                      }}
+                    >
+                      Summary
+                    </button>
+                  )}
               </div>
             </>
           </div>
@@ -554,7 +576,9 @@ export default function QuizPage() {
                                   ? " border border-3 border-success"
                                   : " border border-3 border-danger")
                           }
-                          onClick={() => handleClick(answer, 3)}
+                          onClick={() =>
+                            checkResultForMultipleAnswers(answer, 3)
+                          }
                         >
                           <div className="card-body">
                             <div className="card-title m-auto">
@@ -606,10 +630,11 @@ export default function QuizPage() {
                 <ShowGameSummaryAction
                   title={"Guess the country flag summary"}
                   pointsMessage={() => {
-                    return "";
+                    return "You have won " + points + " points!";
                   }}
                   onSubmit={() => {
                     setShowGameSummaryDialog(false);
+                    setPoints(0);
                     setGameId(4);
                     setQuestionIndex(0);
                     setLoading(true);
@@ -617,26 +642,34 @@ export default function QuizPage() {
                 />
               )}
               <div>
-                {isCountryFlagCorrectMessageVisible && (
-                  <button
-                    className="btn btn-sm btn-success mt-3"
-                    onClick={() => {
-                      if (
-                        questionIndex <
-                        (questions !== undefined ? questions?.length - 1 : 0)
-                      ) {
+                {isCountryFlagCorrectMessageVisible &&
+                  questionIndex <
+                    (questions !== undefined ? questions?.length - 1 : 0) && (
+                    <button
+                      className="btn btn-sm btn-success mt-3"
+                      onClick={() => {
                         setQuestionIndex(questionIndex + 1);
-                      } else {
+                        setIsClicked(false);
+                        setIsCountryFlagCorrectMessageVisible(false);
+                      }}
+                    >
+                      Next question
+                    </button>
+                  )}
+                {isCountryFlagCorrectMessageVisible &&
+                  questionIndex ===
+                    (questions !== undefined ? questions?.length - 1 : 0) && (
+                    <button
+                      className="btn btn-sm btn-success mt-3"
+                      onClick={() => {
                         setShowGameSummaryDialog(true);
-                      }
-
-                      setIsClicked(false);
-                      setIsCountryFlagCorrectMessageVisible(false);
-                    }}
-                  >
-                    Next question
-                  </button>
-                )}
+                        setIsClicked(false);
+                        setIsCountryFlagCorrectMessageVisible(false);
+                      }}
+                    >
+                      Summary
+                    </button>
+                  )}
               </div>
             </>
           </div>
@@ -669,7 +702,9 @@ export default function QuizPage() {
                                   ? " border border-3 border-success"
                                   : " border border-3 border-danger")
                           }
-                          onClick={() => handleClick(answer, 4)}
+                          onClick={() =>
+                            checkResultForMultipleAnswers(answer, 4)
+                          }
                         >
                           <div className="card-body">
                             <div className="card-title m-auto">
@@ -700,14 +735,21 @@ export default function QuizPage() {
                     </h1>
                   </div>
                 )}
-              {showGameSummaryDialog && (
-                <ShowGameSummaryAction
+              {showQuizSummaryDialog && (
+                <ShowQuizSummaryAction
                   title={"Guess the expression result summary"}
                   pointsMessage={() => {
-                    return "";
+                    return (
+                      "The quiz has been finished. In the last game, you have won " +
+                      points +
+                      " points. In total, you have won " +
+                      totalPoints +
+                      " points!"
+                    );
                   }}
                   onSubmit={() => {
                     setShowQuizSummaryDialog(false);
+                    setPoints(0);
                     setGameId(1);
                     setQuestionIndex(0);
                     setLoading(true);
@@ -716,27 +758,34 @@ export default function QuizPage() {
                 />
               )}
               <div>
-                {isExpressionResultCorrectMessageVisible && (
-                  <button
-                    className="btn btn-sm btn-success mt-3"
-                    onClick={() => {
-                      if (
-                        questionIndex <
-                        (questions !== undefined ? questions?.length - 1 : 0)
-                      ) {
+                {isExpressionResultCorrectMessageVisible &&
+                  questionIndex !==
+                    (questions !== undefined ? questions?.length - 1 : 0) && (
+                    <button
+                      className="btn btn-sm btn-success mt-3"
+                      onClick={() => {
                         setQuestionIndex(questionIndex + 1);
-                        setGivenCountryName("");
-                      } else {
+                        setIsClicked(false);
+                        setIsExpressionResultCorrectMessageVisible(false);
+                      }}
+                    >
+                      Next question
+                    </button>
+                  )}
+                {isExpressionResultCorrectMessageVisible &&
+                  questionIndex ===
+                    (questions !== undefined ? questions?.length - 1 : 0) && (
+                    <button
+                      className="btn btn-sm btn-success mt-3"
+                      onClick={() => {
                         setShowQuizSummaryDialog(true);
-                      }
-
-                      setIsClicked(false);
-                      setIsExpressionResultCorrectMessageVisible(false);
-                    }}
-                  >
-                    Next question
-                  </button>
-                )}
+                        setIsClicked(false);
+                        setIsExpressionResultCorrectMessageVisible(false);
+                      }}
+                    >
+                      Summary
+                    </button>
+                  )}
               </div>
             </>
           </div>
