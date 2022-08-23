@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import BaseController from "../../common/BaseController";
 import { IActiveUserLoginDto } from "./dto/IActiveUserLogin.dto";
 import * as bcrypt from "bcrypt";
-import ITokenData from "./dto/ITokenData";
+import ITokenData from "./ITokenData";
 import * as jwt from "jsonwebtoken";
 import { DevConfig } from "../../configs";
 import AuthMiddleware from "../../middlewares/AuthMiddleware";

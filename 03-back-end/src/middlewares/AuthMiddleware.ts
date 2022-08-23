@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import * as jwt from "jsonwebtoken";
-import ITokenData from "../components/auth/dto/ITokenData";
+import ITokenData from "../components/auth/ITokenData";
 import { DevConfig } from "../configs";
 
 export default class AuthMiddleware {
