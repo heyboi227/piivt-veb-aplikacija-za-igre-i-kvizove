@@ -23,13 +23,14 @@ import UserQuestionList from "../User/Questions/UserQuestionList";
 import UserQuestionAdd from "../User/Questions/UserQuestionAdd";
 import UserQuestionEdit from "../User/Questions/UserQuestionEdit";
 import UserQuestionAnswerList from "../User/Questions/UserQuestionAnswerList";
+import HomePage from "../Home/HomePage";
 
 function Application() {
   return (
     <Container className="mt-4">
       <Menu />
       <Routes>
-        <Route path="/" element={<div></div>} />
+        <Route path="/" element={<HomePage />} />
         <Route path="/contact" element={<ContactPage />} />
 
         <Route
