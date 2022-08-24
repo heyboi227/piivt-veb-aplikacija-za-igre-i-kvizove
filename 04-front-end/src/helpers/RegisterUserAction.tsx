@@ -1,15 +1,13 @@
 import { Button, Modal } from "react-bootstrap";
 
-export interface IShowFirstGameSummaryActionProperties {
+export interface IRegisterUserActionProperties {
   title: string;
-  givenWord: string;
-  targetWord: string;
-  pointsMessage: () => string;
+  message: string;
   onSubmit: () => void;
 }
 
-export default function ShowFirstGameSummaryAction(
-  props: IShowFirstGameSummaryActionProperties
+export default function RegisterUserAction(
+  props: IRegisterUserActionProperties
 ) {
   return (
     <Modal
@@ -24,13 +22,11 @@ export default function ShowFirstGameSummaryAction(
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <p>The word you have entered was: {props.givenWord}</p>
-        <p>The target word was: {props.targetWord}</p>
-        <p>{props.pointsMessage()}</p>
+        <p>{props.message}</p>
       </Modal.Body>
       <Modal.Footer>
         <Button className="btn btn-lg btn-success" onClick={props.onSubmit}>
-          Next game
+          Register
         </Button>
       </Modal.Footer>
     </Modal>

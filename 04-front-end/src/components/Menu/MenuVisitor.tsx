@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import SubmitUsernameAction from "../../helpers/SubmitUsernameAction";
 import AppStore from "../../stores/AppStore";
 import { api } from "../../api/api";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faWindowClose } from "@fortawesome/free-regular-svg-icons";
 
 export default function MenuVisitor() {
   const [role, setRole] = useState<
@@ -14,6 +16,11 @@ export default function MenuVisitor() {
   const [error, setError] = useState<string>("");
 
   const navigate = useNavigate();
+
+  function doUserLogout() {
+    AppStore.dispatch({ type: "auth.reset" });
+    navigate("/auth/user/login");
+  }
 
   AppStore.subscribe(() => {
     setRole(AppStore.getState().auth.role);
@@ -65,6 +72,7 @@ export default function MenuVisitor() {
               key: "role",
               value: "user",
             });
+            window.location.reload();
           });
       })
       .then(() => {
@@ -122,8 +130,8 @@ export default function MenuVisitor() {
               username={username}
               setUsername={setUsername}
               onSubmit={() => {
-                doAddUser();
                 setShowUsernameSubmitDialog(false);
+                doAddUser();
               }}
               onCancel={() => setShowUsernameSubmitDialog(false)}
             />
@@ -143,6 +151,16 @@ export default function MenuVisitor() {
           <Link className="nav-item nav-link" to="/contact">
             Contact
           </Link>
+
+          {role === "user" && (
+            <div
+              className="nav-item nav-link"
+              style={{ cursor: "pointer" }}
+              onClick={() => doUserLogout()}
+            >
+              <FontAwesomeIcon icon={faWindowClose} /> Logout
+            </div>
+          )}
         </div>
       </div>
       {error && <p className="alert alert-danger">{error}</p>}

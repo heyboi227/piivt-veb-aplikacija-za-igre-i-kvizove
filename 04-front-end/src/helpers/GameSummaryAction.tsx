@@ -1,13 +1,13 @@
 import { Button, Modal } from "react-bootstrap";
 
-export interface IShowGameSummaryActionProperties {
+export interface IGameSummaryActionProperties {
   title: string;
   pointsMessage: () => string;
   onSubmit: () => void;
 }
 
-export default function ShowGameSummaryAction(
-  props: IShowGameSummaryActionProperties
+export default function GameSummaryAction(
+  props: IGameSummaryActionProperties
 ) {
   return (
     <Modal

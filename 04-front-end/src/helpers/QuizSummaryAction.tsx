@@ -1,13 +1,13 @@
 import { Button, Modal } from "react-bootstrap";
 
-export interface IShowQuizSummaryActionProperties {
+export interface IQuizSummaryActionProperties {
   title: string;
   pointsMessage: () => string;
   onSubmit: () => void;
 }
 
-export default function ShowQuizSummaryAction(
-  props: IShowQuizSummaryActionProperties
+export default function QuizSummaryAction(
+  props: IQuizSummaryActionProperties
 ) {
   return (
     <Modal

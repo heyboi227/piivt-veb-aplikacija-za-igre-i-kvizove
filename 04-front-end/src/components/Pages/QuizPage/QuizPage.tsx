@@ -5,7 +5,7 @@ import { api } from "../../../api/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDeleteLeft } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
-import ShowFirstGameSummaryAction from "../../../helpers/ShowFirstGameSummaryAction";
+import FirstGameSummaryAction from "../../../helpers/FirstGameSummaryAction";
 import { useNavigate } from "react-router-dom";
 import {
   faCircleCheck,
@@ -14,10 +14,17 @@ import {
 import "./QuizPage.sass";
 import IAnswer from "../../../models/IAnswer.model";
 import { CountdownTimer } from "../../CountdownTimer/CountdownTimer";
-import ShowGameSummaryAction from "../../../helpers/ShowGameSummaryAction";
-import ShowQuizSummaryAction from "../../../helpers/ShowQuizSummaryAction";
+import GameSummaryAction from "../../../helpers/GameSummaryAction";
+import QuizSummaryAction from "../../../helpers/QuizSummaryAction";
+import AppStore from "../../../stores/AppStore";
+import RegisterUserAction from "../../../helpers/RegisterUserAction";
 
 export default function QuizPage() {
+  const role = AppStore.getState().auth.role;
+
+  const [showRegisterUserDialog, setShowRegisterUserDialog] =
+    useState<boolean>(false);
+
   const [game, setGame] = useState<IGame>();
   const [gameId, setGameId] = useState<number>(1);
 
@@ -352,7 +359,7 @@ export default function QuizPage() {
                         </button>
 
                         {showFirstGameSummaryDialog && (
-                          <ShowFirstGameSummaryAction
+                          <FirstGameSummaryAction
                             title="Find the longest word summary"
                             onSubmit={() => {
                               setShowFirstGameSummaryDialog(false);
@@ -495,7 +502,7 @@ export default function QuizPage() {
                 </>
               )}
               {showGameSummaryDialog && (
-                <ShowGameSummaryAction
+                <GameSummaryAction
                   title={"Guess the country name summary"}
                   pointsMessage={() => {
                     return "You have won " + points + " points!";
@@ -627,7 +634,7 @@ export default function QuizPage() {
                 </>
               )}
               {showGameSummaryDialog && (
-                <ShowGameSummaryAction
+                <GameSummaryAction
                   title={"Guess the country flag summary"}
                   pointsMessage={() => {
                     return "You have won " + points + " points!";
@@ -736,7 +743,7 @@ export default function QuizPage() {
                   </div>
                 )}
               {showQuizSummaryDialog && (
-                <ShowQuizSummaryAction
+                <QuizSummaryAction
                   title={"Guess the expression result summary"}
                   pointsMessage={() => {
                     return (
@@ -748,12 +755,34 @@ export default function QuizPage() {
                     );
                   }}
                   onSubmit={() => {
+                    if (role === "user") {
+                      setShowQuizSummaryDialog(false);
+                      setShowRegisterUserDialog(true);
+                      return;
+                    }
+
                     setShowQuizSummaryDialog(false);
                     setPoints(0);
                     setGameId(1);
                     setQuestionIndex(0);
                     setLoading(true);
                     navigate("/", { replace: true });
+                  }}
+                />
+              )}
+              {showRegisterUserDialog && (
+                <RegisterUserAction
+                  title={"Registration required"}
+                  message={
+                    "Thank you for playing our quiz. If you wish to play again and store your results, please register your account on the following page."
+                  }
+                  onSubmit={() => {
+                    setShowRegisterUserDialog(false);
+                    setPoints(0);
+                    setGameId(1);
+                    setQuestionIndex(0);
+                    setLoading(true);
+                    navigate("/auth/user/register", { replace: true });
                   }}
                 />
               )}
