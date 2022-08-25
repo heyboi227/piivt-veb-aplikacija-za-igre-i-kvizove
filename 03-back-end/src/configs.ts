@@ -7,6 +7,7 @@ import QuestionRouter from "./components/question/QuestionRouter.router";
 import AnswerRouter from "./components/answer/AnswerRouter.router";
 import AuthRouter from "./components/auth/AuthRouter.router";
 import AdministratorRouter from "./components/administrator/AdministratorRouter.router";
+import "dotenv/config";
 
 const DevConfig: IConfig = {
   server: {
@@ -30,8 +31,8 @@ const DevConfig: IConfig = {
   database: {
     host: "localhost",
     port: 3306,
-    user: "jeknicm",
-    password: "jeknicm",
+    user: process.env.DATABASE_USERNAME,
+    password: process.env.DATABASE_PASSWORD,
     database: "piivt_app",
     charset: "utf8",
     timezone: "+01:00",

@@ -4,7 +4,6 @@ import { DevConfig } from "./configs";
 import IConfig from "./common/IConfig.interface";
 import * as fs from "fs";
 import * as morgan from "morgan";
-import axios from "axios";
 import IApplicationResources from "./common/IApplicationResources.interface";
 import * as mysql2 from "mysql2/promise";
 import GameService from "./components/game/GameService.service";
@@ -106,18 +105,6 @@ async function main() {
   for (const router of config.routers) {
     router.setupRoutes(application, applicationResources);
   }
-
-  // application.get("/countries-json", () => {
-  //   axios({
-  //     method: "get",
-  //     url: "https://flagcdn.com/en/codes.json",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //   })
-  //     .then((res) => console.log(res.data))
-  //     .catch((error) => console.error(error));
-  // });
 
   application.use((_req, res) => {
     res.sendStatus(404);
