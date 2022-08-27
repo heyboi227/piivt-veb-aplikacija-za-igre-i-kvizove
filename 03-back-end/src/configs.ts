@@ -8,6 +8,7 @@ import AnswerRouter from "./components/answer/AnswerRouter.router";
 import AuthRouter from "./components/auth/AuthRouter.router";
 import AdministratorRouter from "./components/administrator/AdministratorRouter.router";
 import "dotenv/config";
+import ScoreRouter from "./components/score/ScoreRouter.router";
 
 const DevConfig: IConfig = {
   server: {
@@ -39,12 +40,13 @@ const DevConfig: IConfig = {
     supportBigNumbers: true,
   },
   routers: [
-    new GameRouter(),
-    new UserRouter(),
-    new QuestionRouter(),
     new AnswerRouter(),
     new AuthRouter(),
     new AdministratorRouter(),
+    new GameRouter(),
+    new QuestionRouter(),
+    new ScoreRouter(),
+    new UserRouter(),
   ],
   mail: {
     host: "smtp.office365.com",

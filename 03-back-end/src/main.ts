@@ -11,6 +11,7 @@ import UserService from "./components/user/UserService.service";
 import QuestionService from "./components/question/QuestionService.service";
 import AnswerService from "./components/answer/AnswerService.service";
 import AdministratorService from "./components/administrator/AdministratorService.service";
+import ScoreService from "./components/score/ScoreService.service";
 
 async function main() {
   const config: IConfig = DevConfig;
@@ -56,25 +57,27 @@ async function main() {
   const applicationResources: IApplicationResources = {
     databaseConnection: db,
     services: {
-      game: null,
-      user: null,
-      question: null,
       answer: null,
       administrator: null,
+      game: null,
+      question: null,
+      score: null,
+      user: null,
     },
   };
 
-  applicationResources.services.game = new GameService(applicationResources);
-  applicationResources.services.user = new UserService(applicationResources);
-  applicationResources.services.question = new QuestionService(
-    applicationResources
-  );
   applicationResources.services.answer = new AnswerService(
     applicationResources
   );
   applicationResources.services.administrator = new AdministratorService(
     applicationResources
   );
+  applicationResources.services.game = new GameService(applicationResources);
+  applicationResources.services.question = new QuestionService(
+    applicationResources
+  );
+  applicationResources.services.score = new ScoreService(applicationResources);
+  applicationResources.services.user = new UserService(applicationResources);
 
   const application: express.Application = express();
 

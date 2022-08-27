@@ -4,13 +4,15 @@ import UserService from "../components/user/UserService.service";
 import QuestionService from "../components/question/QuestionService.service";
 import AnswerService from "../components/answer/AnswerService.service";
 import AdministratorService from "../components/administrator/AdministratorService.service";
+import ScoreService from "../components/score/ScoreService.service";
 
 export interface IServices {
-  game: GameService;
-  user: UserService;
-  question: QuestionService;
   answer: AnswerService;
   administrator: AdministratorService;
+  game: GameService;
+  question: QuestionService;
+  score: ScoreService;
+  user: UserService;
 }
 
 export default interface IApplicationResources {
