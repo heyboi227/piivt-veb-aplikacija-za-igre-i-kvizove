@@ -1,6 +1,5 @@
 import IAdapterOptions from "../../common/IAdapterOptions.interface";
 import ScoreModel from "./ScoreModel.model";
-import IEditScore from "./dto/IEditScore.dto";
 import IAddScore from "./dto/IAddScore.dto";
 import BaseService from "../../common/BaseService";
 
@@ -29,6 +28,7 @@ export default class ScoreService extends BaseService<
     score.scoreId = +data?.score_id;
     score.userId = +data?.user_id;
     score.value = +data?.value;
+    score.createdAt = data?.created_at;
 
     if (options.showUser) {
       score.user = await this.services.user.getById(score.userId, {
@@ -51,13 +51,6 @@ export default class ScoreService extends BaseService<
 
   public async add(data: IAddScore): Promise<ScoreModel> {
     return this.baseAdd(data, DefaultScoreAdapterOptions);
-  }
-
-  public async editById(
-    scoreId: number,
-    data: IEditScore
-  ): Promise<ScoreModel> {
-    return this.baseEditById(scoreId, data, DefaultScoreAdapterOptions);
   }
 
   public async deleteById(id: number): Promise<true> {
