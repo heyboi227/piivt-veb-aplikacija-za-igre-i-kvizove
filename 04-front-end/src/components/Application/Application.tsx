@@ -24,6 +24,7 @@ import UserQuestionAdd from "../User/Questions/UserQuestionAdd";
 import UserQuestionEdit from "../User/Questions/UserQuestionEdit";
 import UserQuestionAnswerList from "../User/Questions/UserQuestionAnswerList";
 import HomePage from "../Home/HomePage";
+import UserScoresPage from "../User/UserScoresPage/UserScoresPage";
 
 function Application() {
   return (
@@ -49,7 +50,7 @@ function Application() {
         />
 
         <Route path="/profile" element={<UserProfile />} />
-        {/* TODO <Route path="/myscores" element={<UserScoresPage />} /> */}
+        <Route path="/my-scores" element={<UserScoresPage />} />
 
         <Route path="/quiz" element={<QuizPage />} />
 

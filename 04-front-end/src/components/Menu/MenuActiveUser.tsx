@@ -49,7 +49,7 @@ export default function MenuUser() {
             <FontAwesomeIcon icon={faUser} /> My profile
           </Link>
 
-          <Link className="nav-item nav-link" to="/scores">
+          <Link className="nav-item nav-link" to="/my-scores">
             <FontAwesomeIcon icon={faRectangleList} /> My scores
           </Link>
 
