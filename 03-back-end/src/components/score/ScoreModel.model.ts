@@ -5,9 +5,9 @@ class ScoreModel implements IModel {
   scoreId: number;
   userId: number;
   value: number;
+  createdAt: string;
 
   user: UserModel = null;
-    answers: any;
 }
 
 export default ScoreModel;
