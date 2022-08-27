@@ -81,7 +81,7 @@ export default function AdministratorLoginPage() {
       }}
     >
       <div className="col col-xs-12 col-md-6 offset-md-3">
-        <h1 className="h5 mb-3">Log into your account</h1>
+        <h1 className="h5 mb-3">Log into your administrator account</h1>
 
         <div className="form-group mb-3">
           <div className="input-group">

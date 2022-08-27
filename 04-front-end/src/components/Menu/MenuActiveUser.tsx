@@ -53,6 +53,10 @@ export default function MenuUser() {
             <FontAwesomeIcon icon={faRectangleList} /> My scores
           </Link>
 
+          <Link className="nav-item nav-link" to="/high-scores">
+            <FontAwesomeIcon icon={faRectangleList} /> High scores
+          </Link>
+
           <div
             className="nav-item nav-link"
             style={{ cursor: "pointer" }}

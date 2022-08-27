@@ -4,7 +4,13 @@ import SubmitUsernameAction from "../../helpers/SubmitUsernameAction";
 import AppStore from "../../stores/AppStore";
 import { api } from "../../api/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faWindowClose } from "@fortawesome/free-regular-svg-icons";
+import {
+  faContactCard,
+  faListAlt,
+  faRectangleList,
+  faUser,
+  faWindowClose,
+} from "@fortawesome/free-regular-svg-icons";
 
 export default function MenuVisitor() {
   const [role, setRole] = useState<
@@ -120,7 +126,7 @@ export default function MenuVisitor() {
             to="#"
             onClick={() => setShowUsernameSubmitDialog(true)}
           >
-            Play!
+            <FontAwesomeIcon icon={faListAlt} /> Play!
           </Link>
 
           {showUsernameSubmitDialog && (
@@ -138,18 +144,25 @@ export default function MenuVisitor() {
           )}
 
           <Link className="nav-item nav-link" to="/auth/user/login">
-            User login
+            <FontAwesomeIcon icon={faUser} /> User login
           </Link>
+
           {role === "user" && (
             <Link className="nav-item nav-link" to="/auth/user/register">
-              Register an account
+              <FontAwesomeIcon icon={faUser} /> Register an account
             </Link>
           )}
+
           <Link className="nav-item nav-link" to="/auth/administrator/login">
-            Admin login
+            <FontAwesomeIcon icon={faUser} /> Admin login
           </Link>
+
           <Link className="nav-item nav-link" to="/contact">
-            Contact
+            <FontAwesomeIcon icon={faContactCard} /> Contact
+          </Link>
+
+          <Link className="nav-item nav-link" to="/high-scores">
+            <FontAwesomeIcon icon={faRectangleList} /> High scores
           </Link>
 
           {role === "user" && (
