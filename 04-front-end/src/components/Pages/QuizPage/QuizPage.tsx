@@ -188,6 +188,28 @@ export default function QuizPage() {
     });
   }
 
+  const doAddScore = () => {
+    api("post", "/api/score", "activeUser", {
+      userId: AppStore.getState().auth.id,
+      value: totalPoints,
+    })
+      .then((res) => {
+        if (res.status !== "ok") {
+          throw new Error(
+            "Could not add this item! Reason: " +
+              res?.data
+                ?.map(
+                  (error: any) => error?.instancePath + " " + error?.message
+                )
+                .join(", ")
+          );
+        }
+      })
+      .catch((error) => {
+        setErrorMessage(error?.message ?? "Unknown error!");
+      });
+  };
+
   useEffect(() => {
     loadGameData();
     loadQuestionsForGame();
@@ -762,6 +784,7 @@ export default function QuizPage() {
                     }
 
                     setShowQuizSummaryDialog(false);
+                    doAddScore();
                     setPoints(0);
                     setGameId(1);
                     setQuestionIndex(0);
