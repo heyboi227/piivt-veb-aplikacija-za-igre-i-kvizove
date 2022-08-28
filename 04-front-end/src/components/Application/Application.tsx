@@ -1,7 +1,7 @@
 import React from "react";
 import { Container } from "react-bootstrap";
 import ContactPage from "../Pages/ContactPage/ContactPage";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Menu from "../Menu/Menu";
 import UserLoginPage from "../User/UserLoginPage/UserLoginPage";
 import AdministratorLoginPage from "../Administrator/AdministratorLoginPage/AdministratorLoginPage";
@@ -28,9 +28,10 @@ import UserScoresPage from "../User/UserScoresPage/UserScoresPage";
 import HighScoresPage from "../Pages/HighScoresPage/HighScoresPage";
 
 function Application() {
+  const path = useLocation();
   return (
     <Container className="mt-4">
-      <Menu />
+      {path.pathname === "/quiz" ? null : <Menu />}
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/contact" element={<ContactPage />} />

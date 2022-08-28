@@ -18,6 +18,7 @@ import GameSummaryAction from "../../../helpers/GameSummaryAction";
 import QuizSummaryAction from "../../../helpers/QuizSummaryAction";
 import AppStore from "../../../stores/AppStore";
 import RegisterUserAction from "../../../helpers/RegisterUserAction";
+import ConfirmAction from "../../../helpers/ConfirmAction";
 
 export default function QuizPage() {
   const role = AppStore.getState().auth.role;
@@ -36,8 +37,11 @@ export default function QuizPage() {
   const [questionIndex, setQuestionIndex] = useState<number>(0);
   const [questions, setQuestions] = useState<IQuestion[]>();
 
+  // Interaction hooks
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isClicked, setIsClicked] = useState<boolean>(false);
+  const [showConfirmExitDialog, setShowConfirmExitDialog] =
+    useState<boolean>(false);
   const [showGameSummaryDialog, setShowGameSummaryDialog] =
     useState<boolean>(false);
   const [showQuizSummaryDialog, setShowQuizSummaryDialog] =
@@ -81,6 +85,7 @@ export default function QuizPage() {
     setIsExpressionResultCorrectMessageVisible,
   ] = useState<boolean>(false);
 
+  // Navigation hooks
   const navigate = useNavigate();
 
   function checkIfWordExists(word: string) {
@@ -608,6 +613,12 @@ export default function QuizPage() {
                           onClick={() =>
                             checkResultForMultipleAnswers(answer, 3)
                           }
+                          onMouseEnter={(e) => {
+                            e.currentTarget.classList.add("pointer");
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.classList.remove("pointer");
+                          }}
                         >
                           <div className="card-body">
                             <div className="card-title m-auto">
@@ -734,6 +745,12 @@ export default function QuizPage() {
                           onClick={() =>
                             checkResultForMultipleAnswers(answer, 4)
                           }
+                          onMouseEnter={(e) => {
+                            e.currentTarget.classList.add("pointer");
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.classList.remove("pointer");
+                          }}
                         >
                           <div className="card-body">
                             <div className="card-title m-auto">
@@ -850,6 +867,27 @@ export default function QuizPage() {
     <div>
       {errorMessage && (
         <p className="alert alert-danger mb-3">{errorMessage}</p>
+      )}
+
+      <button
+        className="btn btn-sm btn-danger"
+        onClick={() => setShowConfirmExitDialog(true)}
+      >
+        Exit quiz
+      </button>
+
+      {showConfirmExitDialog && (
+        <ConfirmAction
+          title={"The quiz is in progress."}
+          message={
+            "Are you sure you want to exit? You will lose all the results previously made."
+          }
+          onYes={() => {
+            setShowConfirmExitDialog(false);
+            navigate("/", { replace: true });
+          }}
+          onNo={() => setShowConfirmExitDialog(false)}
+        />
       )}
 
       {(showFirstGameSummaryDialog ||
