@@ -18,6 +18,19 @@ export default class ScoreController extends BaseController {
       });
   }
 
+  getAllAndSortByValue(req: Request, res: Response) {
+    this.services.score
+      .getAllAndSortByValue()
+      .then((result) => {
+        res.send(result);
+      })
+      .catch((error: { message: any }) => {
+        setTimeout(() => {
+          res.status(500).send(error?.message);
+        }, 500);
+      });
+  }
+
   getById(req: Request, res: Response) {
     const scoreId: number = +req.params?.sid;
 

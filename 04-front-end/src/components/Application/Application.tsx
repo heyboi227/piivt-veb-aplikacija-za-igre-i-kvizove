@@ -25,6 +25,7 @@ import UserQuestionEdit from "../User/Questions/UserQuestionEdit";
 import UserQuestionAnswerList from "../User/Questions/UserQuestionAnswerList";
 import HomePage from "../Home/HomePage";
 import UserScoresPage from "../User/UserScoresPage/UserScoresPage";
+import HighScoresPage from "../Pages/HighScoresPage/HighScoresPage";
 
 function Application() {
   return (
@@ -54,7 +55,7 @@ function Application() {
 
         <Route path="/quiz" element={<QuizPage />} />
 
-        {/* TODO <Route path="/scores" element={<HighScoresPage />} /> */}
+        <Route path="/high-scores" element={<HighScoresPage />} />
 
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route

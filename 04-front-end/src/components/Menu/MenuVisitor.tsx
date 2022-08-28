@@ -161,10 +161,6 @@ export default function MenuVisitor() {
             <FontAwesomeIcon icon={faContactCard} /> Contact
           </Link>
 
-          <Link className="nav-item nav-link" to="/high-scores">
-            <FontAwesomeIcon icon={faRectangleList} /> High scores
-          </Link>
-
           {role === "user" && (
             <div
               className="nav-item nav-link"

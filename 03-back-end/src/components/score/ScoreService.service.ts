@@ -2,6 +2,7 @@ import IAdapterOptions from "../../common/IAdapterOptions.interface";
 import ScoreModel from "./ScoreModel.model";
 import IAddScore from "./dto/IAddScore.dto";
 import BaseService from "../../common/BaseService";
+import * as mysql2 from 'mysql2/promise';
 
 export class ScoreAdapterOptions implements IAdapterOptions {
   showUser: boolean;
@@ -47,6 +48,33 @@ export default class ScoreService extends BaseService<
       DefaultScoreAdapterOptions,
       userId
     );
+  }
+
+  public async getAllAndSortByValue(): Promise<ScoreModel[]> {
+    return new Promise<ScoreModel[]>((resolve, reject) => {
+      const sql: string = `SELECT * FROM \`score\` ORDER BY \`value\` DESC LIMIT 10;`;
+
+      this.db
+        .execute(sql)
+        .then(async ([rows]) => {
+          if (rows === undefined) {
+            return resolve([]);
+          }
+
+          const items: ScoreModel[] = [];
+
+          for (const row of rows as mysql2.RowDataPacket[]) {
+            items.push(
+              await this.adaptToModel(row, DefaultScoreAdapterOptions)
+            );
+          }
+
+          resolve(items);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
   }
 
   public async add(data: IAddScore): Promise<ScoreModel> {

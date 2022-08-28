@@ -19,6 +19,11 @@ class ScoreRouter implements IRouter {
       scoreController.getAll.bind(scoreController)
     );
     application.get(
+      "/api/score/best",
+      AuthMiddleware.getVerifier("activeUser", "administrator"),
+      scoreController.getAllAndSortByValue.bind(scoreController)
+    );
+    application.get(
       "/api/score/:aid",
       AuthMiddleware.getVerifier("administrator"),
       scoreController.getById.bind(scoreController)
