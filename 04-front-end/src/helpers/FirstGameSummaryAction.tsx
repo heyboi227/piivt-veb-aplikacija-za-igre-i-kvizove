@@ -5,6 +5,7 @@ export interface IFirstGameSummaryActionProperties {
   givenWord: string;
   targetWord: string;
   pointsMessage: () => string;
+  onReport: () => void;
   onSubmit: () => void;
 }
 
@@ -29,6 +30,9 @@ export default function FirstGameSummaryAction(
         <p>{props.pointsMessage()}</p>
       </Modal.Body>
       <Modal.Footer>
+        <Button className="btn btn-lg btn-danger" onClick={props.onReport}>
+          Report word
+        </Button>
         <Button className="btn btn-lg btn-success" onClick={props.onSubmit}>
           Next game
         </Button>

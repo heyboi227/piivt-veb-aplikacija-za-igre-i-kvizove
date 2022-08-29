@@ -15,10 +15,13 @@ class QuestionModel implements IModel {
   title: string;
   createdAt: string;
   updatedAt?: string;
+  userId?: number;
+  isCorrect: boolean;
+  incorrectMessageReason?: string;
 
   game?: GameModel = null;
   answers?: IQuestionAnswer[] = null;
-  user: UserModel = null;
+  user?: UserModel = null;
 }
 
 export default QuestionModel;

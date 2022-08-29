@@ -7,6 +7,8 @@ export default interface IAddQuestion extends IServiceData {
   game_id: number;
   title: string;
   user_id?: number;
+  is_correct: number;
+  incorrect_message_reason: string;
 }
 
 export interface IAddQuestionDto {
@@ -18,6 +20,8 @@ export interface IAddQuestionDto {
     isActive: boolean;
   }[];
   userId?: number;
+  isCorrect: boolean;
+  incorrectMessageReason: string;
 }
 
 export interface IQuestionAnswer extends IServiceData {
@@ -61,8 +65,20 @@ const AddQuestionSchema = {
     userId: {
       type: "number",
     },
+    isCorrect: {
+      type: "boolean",
+    },
+    incorrectMessageReason: {
+      type: "string",
+    },
   },
-  required: ["gameId", "title", "answers"],
+  required: [
+    "gameId",
+    "title",
+    "answers",
+    "isCorrect",
+    "incorrectMessageReason",
+  ],
   additionalProperties: false,
 };
 

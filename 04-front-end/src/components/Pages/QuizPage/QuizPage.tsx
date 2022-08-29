@@ -19,6 +19,7 @@ import QuizSummaryAction from "../../../helpers/QuizSummaryAction";
 import AppStore from "../../../stores/AppStore";
 import RegisterUserAction from "../../../helpers/RegisterUserAction";
 import ConfirmAction from "../../../helpers/ConfirmAction";
+import ReportWrongQuestionAction from "../../../helpers/ReportWrongQuestionAction";
 
 export default function QuizPage() {
   const role = AppStore.getState().auth.role;
@@ -40,11 +41,22 @@ export default function QuizPage() {
   // Interaction hooks
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isClicked, setIsClicked] = useState<boolean>(false);
+  const [incorrectMessageReason, setIncorrectMessageReason] =
+    useState<string>("");
+
   const [showConfirmExitDialog, setShowConfirmExitDialog] =
     useState<boolean>(false);
+
   const [showGameSummaryDialog, setShowGameSummaryDialog] =
     useState<boolean>(false);
+
   const [showQuizSummaryDialog, setShowQuizSummaryDialog] =
+    useState<boolean>(false);
+
+  const [showReportWrongQuestionDialog, setShowReportWrongQuestionDialog] =
+    useState<boolean>(false);
+
+  const [showReportWrongQuestionButton, setShowReportWrongQuestionButton] =
     useState<boolean>(false);
 
   // First game hooks
@@ -113,6 +125,22 @@ export default function QuizPage() {
       .catch((err) => {
         setErrorMessage(err + "");
       });
+  }
+
+  function resetBeforeNextGame() {
+    setPoints(0);
+    setGameId(gameId + 1);
+    setQuestionIndex(0);
+    setLoading(true);
+  }
+
+  function endQuiz() {
+    setPoints(0);
+    setGameId(1);
+    setQuestionIndex(0);
+    setLoading(true);
+    setShowReportWrongQuestionButton(false);
+    navigate("/", { replace: true });
   }
 
   function checkFlagAnswer(question: IQuestion) {
@@ -209,6 +237,34 @@ export default function QuizPage() {
                 .join(", ")
           );
         }
+      })
+      .catch((error) => {
+        setErrorMessage(error?.message ?? "Unknown error!");
+      });
+  };
+
+  const doEditQuestion = () => {
+    api(
+      "put",
+      "/api/question/" + questions![questionIndex].questionId,
+      "activeUser",
+      {
+        isCorrect: false,
+        incorrectMessageReason: incorrectMessageReason,
+      }
+    )
+      .then((res) => {
+        if (res.status !== "ok") {
+          throw new Error(
+            "Could not edit this item! Reason: " +
+              res?.data
+                ?.map(
+                  (error: any) => error?.instancePath + " " + error?.message
+                )
+                .join(", ")
+          );
+        }
+        console.log(res);
       })
       .catch((error) => {
         setErrorMessage(error?.message ?? "Unknown error!");
@@ -390,12 +446,9 @@ export default function QuizPage() {
                             title="Find the longest word summary"
                             onSubmit={() => {
                               setShowFirstGameSummaryDialog(false);
-                              setPoints(0);
+                              resetBeforeNextGame();
                               setGivenWord([]);
                               setShuffledLetters([]);
-                              setGameId(2);
-                              setQuestionIndex(0);
-                              setLoading(true);
                             }}
                             givenWord={
                               givenWord.map((word) => word.letter).join("") !==
@@ -417,6 +470,9 @@ export default function QuizPage() {
                                 return "Unfortunately, you have won no points as the word does not exist.";
                               }
                             }}
+                            onReport={() =>
+                              setShowReportWrongQuestionDialog(true)
+                            }
                           />
                         )}
                       </>
@@ -499,7 +555,9 @@ export default function QuizPage() {
                   placeholder="Guess the flag"
                   onChange={(e) => setGivenCountryName(e.target.value)}
                   onKeyUp={(e) =>
-                    e.key === "Enter" && checkFlagAnswer(question)
+                    e.key === "Enter" &&
+                    (checkFlagAnswer(question),
+                    setShowReportWrongQuestionButton(true))
                   }
                 />
               </div>
@@ -536,10 +594,7 @@ export default function QuizPage() {
                   }}
                   onSubmit={() => {
                     setShowGameSummaryDialog(false);
-                    setPoints(0);
-                    setGameId(3);
-                    setQuestionIndex(0);
-                    setLoading(true);
+                    resetBeforeNextGame();
                   }}
                 />
               )}
@@ -561,6 +616,7 @@ export default function QuizPage() {
                         setQuestionIndex(questionIndex + 1);
                         setGivenCountryName("");
                         setIsCountryNameCorrectMessageVisible(false);
+                        setShowReportWrongQuestionButton(false);
                       }}
                     >
                       Next question
@@ -574,6 +630,7 @@ export default function QuizPage() {
                       onClick={() => {
                         setShowGameSummaryDialog(true);
                         setIsCountryNameCorrectMessageVisible(false);
+                        setShowReportWrongQuestionButton(false);
                       }}
                     >
                       Summary
@@ -610,9 +667,10 @@ export default function QuizPage() {
                                   ? " border border-3 border-success"
                                   : " border border-3 border-danger")
                           }
-                          onClick={() =>
-                            checkResultForMultipleAnswers(answer, 3)
-                          }
+                          onClick={() => {
+                            checkResultForMultipleAnswers(answer, 3);
+                            setShowReportWrongQuestionButton(true);
+                          }}
                           onMouseEnter={(e) => {
                             e.currentTarget.classList.add("pointer");
                           }}
@@ -674,10 +732,7 @@ export default function QuizPage() {
                   }}
                   onSubmit={() => {
                     setShowGameSummaryDialog(false);
-                    setPoints(0);
-                    setGameId(4);
-                    setQuestionIndex(0);
-                    setLoading(true);
+                    resetBeforeNextGame();
                   }}
                 />
               )}
@@ -691,6 +746,7 @@ export default function QuizPage() {
                         setQuestionIndex(questionIndex + 1);
                         setIsClicked(false);
                         setIsCountryFlagCorrectMessageVisible(false);
+                        setShowReportWrongQuestionButton(false);
                       }}
                     >
                       Next question
@@ -705,6 +761,7 @@ export default function QuizPage() {
                         setShowGameSummaryDialog(true);
                         setIsClicked(false);
                         setIsCountryFlagCorrectMessageVisible(false);
+                        setShowReportWrongQuestionButton(false);
                       }}
                     >
                       Summary
@@ -742,9 +799,10 @@ export default function QuizPage() {
                                   ? " border border-3 border-success"
                                   : " border border-3 border-danger")
                           }
-                          onClick={() =>
-                            checkResultForMultipleAnswers(answer, 4)
-                          }
+                          onClick={() => {
+                            checkResultForMultipleAnswers(answer, 4);
+                            setShowReportWrongQuestionButton(true);
+                          }}
                           onMouseEnter={(e) => {
                             e.currentTarget.classList.add("pointer");
                           }}
@@ -802,10 +860,8 @@ export default function QuizPage() {
 
                     setShowQuizSummaryDialog(false);
                     doAddScore();
-                    setPoints(0);
-                    setGameId(1);
-                    setQuestionIndex(0);
-                    setLoading(true);
+                    endQuiz();
+                    setShowReportWrongQuestionButton(false);
                     navigate("/", { replace: true });
                   }}
                 />
@@ -818,10 +874,7 @@ export default function QuizPage() {
                   }
                   onSubmit={() => {
                     setShowRegisterUserDialog(false);
-                    setPoints(0);
-                    setGameId(1);
-                    setQuestionIndex(0);
-                    setLoading(true);
+                    endQuiz();
                     navigate("/auth/user/register", { replace: true });
                   }}
                 />
@@ -875,6 +928,36 @@ export default function QuizPage() {
       >
         Exit quiz
       </button>
+
+      {showReportWrongQuestionButton && (
+        <button
+          className="btn btn-sm btn-danger"
+          onClick={() => setShowReportWrongQuestionDialog(true)}
+        >
+          Report question
+        </button>
+      )}
+
+      {showReportWrongQuestionDialog && (
+        <ReportWrongQuestionAction
+          title={"Report incorrect question"}
+          incorrectMessageReason={incorrectMessageReason}
+          setIncorrectMessageReason={setIncorrectMessageReason}
+          onSubmit={() => {
+            doEditQuestion();
+            endQuiz();
+            setShowReportWrongQuestionDialog(false);
+            if (gameId >= 2 && gameId <= 3) {
+              setShowGameSummaryDialog(false);
+            } else if (gameId === 1) {
+              setShowFirstGameSummaryDialog(false);
+            } else {
+              setShowQuizSummaryDialog(false);
+            }
+          }}
+          onCancel={() => setShowReportWrongQuestionDialog(false)}
+        />
+      )}
 
       {showConfirmExitDialog && (
         <ConfirmAction

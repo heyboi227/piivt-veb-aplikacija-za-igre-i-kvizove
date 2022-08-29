@@ -13,13 +13,13 @@ import IEditQuestion, {
 } from "./dto/IEditQuestion.dto";
 
 export default class QuestionController extends BaseController {
-  getAll(req: Request, res: Response) {
+  getAll(_req: Request, res: Response) {
     this.services.question
       .getAll(DefaultQuestionAdapterOptions)
       .then((result) => {
         res.send(result);
       })
-      .catch((error: { message: any }) => {
+      .catch((error) => {
         setTimeout(() => {
           res.status(500).send(error?.message);
         }, 500);
@@ -33,15 +33,16 @@ export default class QuestionController extends BaseController {
       .getById(questionId, DefaultQuestionAdapterOptions)
       .then((result) => {
         if (result === null) {
-          res.status(404).send("Question not found!");
+          throw {
+            status: 404,
+            message: "Question not found!",
+          };
         }
 
         res.send(result);
       })
       .catch((error) => {
-        setTimeout(() => {
-          res.status(500).send(error?.message);
-        }, 500);
+        res.status(error?.status ?? 500).send(error?.message);
       });
   }
 
@@ -115,10 +116,16 @@ export default class QuestionController extends BaseController {
     const serviceData: IAddQuestion = {
       game_id: data.gameId,
       title: data.title,
+      is_correct: 1,
+      incorrect_message_reason: "",
     };
 
     if (data.userId !== undefined) {
       serviceData.user_id = data.userId;
+    }
+
+    if (data.incorrectMessageReason !== undefined) {
+      serviceData.incorrect_message_reason = data.incorrectMessageReason;
     }
 
     this.services.answer
@@ -186,6 +193,26 @@ export default class QuestionController extends BaseController {
       return res.status(400).send(EditQuestionValidator.errors);
     }
 
+    const serviceData: IEditQuestion = {
+      is_correct: data.isCorrect ? 1 : 0,
+    };
+
+    if (data.gameId !== undefined) {
+      serviceData.game_id = data.gameId;
+    }
+
+    if (data.title !== undefined) {
+      serviceData.title = data.title;
+    }
+
+    if (data.userId !== undefined) {
+      serviceData.user_id = data.userId;
+    }
+
+    if (data.incorrectMessageReason !== undefined) {
+      serviceData.incorrect_message_reason = data.incorrectMessageReason;
+    }
+
     this.services.question
       .getById(questionId, DefaultQuestionAdapterOptions)
       .then((result) => {
@@ -203,71 +230,80 @@ export default class QuestionController extends BaseController {
         return result;
       })
       .then(async (result) => {
-        const currentAnswerIds = result.answers.map(
-          (answerInfo) => answerInfo.answer.answerId
-        );
-        const currentVisibleAnswerIds = result.answers
-          .filter((answerInfo) => answerInfo.isActive)
-          .map((answerInfo) => answerInfo.answer.answerId);
-        const currentInvisibleAnswerIds = result.answers
-          .filter((answerInfo) => !answerInfo.isActive)
-          .map((answerInfo) => answerInfo.answer.answerId);
+        if (data.answers !== undefined) {
+          const currentAnswerIds = result.answers.map(
+            (answerInfo) => answerInfo.answer.answerId
+          );
+          const currentVisibleAnswerIds = result.answers
+            .filter((answerInfo) => answerInfo.isActive)
+            .map((answerInfo) => answerInfo.answer.answerId);
+          const currentInvisibleAnswerIds = result.answers
+            .filter((answerInfo) => !answerInfo.isActive)
+            .map((answerInfo) => answerInfo.answer.answerId);
 
-        const newAnswerIds = data.answers.map((answer) => answer.answerId);
+          const newAnswerIds = data.answers.map((answer) => answer.answerId);
 
-        const answerIdsToHide = currentVisibleAnswerIds.filter(
-          (id) => !newAnswerIds.includes(id)
-        );
-        const answerIdsToShow = currentInvisibleAnswerIds.filter((id) =>
-          newAnswerIds.includes(id)
-        );
-        const answerIdsToAdd = newAnswerIds.filter(
-          (id) => !currentAnswerIds.includes(id)
-        );
-        const answerIdsUnion = [
-          ...new Set([...newAnswerIds, ...answerIdsToShow]),
-        ];
-        const answerIdsToEdit = answerIdsUnion.filter(
-          (id) => !answerIdsToAdd.includes(id)
-        );
+          const answerIdsToHide = currentVisibleAnswerIds.filter(
+            (id) => !newAnswerIds.includes(id)
+          );
+          const answerIdsToShow = currentInvisibleAnswerIds.filter((id) =>
+            newAnswerIds.includes(id)
+          );
+          const answerIdsToAdd = newAnswerIds.filter(
+            (id) => !currentAnswerIds.includes(id)
+          );
+          const answerIdsUnion = [
+            ...new Set([...newAnswerIds, ...answerIdsToShow]),
+          ];
+          const answerIdsToEdit = answerIdsUnion.filter(
+            (id) => !answerIdsToAdd.includes(id)
+          );
 
-        for (let id of answerIdsToHide) {
-          await this.services.answer.hideQuestionAnswer(result.questionId, id);
+          for (let id of answerIdsToHide) {
+            await this.services.answer.hideQuestionAnswer(
+              result.questionId,
+              id
+            );
+          }
+
+          for (let id of answerIdsToShow) {
+            await this.services.answer.showQuestionAnswer(
+              result.questionId,
+              id
+            );
+          }
+
+          for (let id of answerIdsToAdd) {
+            const answer = data.answers.find(
+              (answer) => answer.answerId === id
+            );
+
+            if (!answer) continue;
+
+            await this.services.question.addQuestionAnswer({
+              question_id: result.questionId,
+              answer_id: id,
+              is_correct: +answer.isCorrect,
+              is_active: 1,
+            });
+          }
+
+          for (let id of answerIdsToEdit) {
+            const answer = data.answers.find(
+              (answer) => answer.answerId === id
+            );
+
+            if (!answer) continue;
+
+            await this.services.question.editQuestionAnswer({
+              question_id: result.questionId,
+              answer_id: id,
+              is_correct: +answer.isCorrect,
+            });
+          }
         }
 
-        for (let id of answerIdsToShow) {
-          await this.services.answer.showQuestionAnswer(result.questionId, id);
-        }
-
-        for (let id of answerIdsToAdd) {
-          const answer = data.answers.find((answer) => answer.answerId === id);
-
-          if (!answer) continue;
-
-          await this.services.question.addQuestionAnswer({
-            question_id: result.questionId,
-            answer_id: id,
-            is_correct: +answer.isCorrect,
-            is_active: 1,
-          });
-        }
-
-        for (let id of answerIdsToEdit) {
-          const answer = data.answers.find((answer) => answer.answerId === id);
-
-          if (!answer) continue;
-
-          await this.services.question.editQuestionAnswer({
-            question_id: result.questionId,
-            answer_id: id,
-            is_correct: +answer.isCorrect,
-          });
-        }
-
-        await this.services.question.editById(result.questionId, {
-          game_id: data.gameId,
-          title: data.title,
-        });
+        await this.services.question.editById(result.questionId, serviceData);
 
         return result;
       })

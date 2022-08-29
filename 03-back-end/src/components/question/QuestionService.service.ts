@@ -4,16 +4,19 @@ import IEditQuestion from "./dto/IEditQuestion.dto";
 import IAddQuestion, { IQuestionAnswer } from "./dto/IAddQuestion.dto";
 import BaseService from "../../common/BaseService";
 import * as mysql2 from "mysql2/promise";
+import { DefaultUserAdapterOptions } from "../user/UserService.service";
 
 export class QuestionAdapterOptions implements IAdapterOptions {
-  loadGame: boolean;
+  showGame: boolean;
   showAnswers: boolean;
+  showUser: boolean;
   hideInactiveAnswers: boolean;
 }
 
 export const DefaultQuestionAdapterOptions: QuestionAdapterOptions = {
-  loadGame: true,
+  showGame: true,
   showAnswers: true,
+  showUser: true,
   hideInactiveAnswers: true,
 };
 
@@ -36,9 +39,20 @@ export default class QuestionService extends BaseService<
     question.title = data?.title;
     question.createdAt = data?.created_at;
     question.updatedAt = data?.updated_at;
+    question.userId = +data?.user_id;
+    question.isCorrect = +data?.is_correct === 1;
+    question.incorrectMessageReason = data?.incorrect_message_reason;
 
-    if (options.loadGame) {
+    if (options.showGame) {
       question.game = await this.services.game.getById(question.gameId, {});
+    }
+
+    if (options.showUser) {
+      question.user = await this.services.user.getById(question.userId, {
+        removeActivationCode: true,
+        removeEmail: false,
+        removePassword: true,
+      });
     }
 
     if (options.showAnswers) {
@@ -89,6 +103,33 @@ export default class QuestionService extends BaseService<
 
       this.db
         .execute(sql, [userId])
+        .then(async ([rows]) => {
+          if (rows === undefined) {
+            return resolve([]);
+          }
+
+          const items: QuestionModel[] = [];
+
+          for (const row of rows as mysql2.RowDataPacket[]) {
+            items.push(
+              await this.adaptToModel(row, DefaultQuestionAdapterOptions)
+            );
+          }
+
+          resolve(items);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  }
+
+  public async getIncorrect(): Promise<QuestionModel[]> {
+    return new Promise<QuestionModel[]>((resolve, reject) => {
+      const sql: string = `SELECT * FROM \`question\` WHERE \`is_correct\` = 0;`;
+
+      this.db
+        .execute(sql)
         .then(async ([rows]) => {
           if (rows === undefined) {
             return resolve([]);

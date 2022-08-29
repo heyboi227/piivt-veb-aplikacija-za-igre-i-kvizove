@@ -8,6 +8,10 @@ export default interface IQuestion {
   title: string;
   createdAt: string;
   updatedAt: string | null;
+  userId: number;
+  isCorrect: boolean;
+  incorrectMessageReason: string;
+
   game: IGame;
   answers: IAnswer[];
   user: IUser;

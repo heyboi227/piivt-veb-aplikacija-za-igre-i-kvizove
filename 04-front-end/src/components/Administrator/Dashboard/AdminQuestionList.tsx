@@ -42,6 +42,15 @@ export default function AdminQuestionList() {
           <p>{title}</p>
         </td>
         <td>
+          <p
+            className={
+              props.question.isCorrect ? "text-primary" : "text-danger fw-bold"
+            }
+          >
+            {props.question.isCorrect ? "Correct" : "Incorrect"}
+          </p>
+        </td>
+        <td>
           <Link
             className="btn btn-primary btn-sm"
             to={
@@ -111,6 +120,7 @@ export default function AdminQuestionList() {
                 <th className="question-row-id">ID</th>
                 <th>Game ID</th>
                 <th>Title</th>
+                <th>Status</th>
                 <th className="question-row-options">Options</th>
               </tr>
             </thead>

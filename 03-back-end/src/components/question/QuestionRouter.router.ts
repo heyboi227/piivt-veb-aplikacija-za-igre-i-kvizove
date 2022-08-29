@@ -13,9 +13,6 @@ class QuestionRouter implements IRouter {
     const questionController: QuestionController = new QuestionController(
       resources.services
     );
-    const answerController: AnswerController = new AnswerController(
-      resources.services
-    );
 
     application.get(
       "/api/question",

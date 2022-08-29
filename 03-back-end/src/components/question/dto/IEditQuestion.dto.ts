@@ -4,18 +4,24 @@ import IServiceData from "../../../common/IServiceData.interface";
 const ajv = new Ajv();
 
 export default interface IEditQuestion extends IServiceData {
-  game_id: number;
-  title: string;
+  game_id?: number;
+  title?: string;
+  user_id?: number;
+  is_correct?: number;
+  incorrect_message_reason?: string;
 }
 
 interface IEditQuestionDto {
-  gameId: number;
-  title: string;
-  answers: {
+  gameId?: number;
+  title?: string;
+  answers?: {
     answerId: number;
     isCorrect: boolean;
     isActive: boolean;
   }[];
+  userId?: number;
+  isCorrect?: boolean;
+  incorrectMessageReason?: string;
 }
 
 const EditQuestionSchema = {
@@ -52,8 +58,14 @@ const EditQuestionSchema = {
     userId: {
       type: "number",
     },
+    isCorrect: {
+      type: "boolean",
+    },
+    incorrectMessageReason: {
+      type: "string",
+    },
   },
-  required: ["gameId", "title", "answers"],
+  required: [],
   additionalProperties: false,
 };
 
