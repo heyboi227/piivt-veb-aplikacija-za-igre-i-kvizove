@@ -6,11 +6,11 @@ import IAddAnswer from "./dto/IAddAnswer.dto";
 import IEditAnswer from "./dto/IEditAnswer.dto";
 
 export class AnswerAdapterOptions implements IAdapterOptions {
-  loadGame: boolean;
+  showGame: boolean;
 }
 
 export const DefaultAnswerAdapterOptions: AnswerAdapterOptions = {
-  loadGame: true,
+  showGame: true,
 };
 
 export default class AnswerService extends BaseService<
@@ -31,7 +31,7 @@ export default class AnswerService extends BaseService<
     answer.gameId = +data?.game_id;
     answer.answerValue = data?.answer_value;
 
-    if (options.loadGame) {
+    if (options.showGame) {
       answer.game = await this.services.game.getById(answer.gameId, {});
     }
 
