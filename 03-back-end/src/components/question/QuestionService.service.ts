@@ -124,33 +124,6 @@ export default class QuestionService extends BaseService<
     });
   }
 
-  public async getIncorrect(): Promise<QuestionModel[]> {
-    return new Promise<QuestionModel[]>((resolve, reject) => {
-      const sql: string = `SELECT * FROM \`question\` WHERE \`is_correct\` = 0;`;
-
-      this.db
-        .execute(sql)
-        .then(async ([rows]) => {
-          if (rows === undefined) {
-            return resolve([]);
-          }
-
-          const items: QuestionModel[] = [];
-
-          for (const row of rows as mysql2.RowDataPacket[]) {
-            items.push(
-              await this.adaptToModel(row, DefaultQuestionAdapterOptions)
-            );
-          }
-
-          resolve(items);
-        })
-        .catch((error) => {
-          reject(error);
-        });
-    });
-  }
-
   public async add(data: IAddQuestion): Promise<QuestionModel> {
     return this.baseAdd(data, DefaultQuestionAdapterOptions);
   }
