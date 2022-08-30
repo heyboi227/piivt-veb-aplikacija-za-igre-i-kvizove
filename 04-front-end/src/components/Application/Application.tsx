@@ -12,7 +12,6 @@ import AdminAdministratorList from "../Administrator/Dashboard/AdminAdministrato
 import AdminAdministratorAdd from "../Administrator/Dashboard/AdminAdministratorAdd";
 import AdminAnswerList from "../Administrator/Dashboard/AdminAnswerList";
 import AdminQuestionAnswerList from "../Administrator/Dashboard/AdminQuestionAnswerList";
-import AdminQuestionAdd from "../Administrator/Dashboard/AdminQuestionAdd";
 import AdminQuestionEdit from "../Administrator/Dashboard/AdminQuestionEdit";
 import UserRegisterPage from "../User/UserRegisterPage/UserRegisterPage";
 import QuizPage from "../Pages/QuizPage/QuizPage";
@@ -62,10 +61,6 @@ function Application() {
         <Route
           path="/admin/dashboard/question/list"
           element={<AdminQuestionList />}
-        />
-        <Route
-          path="/admin/dashboard/question/add"
-          element={<AdminQuestionAdd />}
         />
         <Route
           path="/admin/dashboard/question/:qid/edit"

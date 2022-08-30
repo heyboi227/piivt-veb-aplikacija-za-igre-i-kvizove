@@ -18,6 +18,7 @@ export default function UserQuestionList() {
   function UserQuestionListRow(props: IUserQuestionListRowProperties) {
     const [gameId] = useState<number>(props.question.gameId);
     const [title] = useState<string>(props.question.title);
+    const [user] = useState<string>(props.question.user.username);
 
     const doDeleteQuestion = () => {
       api(
@@ -41,6 +42,9 @@ export default function UserQuestionList() {
         </td>
         <td>
           <p>{title}</p>
+        </td>
+        <td>
+          <p>{user}</p>
         </td>
         <td>
           <Link
@@ -69,11 +73,7 @@ export default function UserQuestionList() {
   }
 
   const loadQuestions = () => {
-    api(
-      "get",
-      "/api/question/user/" + AppStore.getState().auth.id,
-      "activeUser"
-    )
+    api("get", "/api/question/", "activeUser")
       .then((apiResponse) => {
         if (apiResponse.status === "ok") {
           return setQuestions(apiResponse.data);
@@ -107,6 +107,7 @@ export default function UserQuestionList() {
                 <th className="question-row-id">ID</th>
                 <th>Game ID</th>
                 <th>Title</th>
+                <th>Added by</th>
                 <th className="question-row-options">Options</th>
               </tr>
             </thead>

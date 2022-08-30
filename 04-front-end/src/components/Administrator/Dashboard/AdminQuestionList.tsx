@@ -17,6 +17,7 @@ export default function AdminQuestionList() {
   function AdminQuestionListRow(props: IAdminQuestionListRowProperties) {
     const [gameId] = useState<number>(props.question.gameId);
     const [title] = useState<string>(props.question.title);
+    const [user] = useState<string>(props.question.user.username);
 
     const doDeleteQuestion = (e: any) => {
       api(
@@ -40,6 +41,9 @@ export default function AdminQuestionList() {
         </td>
         <td>
           <p>{title}</p>
+        </td>
+        <td>
+          <p>{user}</p>
         </td>
         <td>
           <p
@@ -107,12 +111,6 @@ export default function AdminQuestionList() {
       {errorMessage && <p>Error: {errorMessage}</p>}
       {!errorMessage && (
         <div>
-          <Link
-            className="btn btn-sm btn-primary"
-            to={"/admin/dashboard/question/add"}
-          >
-            <FontAwesomeIcon icon={faPlusSquare} /> Add new question
-          </Link>
 
           <table className="table table-bordered table-striped table-hover table-sm mt-3">
             <thead>
@@ -120,6 +118,7 @@ export default function AdminQuestionList() {
                 <th className="question-row-id">ID</th>
                 <th>Game ID</th>
                 <th>Title</th>
+                <th>Added by</th>
                 <th>Status</th>
                 <th className="question-row-options">Options</th>
               </tr>

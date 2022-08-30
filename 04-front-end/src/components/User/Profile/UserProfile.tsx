@@ -104,7 +104,7 @@ export default function UserProfile() {
         >
           <div className="card-body">
             <div className="card-title">
-              <h2 className="h5">My questions</h2>
+              <h2 className="h5">Questions</h2>
             </div>
             <div className="card-text d-grid gap-3">
               <Link className="btn btn-primary" to="/question">
