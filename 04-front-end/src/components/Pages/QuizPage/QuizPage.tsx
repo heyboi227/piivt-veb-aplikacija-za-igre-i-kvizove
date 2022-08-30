@@ -929,15 +929,6 @@ export default function QuizPage() {
         Exit quiz
       </button>
 
-      {showReportWrongQuestionButton && (
-        <button
-          className="btn btn-sm btn-danger"
-          onClick={() => setShowReportWrongQuestionDialog(true)}
-        >
-          Report question
-        </button>
-      )}
-
       {showReportWrongQuestionDialog && (
         <ReportWrongQuestionAction
           title={"Report incorrect question"}
@@ -1007,6 +998,15 @@ export default function QuizPage() {
       )}
 
       {questions && RenderQuestionInfo(questions[questionIndex])}
+
+      {showReportWrongQuestionButton && (
+        <button
+          className="btn btn-sm btn-danger"
+          onClick={() => setShowReportWrongQuestionDialog(true)}
+        >
+          Report question
+        </button>
+      )}
     </div>
   );
 }
