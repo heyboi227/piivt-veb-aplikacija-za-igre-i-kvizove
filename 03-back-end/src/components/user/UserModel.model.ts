@@ -9,7 +9,7 @@ class UserModel implements IModel {
   updatedAt: string;
   isActive: boolean;
   activationCode: string;
-  passwordResetCode: any;
+  passwordResetCode: string;
 }
 
 export default UserModel;

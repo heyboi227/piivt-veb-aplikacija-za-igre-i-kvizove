@@ -7,4 +7,5 @@ export default interface IUser {
   createdAt: string;
   updatedAt: string | null;
   activationCode: string | null;
+  passwordResetCode: string | null;
 }
