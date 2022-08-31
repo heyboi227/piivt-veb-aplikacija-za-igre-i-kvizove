@@ -121,10 +121,12 @@ CREATE TABLE IF NOT EXISTS `user` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
   `activation_code` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `password_reset_code` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `uq_user_username` (`username`),
   UNIQUE KEY `uq_user_email` (`email`),
   UNIQUE KEY `uq_user_activation_code` (`activation_code`)
+  UNIQUE KEY `uq_user_password_reset_code` (`password_reset_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Data exporting was unselected.
