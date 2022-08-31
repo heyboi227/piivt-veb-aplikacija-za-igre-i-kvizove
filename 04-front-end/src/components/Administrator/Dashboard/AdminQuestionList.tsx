@@ -17,7 +17,7 @@ export default function AdminQuestionList() {
     const [title] = useState<string>(props.question.title);
     const [user] = useState<string>(props.question.user.username);
 
-    const doDeleteQuestion = (e: any) => {
+    const doDeleteQuestion = () => {
       api(
         "delete",
         "/api/question/" + props.question.questionId,
@@ -75,7 +75,7 @@ export default function AdminQuestionList() {
           &nbsp;&nbsp;
           <button
             className="btn btn-danger btn-sm"
-            onClick={(e) => doDeleteQuestion(e)}
+            onClick={() => doDeleteQuestion()}
           >
             Delete
           </button>
@@ -109,7 +109,6 @@ export default function AdminQuestionList() {
       {errorMessage && <p>Error: {errorMessage}</p>}
       {!errorMessage && (
         <div>
-
           <table className="table table-bordered table-striped table-hover table-sm mt-3">
             <thead>
               <tr>

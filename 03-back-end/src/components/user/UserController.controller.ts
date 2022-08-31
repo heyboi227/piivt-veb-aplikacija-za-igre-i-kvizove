@@ -631,7 +631,6 @@ export default class UserController extends BaseController {
 
   deactivate(req: Request, res: Response) {
     const id: number = +req.params?.uid;
-    const editData = req.body as IEditUserDto;
 
     this.services.user.startTransaction().then(() => {
       this.services.user
@@ -652,7 +651,7 @@ export default class UserController extends BaseController {
               },
               DefaultUserAdapterOptions
             )
-            .then(async (_result) => {
+            .then(async () => {
               await this.services.user.commitChanges();
               res.send("This user has been deactivated!");
             })
