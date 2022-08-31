@@ -26,6 +26,7 @@ import HomePage from "../Home/HomePage";
 import UserScoresPage from "../User/UserScoresPage/UserScoresPage";
 import HighScoresPage from "../Pages/HighScoresPage/HighScoresPage";
 import UserPasswordResetPage from "../User/UserPasswordResetPage/UserPasswordResetPage";
+import UserDeactivatePage from "../User/UserDeactivatePage/UserDeactivatePage";
 
 function Application() {
   const path = useLocation();
@@ -57,6 +58,7 @@ function Application() {
 
         <Route path="/profile" element={<UserProfile />} />
         <Route path="/my-scores" element={<UserScoresPage />} />
+        <Route path="/deactivate" element={<UserDeactivatePage />} />
 
         <Route path="/quiz" element={<QuizPage />} />
 

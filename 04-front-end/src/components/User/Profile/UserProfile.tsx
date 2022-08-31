@@ -114,6 +114,29 @@ export default function UserProfile() {
           </div>
         </motion.div>
       </div>
+      <div>
+        <motion.div
+          className="btn-danger"
+          initial={{
+            position: "relative",
+            top: 20,
+            scale: 0.75,
+            opacity: 0,
+          }}
+          animate={{
+            top: 0,
+            scale: 1,
+            opacity: 1,
+          }}
+          transition={{
+            delay: 0.125,
+          }}
+        >
+          <Link className="btn btn-sm btn-danger" to="/deactivate">
+            Deactivate account
+          </Link>
+        </motion.div>
+      </div>
     </>
   );
 }
