@@ -25,6 +25,7 @@ import UserQuestionAnswerList from "../User/Questions/UserQuestionAnswerList";
 import HomePage from "../Home/HomePage";
 import UserScoresPage from "../User/UserScoresPage/UserScoresPage";
 import HighScoresPage from "../Pages/HighScoresPage/HighScoresPage";
+import UserPasswordResetPage from "../User/UserPasswordResetPage/UserPasswordResetPage";
 
 function Application() {
   const path = useLocation();
@@ -41,6 +42,10 @@ function Application() {
         />
         <Route path="/auth/user/login" element={<UserLoginPage />} />
         <Route path="/auth/user/register" element={<UserRegisterPage />} />
+        <Route
+          path="/auth/user/forgot-password"
+          element={<UserPasswordResetPage />}
+        />
 
         <Route path="/question" element={<UserQuestionList />} />
         <Route path="/question/add" element={<UserQuestionAdd />} />

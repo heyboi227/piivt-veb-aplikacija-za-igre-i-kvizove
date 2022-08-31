@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { api } from "../../../api/api";
 import AppStore from "../../../stores/AppStore";
 import { motion } from "framer-motion";
@@ -112,6 +112,8 @@ export default function UserLoginPage() {
             Log in
           </button>
         </div>
+
+        <Link to="/auth/user/forgot-password">Forgot your password?</Link>
 
         {error && <p className="alert alert-danger">{error}</p>}
       </div>
