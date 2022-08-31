@@ -16,6 +16,11 @@ import IEditUser, {
   EditUserValidator,
   IEditUserDto,
 } from "./dto/IEditUser.dto";
+import {
+  IPasswordResetDto,
+  PasswordResetValidator,
+} from "./dto/IPasswordReset.dto";
+import * as generatePassword from "generate-password";
 
 export default class UserController extends BaseController {
   getAll(req: Request, res: Response) {
@@ -176,6 +181,245 @@ export default class UserController extends BaseController {
     });
   }
 
+  passwordResetEmailSend(req: Request, res: Response) {
+    const data = req.body as IPasswordResetDto;
+
+    if (!PasswordResetValidator(data)) {
+      return res.status(400).send(PasswordResetValidator.errors);
+    }
+
+    this.services.user
+      .getByEmail(data.email, {
+        removeActivationCode: false,
+        removePassword: true,
+        removeEmail: false,
+      })
+      .then((result) => {
+        if (result === null) {
+          throw {
+            status: 404,
+            message: "User not found!",
+          };
+        }
+
+        return result;
+      })
+      .then((user) => {
+        if (!user.isActive && !user.activationCode) {
+          throw {
+            status: 403,
+            message: "Your account has been deactivated by the administrator!",
+          };
+        }
+
+        return user;
+      })
+      .then((user) => {
+        const code = uuid.v4() + "-" + uuid.v4();
+
+        return this.services.user.editById(
+          user.userId,
+          {
+            password_reset_code: code,
+          },
+          {
+            removeActivationCode: true,
+            removePassword: true,
+            removeEmail: false,
+          }
+        );
+      })
+      .then((user) => {
+        return this.sendRecoveryEmail(user);
+      })
+      .then(() => {
+        res.send({
+          message: "Sent",
+        });
+      })
+      .catch((error) => {
+        setTimeout(() => {
+          res.status(error?.status ?? 500).send(error?.message);
+        }, 500);
+      });
+  }
+
+  resetPassword(req: Request, res: Response) {
+    const code: string = req.params?.code;
+
+    this.services.user
+      .getUserByPasswordResetCode(code, {
+        removeActivationCode: false,
+        removePassword: true,
+        removeEmail: false,
+      })
+      .then((result) => {
+        if (result === null) {
+          throw {
+            status: 404,
+            message: "User not found!",
+          };
+        }
+
+        return result;
+      })
+      .then((user) => {
+        if (!user.isActive && !user.activationCode) {
+          throw {
+            status: 403,
+            message: "Your account has been deactivated by the administrator",
+          };
+        }
+
+        return user;
+      })
+      .then((user) => {
+        const newPassword = generatePassword.generate({
+          numbers: true,
+          uppercase: true,
+          lowercase: true,
+          symbols: false,
+          length: 18,
+        });
+
+        const passwordHash = bcrypt.hashSync(newPassword, 10);
+
+        return new Promise<{ user: UserModel; newPassword: string }>(
+          (resolve) => {
+            this.services.user
+              .editById(
+                user.userId,
+                {
+                  password_hash: passwordHash,
+                  password_reset_code: null,
+                },
+                {
+                  removeActivationCode: true,
+                  removePassword: true,
+                  removeEmail: false,
+                }
+              )
+              .then((user) => {
+                return this.sendNewPassword(user, newPassword);
+              })
+              .then((user) => {
+                resolve({
+                  user: user,
+                  newPassword: newPassword,
+                });
+              })
+              .catch((error) => {
+                throw error;
+              });
+          }
+        );
+      })
+      .then(() => {
+        res.send({
+          message: "Sent!",
+        });
+      })
+      .catch((error) => {
+        setTimeout(() => {
+          res.status(error?.status ?? 500).send(error?.message);
+        }, 500);
+      });
+  }
+
+  private async sendNewPassword(
+    user: UserModel,
+    newPassword: string
+  ): Promise<UserModel> {
+    return new Promise((resolve, reject) => {
+      const transport = this.getMailTransport();
+
+      const mailOptions: Mailer.Options = {
+        to: user.email,
+        subject: "New password",
+        html: `<!doctype html>
+                  <html>
+                      <head><meta charset="utf-8"></head>
+                      <body>
+                          <p>
+                              Dear ${user.username},<br>
+                              Your account password was successfully reset.
+                          </p>
+                          <p>
+                              Your new password is:<br>
+                              <pre style="padding: 20px; font-size: 24pt; color: #000; background-color: #eee; border: 1px solid #666;">${newPassword}</pre>
+                          </p>
+                          <p>
+                              You can now log into your account using the login form.
+                          </p>
+                      </body>
+                  </html>`,
+      };
+
+      transport
+        .sendMail(mailOptions)
+        .then(() => {
+          transport.close();
+
+          user.activationCode = null;
+          user.passwordResetCode = null;
+
+          resolve(user);
+        })
+        .catch((error) => {
+          transport.close();
+
+          reject({
+            message: error?.message,
+          });
+        });
+    });
+  }
+
+  private async sendRecoveryEmail(user: UserModel): Promise<UserModel> {
+    return new Promise((resolve, reject) => {
+      const transport = this.getMailTransport();
+
+      const mailOptions: Mailer.Options = {
+        to: user.email,
+        subject: "Account password reset code",
+        html: `<!doctype html>
+                  <html>
+                      <head><meta charset="utf-8"></head>
+                      <body>
+                          <p>
+                              Dear ${user.username},<br>
+                              Here is a link you can use to reset your account:
+                          </p>
+                          <p>
+                              <a href="http://localhost:10000/api/user/reset/${user.passwordResetCode}"
+                                  sryle="display: inline-block; padding: 10px 20px; color: #fff; background-color: #db0002; text-decoration: none;">
+                                  Click here to reset your account
+                              </a>
+                          </p>
+                      </body>
+                  </html>`,
+      };
+
+      transport
+        .sendMail(mailOptions)
+        .then(() => {
+          transport.close();
+
+          user.activationCode = null;
+          user.passwordResetCode = null;
+
+          resolve(user);
+        })
+        .catch((error) => {
+          transport.close();
+
+          reject({
+            message: error?.message,
+          });
+        });
+    });
+  }
+
   private getMailTransport() {
     return nodemailer.createTransport(
       {
@@ -256,10 +500,14 @@ export default class UserController extends BaseController {
         })
         .then((result) => {
           const user = result as UserModel;
-          return this.services.user.editById(user.userId, {
-            is_active: 1,
-            activation_code: null,
-          });
+          return this.services.user.editById(
+            user.userId,
+            {
+              is_active: 1,
+              activation_code: null,
+            },
+            DefaultUserAdapterOptions
+          );
         })
         .then(async (user) => {
           await this.services.user.commitChanges();
@@ -337,7 +585,11 @@ export default class UserController extends BaseController {
                 serviceData.username = editData.username;
               }
 
-              const user = await this.services.user.editById(id, serviceData);
+              const user = await this.services.user.editById(
+                id,
+                serviceData,
+                DefaultUserAdapterOptions
+              );
               await this.services.user.commitChanges();
               res.send(user);
             } else {
@@ -347,12 +599,16 @@ export default class UserController extends BaseController {
 
               const passwordHash = bcrypt.hashSync(registerData.password, 10);
 
-              const inactiveUser = await this.services.user.editById(id, {
-                username: registerData.username,
-                email: registerData.email,
-                password_hash: passwordHash,
-                activation_code: uuid.v4(),
-              });
+              const inactiveUser = await this.services.user.editById(
+                id,
+                {
+                  username: registerData.username,
+                  email: registerData.email,
+                  password_hash: passwordHash,
+                  activation_code: uuid.v4(),
+                },
+                DefaultUserAdapterOptions
+              );
               await this.sendRegistrationEmail(inactiveUser);
               await this.services.user.commitChanges();
               res.send(inactiveUser);
@@ -389,9 +645,13 @@ export default class UserController extends BaseController {
           }
 
           this.services.user
-            .editById(id, {
-              is_active: 0,
-            })
+            .editById(
+              id,
+              {
+                is_active: 0,
+              },
+              DefaultUserAdapterOptions
+            )
             .then(async (_result) => {
               await this.services.user.commitChanges();
               res.send("This user has been deactivated!");

@@ -39,6 +39,14 @@ class UserRouter implements IRouter {
       AuthMiddleware.getVerifier("user", "activeUser", "administrator"),
       userController.edit.bind(userController)
     );
+    application.post(
+      "/api/user/reset-password",
+      userController.passwordResetEmailSend.bind(userController)
+    );
+    application.get(
+      "/api/user/reset/:code",
+      userController.resetPassword.bind(userController)
+    );
     application.put(
       "/api/user/deactivate/:uid",
       AuthMiddleware.getVerifier("user", "activeUser", "administrator"),

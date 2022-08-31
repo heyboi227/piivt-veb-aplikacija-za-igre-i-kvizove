@@ -75,13 +75,10 @@ export default class UserService extends BaseService<
 
   public async editById(
     userId: number,
-    data: IRegisterUser | IEditUser
+    data: IRegisterUser | IEditUser,
+    options: UserAdapterOptions
   ): Promise<UserModel> {
-    return this.baseEditById(userId, data, {
-      removeActivationCode: true,
-      removeEmail: false,
-      removePassword: false,
-    });
+    return this.baseEditById(userId, data, options);
   }
 
   public async deleteById(id: number): Promise<true> {
@@ -93,5 +90,12 @@ export default class UserService extends BaseService<
     options: UserAdapterOptions = DefaultUserAdapterOptions
   ): Promise<UserModel | null> {
     return this.getByFieldNameAndValue("activation_code", options, code);
+  }
+
+  public async getUserByPasswordResetCode(
+    code: string,
+    options: UserAdapterOptions
+  ): Promise<UserModel | null> {
+    return this.getByFieldNameAndValue("password_reset_code", options, code);
   }
 }

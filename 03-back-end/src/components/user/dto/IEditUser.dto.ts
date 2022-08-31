@@ -9,6 +9,7 @@ export default interface IEditUser extends IServiceData {
   password_hash?: string;
   username?: string;
   is_active?: number;
+  password_reset_code?: string;
 }
 
 interface IEditUserDto {
