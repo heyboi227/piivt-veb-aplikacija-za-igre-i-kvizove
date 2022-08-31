@@ -24,8 +24,8 @@ Aplikacija je namenjena za zabavu i proveru znanja. Registrovani i prijavljeni k
 
 ### Model baze podataka
 
-![Polja i atributi u bazi](./01-documentation/documentation-img/database_fields.png)
+![Polja i atributi u bazi](./documentation-img/database_fields.png)
 
 ### Dijagram baze podataka
 
-![Dijagram baze](./01-documentation/documentation-img/diagram.png)
+![Dijagram baze](./documentation-img/diagram.png)
