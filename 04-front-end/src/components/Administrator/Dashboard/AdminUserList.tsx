@@ -38,6 +38,18 @@ export default function AdminUserList() {
       ? " btn-primary"
       : " btn-light";
 
+    const doDeleteUser = () => {
+      api("delete", "/api/user/" + props.user.userId, "administrator").then(
+        (res) => {
+          if (res.status === "error") {
+            return setErrorMessage("Could not delete this user!");
+          }
+
+          loadUsers();
+        }
+      );
+    };
+
     function doToggleUserActiveState() {
       api("put", "/api/user/" + props.user.userId, "administrator", {
         isActive: !props.user.isActive,
@@ -176,6 +188,14 @@ export default function AdminUserList() {
                 </button>
               </div>
             )}
+          </td>
+          <td>
+            <button
+              className="btn btn-danger btn-sm"
+              onClick={() => doDeleteUser()}
+            >
+              Delete
+            </button>
           </td>
         </tr>
       </>
