@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../../../api/api";
 import IQuestion from "../../../models/IQuestion.model";
-import AppStore from "../../../stores/AppStore";
 import "./UserQuestionList.sass";
 
 interface IUserQuestionListRowProperties {

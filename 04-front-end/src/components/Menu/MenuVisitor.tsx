@@ -7,7 +7,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faContactCard,
   faListAlt,
-  faRectangleList,
   faUser,
   faWindowClose,
 } from "@fortawesome/free-regular-svg-icons";
