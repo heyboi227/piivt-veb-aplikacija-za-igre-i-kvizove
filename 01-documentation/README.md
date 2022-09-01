@@ -29,3 +29,71 @@ Aplikacija je namenjena za zabavu i proveru znanja. Registrovani i prijavljeni k
 ### Dijagram baze podataka
 
 ![Dijagram baze](./documentation-img/diagram.png)
+
+### Uloge u veb-aplikaciji, prikazane kroz Use-case dijagram
+
+![Use-case dijagram uloga](./documentation-img/uloge.png)
+
+### Uloge
+
+#### Administrator
+
+- Uređivanje pitanja:
+  - Dodavanje novog pitanja
+  - Izmena postojećih pitanja
+  - Pregled svih postojećih pitanja
+  - Brisanje postojećih pitanja
+
+- Uređivanje odgovora:
+  - Dodavanje novog odgovora
+  - Izmena postojećih odgovora
+  - Pregled svih postojećih odgovora
+  - Brisanje postojećih odgovora
+
+- Uređivanje administratora:
+  - Dodavanje novog administratora
+  - Izmena postojećih administratora
+  - Pregled svih postojećih administratora
+  - Deaktiviranje naloga administratora
+
+- Uređivanje korisnika:
+  - Izmena postojećih korisnika
+    - Izmena korisničkog imena
+    - Izmena lozinke
+  - Pregled svih postojećih korisnika
+  - Deaktiviranje korisnika
+  - Brisanje postojećih korisnika
+
+- Odjava
+
+#### "Neaktivni" korisnik
+
+- Igranje kviza
+- Prijava netačnih pitanja
+- Registracija naloga sa pristupnim parametrima, čime postaje korisnik
+- Odjava
+
+#### Korisnik
+
+- Igranje kviza
+- Prijava netačnih pitanja
+- Prijava naloga
+
+- Uređivanje pitanja:
+  - Dodavanje novog pitanja
+  - Izmena postojećih pitanja
+  - Pregled svih postojećih pitanja
+  - Brisanje postojećih pitanja
+
+- Pregled:
+  - svojih rezultata
+  - najboljih rezultata
+
+- Izmena svojih podataka
+- Odjava
+
+#### Posetilac
+
+- Logovanje
+  - kao administrator
+  - kao korisnik
