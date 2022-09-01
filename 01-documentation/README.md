@@ -39,24 +39,28 @@ Aplikacija je namenjena za zabavu i proveru znanja. Registrovani i prijavljeni k
 #### Administrator
 
 - Uređivanje pitanja:
+
   - Dodavanje novog pitanja
   - Izmena postojećih pitanja
   - Pregled svih postojećih pitanja
   - Brisanje postojećih pitanja
 
 - Uređivanje odgovora:
+
   - Dodavanje novog odgovora
   - Izmena postojećih odgovora
   - Pregled svih postojećih odgovora
   - Brisanje postojećih odgovora
 
 - Uređivanje administratora:
+
   - Dodavanje novog administratora
   - Izmena postojećih administratora
   - Pregled svih postojećih administratora
   - Deaktiviranje naloga administratora
 
 - Uređivanje korisnika:
+
   - Izmena postojećih korisnika
     - Izmena korisničkog imena
     - Izmena lozinke
@@ -80,12 +84,14 @@ Aplikacija je namenjena za zabavu i proveru znanja. Registrovani i prijavljeni k
 - Prijava naloga
 
 - Uređivanje pitanja:
+
   - Dodavanje novog pitanja
   - Izmena postojećih pitanja
   - Pregled svih postojećih pitanja
   - Brisanje postojećih pitanja
 
 - Pregled:
+
   - svojih rezultata
   - najboljih rezultata
 
