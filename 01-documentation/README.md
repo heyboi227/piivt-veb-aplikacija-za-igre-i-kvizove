@@ -1,6 +1,6 @@
 # Veb aplikacija za igre i kvizove
 
-Projekat za ispitni zadatak iz predmeta Praktikum: Internet i veb tehnologije. Tema: **Veb aplikacija za igre i kvizove**
+Ispitni zadatak iz predmeta Praktikum: Internet i veb tehnologije. Tema: **Veb aplikacija za igre i kvizove**
 
 Ime i prezime: Miloš Jeknić
 Broj indeksa: 2018201579
