@@ -32,7 +32,7 @@ Aplikacija je namenjena za zabavu i proveru znanja. Registrovani i prijavljeni k
 
 ### Uloge u veb-aplikaciji, prikazane kroz Use-case dijagram
 
-![Use-case dijagram uloga](./documentation-img/uloge.png)
+![Use-case dijagram uloga](./documentation-img/use-case.png)
 
 ### Uloge
 
