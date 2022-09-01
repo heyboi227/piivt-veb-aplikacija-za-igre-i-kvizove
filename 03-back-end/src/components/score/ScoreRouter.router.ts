@@ -38,11 +38,6 @@ class ScoreRouter implements IRouter {
       AuthMiddleware.getVerifier("activeUser", "administrator"),
       scoreController.add.bind(scoreController)
     );
-    application.delete(
-      "/api/score/:aid",
-      AuthMiddleware.getVerifier("administrator"),
-      scoreController.delete.bind(scoreController)
-    );
   }
 }
 

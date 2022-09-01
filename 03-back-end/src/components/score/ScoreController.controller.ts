@@ -103,40 +103,4 @@ export default class ScoreController extends BaseController {
         });
     });
   }
-
-  delete(req: Request, res: Response) {
-    const id: number = +req.params?.aid;
-
-    this.services.score.startTransaction().then(() => {
-      this.services.score
-        .getById(id, DefaultScoreAdapterOptions)
-        .then((result) => {
-          if (result === null) {
-            throw {
-              status: 404,
-              message: "The score is not found!",
-            };
-          }
-
-          this.services.score
-            .deleteById(id)
-            .then(async () => {
-              await this.services.question.commitChanges();
-              res.send("This score has been deleted!");
-            })
-            .catch((error) => {
-              throw {
-                status: 500,
-                message: error?.message,
-              };
-            });
-        })
-        .catch(async (error) => {
-          await this.services.question.rollbackChanges();
-          setTimeout(() => {
-            res.status(error?.status ?? 500).send(error?.message);
-          }, 500);
-        });
-    });
-  }
 }

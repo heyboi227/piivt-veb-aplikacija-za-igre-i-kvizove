@@ -80,8 +80,4 @@ export default class ScoreService extends BaseService<
   public async add(data: IAddScore): Promise<ScoreModel> {
     return this.baseAdd(data, DefaultScoreAdapterOptions);
   }
-
-  public async deleteById(id: number): Promise<true> {
-    return this.baseDeleteById(id);
-  }
 }
