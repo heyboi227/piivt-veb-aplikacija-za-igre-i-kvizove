@@ -1,0 +1,1454 @@
+{
+	"info": {
+		"_postman_id": "a692c489-1e3d-4718-bc14-b72d5a36500b",
+		"name": "PiIVT App",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Administrator",
+			"item": [
+				{
+					"name": "Get all administrators",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/api/administrator",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"administrator"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get a single administrator by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/api/administrator/2",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"administrator",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get a single administrator by id - not found",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/api/administrator/50",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"administrator",
+								"50"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add a single administrator",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"administrator\",\r\n    \"password\": \"Cista lozinka koja se Vidi 1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/api/administrator",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"administrator"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit a single administrator",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"2Abc1!e\",\r\n    \"isActive\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/api/administrator/2",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"administrator",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit a single administrator - only password",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"2Abc1!e\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/api/administrator/2",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"administrator",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit a single administrator - only status",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"isActive\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/api/administrator/2",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"administrator",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Answer",
+			"item": [
+				{
+					"name": "Get all answers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/api/answer",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"answer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get a single answer by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/api/answer/122",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"answer",
+								"122"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get a single answer by id - not found",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/api/answer/900",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"answer",
+								"900"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get a single answer by answer value",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/api/answer/answer-value/Serbia",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"answer",
+								"answer-value",
+								"Serbia"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get a single answer by answer value - not found",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/api/answer/answer-value/Liberland",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"answer",
+								"answer-value",
+								"Liberland"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add a single answer",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"gameId\": 1,\r\n    \"answerValue\": \"exciting\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/api/answer",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"answer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit a single answer",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"gameId\": 1,\r\n    \"answerValue\": \"excitement\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/api/answer/391",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"answer",
+								"391"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit a single answer - gameId only",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"gameId\": 3\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/api/answer/391",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"answer",
+								"391"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit a single answer - answerValue only",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"answerValue\": \"excited\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/api/answer/391",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"answer",
+								"391"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a single answer",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/api/answer/391",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"answer",
+								"391"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "User",
+					"item": [
+						{
+							"name": "User login",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"heyboi\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{API_URL}}/api/auth/user/login",
+									"host": [
+										"{{API_URL}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"user",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Refresh user auth token",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImlkIjoxLCJpZGVudGl0eSI6ImhleWJvaSIsImlhdCI6MTY1NTgxNTg0OSwiZXhwIjoxNjYwOTk5ODQ5LCJpc3MiOiJQSWlWVCJ9.PjzHtF-RYUrET7aMGw3hHLpHSWTPpKjZ5cU6vf-MJLzi_LondNGCHo_6fyPTlS-HATNhf8eVLtdrtiab2wjR96KRBLGJNfo51B1AQvdGbgttwefPRRusgswpS0yDBirpfFQtVSVLvUKp2l2tlulaC7UFuCUiG8d3ob3ZH5l6NVdSr3euKin73tyknM0hDA-o109VlCqSm4qZBJvDD-3kC7TaFYUWUIz7TZCNi1MC2MgBNU5aFMnTFb0stehI0Y18G6NfXLeTqH185r_9DgEeFSBgLKHORxp5Tr_FVT2fcmyKk23ilCK5_ejsvHn3qUWmODudFEZ0XFpl8zIsmH5ozw",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{API_URL}}/api/auth/user/refresh",
+									"host": [
+										"{{API_URL}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"user",
+										"refresh"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Active user",
+					"item": [
+						{
+							"name": "Active user login",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"heyboi\",\r\n    \"password\": \"The hashed password1234\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{API_URL}}/api/auth/active-user/login",
+									"host": [
+										"{{API_URL}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"active-user",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Refresh active user auth token",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYWN0aXZlVXNlciIsImlkIjoxLCJpZGVudGl0eSI6ImhleWJvaSIsImlhdCI6MTY1NTgxNTEzNywiZXhwIjoxNjYwOTk5MTM3LCJpc3MiOiJQSWlWVCJ9.zJVeIvTZDXo97Zb6rP1cf7BsvVjJqKKy1Xys93fP-XQ",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{API_URL}}/api/auth/active-user/refresh",
+									"host": [
+										"{{API_URL}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"active-user",
+										"refresh"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Administrator",
+					"item": [
+						{
+							"name": "Administrator login",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"administrator\",\r\n    \"password\": \"Cista lozinka koja se Vidi 1234\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{API_URL}}/api/auth/administrator/login",
+									"host": [
+										"{{API_URL}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"administrator",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Refresh administrator auth token",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYWRtaW5pc3RyYXRvciIsImlkIjo0LCJpZGVudGl0eSI6ImFkbWluaXN0cmF0b3ItZHZhIiwiaWF0IjoxNjUzOTI0NTc4LCJleHAiOjE2NTkxMDg1NzgsImlzcyI6IlBJaVZUIn0.LTk86kwjiKYlMl7u2Tz_E8oDcij8YXmCoK4fAGoRD2C7o_dE25yg5COrjKD4QrYFhk0zb5uEIMPr7u9IHmMXnxSb3bPJkSCpgOBYomf4R0jzv4uIujF61n6q7acMKGFmNbzhPPwhhPVpvUaTeRg0aGjJSfAVYguUJGbsbpkjJ1DEqh-TAZLjj6NQXowEk2sritibZzAY8W7RZ9qYEqi3yJoN8UYp306FuwdPLVnUde8KipuElsgJY1PFoBM5Xn3sIw7E77H1Nrf8tW7slG5ESzPlP8xdQO0cLtvZxJZr5gEsgxMX3FTZGNe_RV61HLRMkVGI4zl2OGQ93KwNVr-g8w",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{API_URL}}/api/auth/administrator/refresh",
+									"host": [
+										"{{API_URL}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"administrator",
+										"refresh"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Game",
+			"item": [
+				{
+					"name": "Get all games",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/api/game",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"game"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get a single game by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/api/game/1",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"game",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get a single game by id - not found",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/api/game/5",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"game",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get a single game by name",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/api/game/name/Guess the country flag",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"game",
+								"name",
+								"Guess the country flag"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get a single game by name - Not found",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/api/game/name/Does not exist",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"game",
+								"name",
+								"Does not exist"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Question",
+			"item": [
+				{
+					"name": "Get all questions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/api/question",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"question"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get a single question by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/api/question/7",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"question",
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get a single question by id - not found",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/api/question/999",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"question",
+								"999"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get questions by game id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/api/question/game/1",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"question",
+								"game",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get questions by game id - not found",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/api/question/game/5",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"question",
+								"game",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get questions added by user id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/api/question/user/7",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"question",
+								"user",
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get questions added by user id - not found",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/api/question/user/99",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"question",
+								"user",
+								"99"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add a single question",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"gameId\": 3,\r\n    \"title\": \"Slovakia\",\r\n    \"answers\": [\r\n        {\r\n            \"answerId\": 352,\r\n            \"isCorrect\": true\r\n        },\r\n        {\r\n            \"answerId\": 330,\r\n            \"isCorrect\": false\r\n        },\r\n        {\r\n            \"answerId\": 258,\r\n            \"isCorrect\": false\r\n        }\r\n    ],\r\n    \"userId\": 7\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/api/question",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"question"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit a single question",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"gameId\": 3,\r\n    \"title\": \"Slovakia\",\r\n    \"answers\": [\r\n        {\r\n            \"answerId\": 352,\r\n            \"isCorrect\": true\r\n        },\r\n        {\r\n            \"answerId\": 330,\r\n            \"isCorrect\": false\r\n        },\r\n        {\r\n            \"answerId\": 258,\r\n            \"isCorrect\": false\r\n        }\r\n    ],\r\n    \"userId\": 7,\r\n    \"isCorrect\": false,\r\n    \"incorrectMessageReason\": \"This isn't the flag of Slovakia.\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/api/question/7",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"question",
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit a single question - gameId only",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"gameId\": 3\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/api/question/7",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"question",
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit a single question - title only",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Slovakia\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/api/question/7",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"question",
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit a single question - answers only",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"answers\": [\r\n        {\r\n            \"answerId\": 112,\r\n            \"isCorrect\": false\r\n        },\r\n        {\r\n            \"answerId\": 211,\r\n            \"isCorrect\": false\r\n        },\r\n        {\r\n            \"answerId\": 254,\r\n            \"isCorrect\": true\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/api/question/7",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"question",
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit a single question - isCorrect and incorrectMessageReason only",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"isCorrect\": true,\r\n    \"incorrectMessageReason\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/api/question/7",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"question",
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a single question",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/api/question/2",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"question",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Score",
+			"item": [
+				{
+					"name": "Get all scores",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/api/score",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"score"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all scores sorted descending by value (high scores)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/api/score/best",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"score",
+								"best"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get a single score by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/api/score/1",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"score",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get a single score by id - not found",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/api/score/50",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"score",
+								"50"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all scores by user id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/api/score/user/17",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"score",
+								"user",
+								"17"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all scores by user id - not found",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/api/score/user/99",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"score",
+								"user",
+								"99"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add a single score",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\": 17,\r\n    \"value\": 21\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/api/score",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"score"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a single score",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/api/score/1",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"score",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Get all users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/api/user",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get a single user by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/api/user/1",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get a single user by id - not found",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/api/user/99",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"99"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add a single user (without registration, username only)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"new-user\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/api/user",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register an account (make an added user active)",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"new-user\",\r\n    \"email\": \"milosjeknic1@gmail.com\",\r\n    \"password\": \"Some New password1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/api/user/7",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit a single user - username only (only when the user is activated)",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"edited-again\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/api/user/5",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit a single user - password only (only when the user is activated)",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"NewPassword12345\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/api/user/7",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Activate an account",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"some-user-second\",\r\n    \"email\": \"useremail@gmail.com\",\r\n    \"password\": \"The hashed password1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/api/user/activate/db4efb9c-09f6-44f3-a88f-ee62e75b47fc",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"activate",
+								"db4efb9c-09f6-44f3-a88f-ee62e75b47fc"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "API_URL",
+			"value": "http://localhost:10000",
+			"type": "default"
+		},
+		{
+			"key": "USER_AUTH_TOKEN",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "ADMIN_AUTH_TOKEN",
+			"value": "",
+			"type": "default"
+		}
+	]
+}
