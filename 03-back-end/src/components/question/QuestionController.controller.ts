@@ -113,21 +113,6 @@ export default class QuestionController extends BaseController {
       return res.status(400).send(AddQuestionValidator.errors);
     }
 
-    const serviceData: IAddQuestion = {
-      game_id: data.gameId,
-      title: data.title,
-      is_correct: 1,
-      incorrect_message_reason: "",
-    };
-
-    if (data.userId !== undefined) {
-      serviceData.user_id = data.userId;
-    }
-
-    if (data.incorrectMessageReason !== undefined) {
-      serviceData.incorrect_message_reason = data.incorrectMessageReason;
-    }
-
     this.services.answer
       .getAll(DefaultAnswerAdapterOptions)
       .then((answers) => {
@@ -148,7 +133,11 @@ export default class QuestionController extends BaseController {
         return this.services.question.startTransaction();
       })
       .then(() => {
-        return this.services.question.add(serviceData);
+        return this.services.question.add({
+          game_id: data.gameId,
+          title: data.title,
+          user_id: data.userId,
+        });
       })
       .then((newQuestion) => {
         for (let givenAnswerInformation of data.answers) {
@@ -203,10 +192,6 @@ export default class QuestionController extends BaseController {
 
     if (data.title !== undefined) {
       serviceData.title = data.title;
-    }
-
-    if (data.userId !== undefined) {
-      serviceData.user_id = data.userId;
     }
 
     if (data.incorrectMessageReason !== undefined) {

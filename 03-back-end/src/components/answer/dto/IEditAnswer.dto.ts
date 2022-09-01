@@ -4,13 +4,13 @@ import IServiceData from "../../../common/IServiceData.interface";
 const ajv = new Ajv();
 
 export default interface IEditAnswer extends IServiceData {
-  game_id: number;
-  answer_value: string;
+  game_id?: number;
+  answer_value?: string;
 }
 
 interface IEditAnswerDto {
-  gameId: number;
-  answerValue: string;
+  gameId?: number;
+  answerValue?: string;
 }
 
 const EditAnswerSchema = {
@@ -27,7 +27,7 @@ const EditAnswerSchema = {
       maxLength: 128,
     },
   },
-  required: ["gameId", "answerValue"],
+  required: [],
   additionalProperties: false,
 };
 

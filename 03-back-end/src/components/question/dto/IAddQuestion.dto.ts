@@ -6,9 +6,7 @@ const ajv = new Ajv();
 export default interface IAddQuestion extends IServiceData {
   game_id: number;
   title: string;
-  user_id?: number;
-  is_correct: number;
-  incorrect_message_reason: string;
+  user_id: number;
 }
 
 export interface IAddQuestionDto {
@@ -19,9 +17,7 @@ export interface IAddQuestionDto {
     isCorrect: boolean;
     isActive: boolean;
   }[];
-  userId?: number;
-  isCorrect: boolean;
-  incorrectMessageReason: string;
+  userId: number;
 }
 
 export interface IQuestionAnswer extends IServiceData {
@@ -65,20 +61,8 @@ const AddQuestionSchema = {
     userId: {
       type: "number",
     },
-    isCorrect: {
-      type: "boolean",
-    },
-    incorrectMessageReason: {
-      type: "string",
-    },
   },
-  required: [
-    "gameId",
-    "title",
-    "answers",
-    "isCorrect",
-    "incorrectMessageReason",
-  ],
+  required: ["gameId", "title", "answers", "userId"],
   additionalProperties: false,
 };
 

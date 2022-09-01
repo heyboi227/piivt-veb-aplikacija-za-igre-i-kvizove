@@ -6,7 +6,6 @@ const ajv = new Ajv();
 export default interface IEditQuestion extends IServiceData {
   game_id?: number;
   title?: string;
-  user_id?: number;
   is_correct?: number;
   incorrect_message_reason?: string;
 }
@@ -19,7 +18,6 @@ interface IEditQuestionDto {
     isCorrect: boolean;
     isActive: boolean;
   }[];
-  userId?: number;
   isCorrect?: boolean;
   incorrectMessageReason?: string;
 }
@@ -54,9 +52,6 @@ const EditQuestionSchema = {
         required: ["answerId", "isCorrect"],
         additionalProperties: false,
       },
-    },
-    userId: {
-      type: "number",
     },
     isCorrect: {
       type: "boolean",
