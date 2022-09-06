@@ -129,6 +129,15 @@ CREATE TABLE IF NOT EXISTS `user` (
   UNIQUE KEY `uq_user_password_reset_code` (`password_reset_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- INSERT users
+INSERT INTO `user` (`username`, `email`, `password_hash`, `is_active`, `created_at`, `updated_at`, `activation_code`, `password_reset_code`) VALUES ('heyboi', NULL, NULL, 0, '2022-07-10 13:51:54', NULL, NULL, NULL);
+INSERT INTO `user` (`username`, `email`, `password_hash`, `is_active`, `created_at`, `updated_at`, `activation_code`, `password_reset_code`) VALUES ('heyboi-second', NULL, NULL, 0, '2022-07-10 13:57:05', NULL, NULL, NULL);
+INSERT INTO `user` (`username`, `email`, `password_hash`, `is_active`, `created_at`, `updated_at`, `activation_code`, `password_reset_code`) VALUES ('new-user', 'milosjeknic1@gmail.com', '$2b$10$XJordA2hVWwFRfGLQm5USezia/69hgYf012wIbWauX37iqtYX3i.S', 1, '2022-08-01 12:22:03', '2022-08-02 12:23:57', NULL, NULL);
+INSERT INTO `user` (`username`, `email`, `password_hash`, `is_active`, `created_at`, `updated_at`, `activation_code`, `password_reset_code`) VALUES ('anewuser', 'milosjeknic@hotmail.rs', '$2b$10$s4u.k5k0qvAftD6rDRBd8.DWg4woj2zYWBy8BvjbYKtCncWWMQYA.', 1, '2022-08-24 12:26:26', '2022-08-31 15:34:57', NULL, NULL);
+
+-- INSERT administrators
+INSERT INTO `administrator` (`username`, `password_hash`, `created_at`, `is_active`) VALUES ('administrator', '$2b$10$.ALhDIXQsTVTDIsb8MPjRuVMYn9AX7oXlOgvP8Ar1U5psc.HgeEx2', '2022-07-08 22:16:54', 1);
+
 -- INSERT games
 INSERT INTO `game` (`name`) VALUES ('Calculate the expression');
 INSERT INTO `game` (`name`) VALUES ('Find the longest word');

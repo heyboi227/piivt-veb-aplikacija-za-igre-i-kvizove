@@ -20,6 +20,16 @@ Aplikacija je namenjena za zabavu i proveru znanja. Registrovani i prijavljeni k
 - Neophodno je napisati prateću projektnu dokumentaciju o izradi aplikacije koja sadrži (1) model baze podataka sa detaljnim opisom svih tabela, njihovih polja i relacija; (2) dijagram baze podataka; (3) dijagram organizacije delova sistema, gde se vidi veza između baze, back-end, front-end i korisnika sa opisom smera kretanja informacija; (4) popis svih aktivnosti koje su podržane kroz aplikaciju za sve uloge korisnika aplikacije prikazane u obliku Use-Case dijagrama; kao i (5) sve ostale elemente dokumentacije predviđene uputstvom za izradu dokumentacije po ISO standardu.
 - Izrada oba dela aplikacije (projekata) i promene kodova datoteka tih projekata moraju da bude praćene korišćenjem alata za verziranje koda Git, a kompletan kôd aplikacije bude dostupan na javnom Git spremištu, npr. na besplatnim GitHub ili Bitbucket servisima, jedno spremište za back-end projekat i jedno za front-end projekat. Ne može ceo projekat da bude otpremljen u samo nekoliko masovnih Git commit-a, već mora da bude pokazano da je projekat realizovan u kontinuitetu, da su korišćene grane (branching), da je bilo paralelnog rada u više grana koje su spojene (merging) sa ili bez konflikata (conflict resolution).
 
+## Pristupni parametri
+
+### Za administratora
+
+username: administrator, password: Cista lozinka koja se Vidi 1234
+
+### Za korisnika
+
+username: new-user, password: NewPassword12345
+
 ## Baza podataka
 
 ### Model baze podataka
@@ -36,7 +46,7 @@ Aplikacija je namenjena za zabavu i proveru znanja. Registrovani i prijavljeni k
 
 ### Uloge
 
-#### Administrator
+### Administrator
 
 - Uređivanje pitanja:
 
