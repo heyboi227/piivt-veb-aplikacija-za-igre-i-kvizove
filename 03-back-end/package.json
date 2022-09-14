@@ -2,7 +2,7 @@
   "name": "projekat-piivt-back-end",
   "version": "0.0.1",
   "description": "",
-  "main": "./dist/src/main.js",
+  "main": "./dist/main.js",
   "scripts": {
     "clean": "rimraf ./dist",
     "build": "npm run clean && tsc",
