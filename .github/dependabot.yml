@@ -9,8 +9,14 @@ updates:
     directory: "/03-back-end" # Location of package manifests
     schedule:
       interval: "daily"
+    labels:
+      - "dependencies"
+      - "automerge"
       
   - package-ecosystem: "npm" # See documentation for possible values
     directory: "/04-front-end" # Location of package manifests
     schedule:
       interval: "daily"
+    labels:
+      - "dependencies"
+      - "automerge"
