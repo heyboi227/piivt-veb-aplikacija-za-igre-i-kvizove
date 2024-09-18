@@ -10,7 +10,6 @@ updates:
     schedule:
       interval: "daily"
     labels:
-      - "dependencies"
       - "automerge"
       
   - package-ecosystem: "npm" # See documentation for possible values
@@ -18,5 +17,4 @@ updates:
     schedule:
       interval: "daily"
     labels:
-      - "dependencies"
       - "automerge"
