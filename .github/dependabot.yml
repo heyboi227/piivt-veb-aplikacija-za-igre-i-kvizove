@@ -11,6 +11,7 @@ updates:
       interval: "daily"
     labels:
       - "automerge"
+      - "dependencies"
       
   - package-ecosystem: "npm" # See documentation for possible values
     directory: "/04-front-end" # Location of package manifests
@@ -18,3 +19,4 @@ updates:
       interval: "daily"
     labels:
       - "automerge"
+      - "dependencies"
