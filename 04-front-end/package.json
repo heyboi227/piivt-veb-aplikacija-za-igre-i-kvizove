@@ -17,7 +17,7 @@
     "axios": "^1.10.0",
     "babel-plugin-macros": "^3.1.0",
     "bootstrap": "^5.3.7",
-    "framer-motion": "^12.23.5",
+    "framer-motion": "^12.23.6",
     "node-sass": "^9.0.0",
     "path-browserify": "^1.0.1",
     "react": "^19.1.0",
