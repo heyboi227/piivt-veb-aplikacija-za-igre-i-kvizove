@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@fortawesome/free-regular-svg-icons": "^7.0.1",
-    "@fortawesome/free-solid-svg-icons": "^7.0.1",
+    "@fortawesome/free-solid-svg-icons": "^7.1.0",
     "@fortawesome/react-fontawesome": "^3.0.2",
     "@reduxjs/toolkit": "^2.9.0",
     "@testing-library/jest-dom": "^6.9.1",
