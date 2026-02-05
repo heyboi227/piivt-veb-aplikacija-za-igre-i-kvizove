@@ -31,7 +31,7 @@
     "axios": "^1.13.4",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
-    "dotenv": "^17.2.3",
+    "dotenv": "^17.2.4",
     "express": "^5.2.1",
     "express-fileupload": "^1.5.2",
     "generate-password": "^1.7.1",
